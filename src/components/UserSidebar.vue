@@ -73,8 +73,8 @@ const menu = [
 
     li {
       padding: 0 12px;
-      margin-bottom: 24px;
-      margin: 24px 0;
+      // margin-bottom: 24px;
+      margin: 36px 0;
       display: flex;
       justify-content: center;
       
