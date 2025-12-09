@@ -1,16 +1,49 @@
 <script setup lang="ts">
-const emit = defineEmits(['toggleSidebar']);
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+
+const props = defineProps({
+  showMenuButton: {
+    type: Boolean,
+    required: false,
+  },
+})
+
+const emit = defineEmits(['toggleSidebar'])
+
+const router = useRouter()
+const isLoggedIn = ref(!!localStorage.getItem('access_token'))
+const route = useRoute()
 
 function handleMenuClick() {
-  emit('toggleSidebar');
+  emit('toggleSidebar')
 }
+
+function navigateToLogin() {
+  router.push('/login')
+}
+
+
+function onTokenExpired() {
+  localStorage.removeItem('access_token')
+  isLoggedIn.value = false
+  router.push('/login')
+}
+
+onMounted(() => {
+  window.addEventListener('auth:token-expired', onTokenExpired as EventListener)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('auth:token-expired', onTokenExpired as EventListener)
+})
 </script>
 
 <template>
   <header class="user-header">
     <div class="user-header-wrapper">
       <div class="user-header-wrapper-left">
-        <button class="menu-button" @click="handleMenuClick">
+        <button v-if="props.showMenuButton !== false" class="menu-button" @click="handleMenuClick">
           <i class="fa-solid fa-bars"></i>
         </button>
         <div class="logo">
@@ -18,7 +51,14 @@ function handleMenuClick() {
         </div>
       </div>
       <div class="user-header-wrapper-right">
-        hola
+        <button v-if="!isLoggedIn && route.path !== '/login'" class="login-button" @click="navigateToLogin">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          Iniciar sesión
+        </button>
+        <div v-else class="user-pill" title="Sesión iniciada">
+          <i class="fa-solid fa-user"></i>
+          Mi cuenta
+        </div>
       </div>
     </div>
   </header>
@@ -63,7 +103,40 @@ function handleMenuClick() {
             }
           }
         }
+        &-right {
+          display: flex;
+          align-items: center;
+          gap: 12px;
 
+          .login-button {
+            background: $FUDMASTER-GREEN;
+            color: $white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            &:hover { filter: brightness(0.95); }
+          }
+
+          .user-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: $white;
+            color: $FUDMASTER-DARK;
+            border: 1px solid #e0e0e0;
+            border-radius: 999px;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: 600;
+          }
+        }
       }
     }
   }
