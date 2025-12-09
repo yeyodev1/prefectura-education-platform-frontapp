@@ -227,91 +227,25 @@ onMounted(fetchComments)
   gap: 8px;
 }
 
-.state {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #555;
-}
-
-.state.error {
-  color: $alert-error;
-}
-
-.composer {
-  display: grid;
-  gap: 8px;
-}
-
-.input {
-  width: 100%;
-  resize: vertical;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  font-family: inherit;
-}
-
-.send {
-  align-self: end;
-  background: $FUDMASTER-GREEN;
-  color: $white;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 12px;
-  cursor: pointer;
-}
-
-.list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  gap: 10px;
-}
-
-.item {
-  background: $white;
-  border: 1px solid #e6e6e6;
-  border-radius: 10px;
-  padding: 10px;
-  display: grid;
-  gap: 8px;
-}
-
-.meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 12px;
-  color: #777;
-}
-
-.author {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: $FUDMASTER-DARK;
-}
-
-.date {
-  color: #999;
-}
-
-.content {
-  color: #333;
-  margin: 0;
-}
-
-.actions {
-  display: inline-flex;align-items: center; gap: 10px; }
-.like { background: none; border: none; color: #e74c3c; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.state { display: inline-flex; align-items: center; gap: 8px; color: rgba($FUDMASTER-DARK, 0.6); }
+.state.error { color: $alert-error; }
+.composer { display: grid; gap: 8px; }
+.input { width: 100%; resize: vertical; padding: 10px; border-radius: 8px; border: 1px solid rgba($FUDMASTER-DARK, 0.15); font-family: inherit; background: $FUDMASTER-LIGHT; color: $FUDMASTER-DARK; }
+.send { align-self: end; background: $FUDMASTER-GREEN; color: $white; border: none; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+.list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.item { background: $white; border: 1px solid rgba($FUDMASTER-DARK, 0.08); border-radius: 10px; padding: 10px; display: grid; gap: 8px; }
+.meta { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: rgba($FUDMASTER-DARK, 0.6); }
+.author { display: inline-flex; align-items: center; gap: 6px; color: $FUDMASTER-DARK; }
+.date { color: rgba($FUDMASTER-DARK, 0.5); }
+.content { color: rgba($FUDMASTER-DARK, 0.85); margin: 0; }
+.actions { display: inline-flex; align-items: center; gap: 10px; }
+.like { background: none; border: none; color: $alert-error; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
 .reply { background: none; border: none; color: $FUDMASTER-DARK; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
-.reply .badge { background: #eee; color: #333; border-radius: 999px; padding: 2px 6px; font-size: 11px; }
-.replies { border-left: 2px solid #eee; margin-left: 8px; padding-left: 12px; display: grid; gap: 8px; }
+.reply .badge { background: $FUDMASTER-LIGHT; color: $FUDMASTER-DARK; border: 1px solid rgba($FUDMASTER-DARK, 0.12); border-radius: 999px; padding: 2px 6px; font-size: 11px; }
+.replies { border-left: 2px solid rgba($FUDMASTER-DARK, 0.1); margin-left: 8px; padding-left: 12px; display: grid; gap: 8px; }
 .replies-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-.reply-item { background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 8px; display: grid; gap: 6px; }
+.reply-item { background: $FUDMASTER-LIGHT; border: 1px solid rgba($FUDMASTER-DARK, 0.08); border-radius: 8px; padding: 8px; display: grid; gap: 6px; }
 .reply-composer { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
-.reply-input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; }
+.reply-input { width: 100%; padding: 8px; border: 1px solid rgba($FUDMASTER-DARK, 0.15); border-radius: 6px; background: $FUDMASTER-LIGHT; color: $FUDMASTER-DARK; }
 @media (max-width: 600px) { .input { font-size: 14px; } }
 </style>

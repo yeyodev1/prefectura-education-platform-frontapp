@@ -86,7 +86,7 @@ onMounted(() => {
 }
 
 .subtitle {
-  color: #777;
+  color: rgba($FUDMASTER-DARK, 0.6);
   margin: 0;
 }
 
@@ -96,9 +96,9 @@ onMounted(() => {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: #555;
+  color: rgba($FUDMASTER-DARK, 0.6);
   background: $FUDMASTER-LIGHT;
-  border: 1px solid #e6e6e6;
+  border: 1px solid rgba($FUDMASTER-DARK, 0.08);
   border-radius: 10px;
   padding: 12px 14px;
 }
@@ -129,7 +129,7 @@ onMounted(() => {
 
 .card {
   background: $white;
-  border: 1px solid #e6e6e6;
+  border: 1px solid rgba($FUDMASTER-DARK, 0.08);
   border-radius: 16px;
   overflow: hidden;
   display: grid;
@@ -156,7 +156,7 @@ onMounted(() => {
 }
 
 .desc {
-  color: #777;
+  color: rgba($FUDMASTER-DARK, 0.6);
   margin: 0;
   font-size: 14px;
 }

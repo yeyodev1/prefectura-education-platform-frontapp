@@ -162,10 +162,10 @@ onMounted(async () => {
 .header { display: grid; gap: 8px; }
 .back { background: none; border: none; color: $FUDMASTER-GREEN; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
 .title { color: $FUDMASTER-DARK; margin: 0; font-size: 24px; display: inline-flex; align-items: center; gap: 10px; }
-.meta { color: #777; margin: 0; font-size: 14px; }
-.loading, .error, .empty { display: inline-flex; align-items: center; gap: 10px; color: #555; background: $FUDMASTER-LIGHT; border: 1px solid #e6e6e6; border-radius: 10px; padding: 12px 14px; }
+.meta { color: rgba($FUDMASTER-DARK, 0.6); margin: 0; font-size: 14px; }
+.loading, .error, .empty { display: inline-flex; align-items: center; gap: 10px; color: rgba($FUDMASTER-DARK, 0.6); background: $FUDMASTER-LIGHT; border: 1px solid rgba($FUDMASTER-DARK, 0.08); border-radius: 10px; padding: 12px 14px; }
 .error { color: $alert-error; background: $alert-error-bg; border-color: rgba($alert-error, 0.3); }
-.player-card { background: $white; border: 1px solid #e6e6e6; border-radius: 16px; padding: 16px; display: grid; gap: 16px; }
+.player-card { background: $white; border: 1px solid rgba($FUDMASTER-DARK, 0.08); border-radius: 16px; padding: 16px; display: grid; gap: 16px; }
 .player { background: #000; border-radius: 12px; overflow: hidden; }
 .player-box { position: relative; }
 .video { width: 100%; max-height: 460px; display: block; }
@@ -177,8 +177,8 @@ onMounted(async () => {
 .attachments { display: grid; gap: 8px; }
 .attachments-title { color: $FUDMASTER-DARK; font-size: 18px; margin: 0; display: inline-flex; align-items: center; gap: 8px; }
 .list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-.item { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 8px; background: $FUDMASTER-LIGHT; border: 1px solid #e6e6e6; border-radius: 10px; padding: 10px; }
+.item { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 8px; background: $FUDMASTER-LIGHT; border: 1px solid rgba($FUDMASTER-DARK, 0.08); border-radius: 10px; padding: 10px; }
 .name { color: $FUDMASTER-DARK; font-weight: 600; }
-.kind { color: #777; font-size: 12px; }
+.kind { color: rgba($FUDMASTER-DARK, 0.6); font-size: 12px; }
 .link { color: $FUDMASTER-GREEN; text-decoration: none; }
 </style>

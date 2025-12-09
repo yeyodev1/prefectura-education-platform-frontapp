@@ -201,7 +201,7 @@ onMounted(async () => {
 }
 
 .pending {
-  color: #777;
+  color: rgba($FUDMASTER-DARK, 0.6);
 }
 
 .details {
@@ -213,6 +213,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  color: rgba($FUDMASTER-DARK, 0.7);
 }
 
 .mono {

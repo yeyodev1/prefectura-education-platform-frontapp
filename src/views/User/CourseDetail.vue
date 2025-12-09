@@ -102,9 +102,9 @@ function openLecture(lectureId: number | string) {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: #555;
+  color: rgba($FUDMASTER-DARK, 0.6);
   background: $FUDMASTER-LIGHT;
-  border: 1px solid #e6e6e6;
+  border: 1px solid rgba($FUDMASTER-DARK, 0.08);
   border-radius: 10px;
   padding: 12px 14px;
 }
@@ -146,12 +146,12 @@ function openLecture(lectureId: number | string) {
   font-size: 26px;
 }
 
-.subtitle { color: #777; margin: 0; font-size: 15px; }
-.author { display: inline-flex; align-items: center; gap: 8px; color: #555; font-size: 14px; }
+.subtitle { color: rgba($FUDMASTER-DARK, 0.6); margin: 0; font-size: 15px; }
+.author { display: inline-flex; align-items: center; gap: 8px; color: rgba($FUDMASTER-DARK, 0.6); font-size: 14px; }
 .lecture-detail { display: grid; gap: 8px; margin-top: 10px; }
 .lecture-title { color: $FUDMASTER-DARK; font-size: 18px; margin: 0; display: inline-flex; align-items: center; gap: 8px; }
-.lecture-card { background: $white; border: 1px solid #e6e6e6; border-radius: 12px; padding: 12px; display: grid; gap: 6px; }
-.row { display: flex; gap: 8px; color: #555; font-size: 14px; }
+.lecture-card { background: $white; border: 1px solid rgba($FUDMASTER-DARK, 0.08); border-radius: 12px; padding: 12px; display: grid; gap: 6px; }
+.row { display: flex; gap: 8px; color: rgba($FUDMASTER-DARK, 0.6); font-size: 14px; }
 .label { color: $FUDMASTER-DARK; font-weight: 600; }
 
 .sections {
@@ -174,12 +174,7 @@ function openLecture(lectureId: number | string) {
   gap: 12px;
 }
 
-.section {
-  background: $white;
-  border: 1px solid #e6e6e6;
-  border-radius: 12px;
-  padding: 12px;
-}
+.section { background: $white; border: 1px solid rgba($FUDMASTER-DARK, 0.08); border-radius: 12px; padding: 12px; }
 
 .section-header {
   display: flex;
@@ -196,15 +191,15 @@ function openLecture(lectureId: number | string) {
 
 .badge {
   background: $FUDMASTER-LIGHT;
-  border: 1px solid #e6e6e6;
-  color: #555;
+  border: 1px solid rgba($FUDMASTER-DARK, 0.08);
+  color: rgba($FUDMASTER-DARK, 0.6);
   border-radius: 999px;
   padding: 4px 8px;
   font-size: 12px;
 }
 
 .lectures { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
-.lectures li { color: #555; font-size: 14px; }
-.lecture-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: $FUDMASTER-LIGHT; border: 1px solid #e6e6e6; border-radius: 8px; padding: 8px 10px; cursor: pointer; }
+.lectures li { color: rgba($FUDMASTER-DARK, 0.6); font-size: 14px; }
+.lecture-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: $FUDMASTER-LIGHT; border: 1px solid rgba($FUDMASTER-DARK, 0.08); border-radius: 8px; padding: 8px 10px; cursor: pointer; }
 .lecture-item:hover { border-color: $FUDMASTER-GREEN; color: $FUDMASTER-DARK; }
 </style>
