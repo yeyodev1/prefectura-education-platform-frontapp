@@ -1,7 +1,7 @@
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 import APIBase from './httpBase'
 
-export interface CreateUserBody extends Record<string, unknown> {}
+export interface CreateUserBody extends Record<string, unknown> { }
 
 class UsersService extends APIBase {
   async create<T>(body: CreateUserBody, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
