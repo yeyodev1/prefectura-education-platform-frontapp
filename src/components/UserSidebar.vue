@@ -28,10 +28,9 @@ function openCloseMenu() {
 .user {
   &-sidebar {
     background-color: $FUDMASTER-LIGHT;
-    height: 100vh;
+    height: 100%;
     border-right: 1px solid #e0e0e0;
     width: 180px;
-    padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
@@ -50,7 +49,7 @@ function openCloseMenu() {
         font-weight: 500;
 
         &:hover {
-          color: #007bff;
+          color: $FUDMASTER-GREEN;
         }
       }
     }

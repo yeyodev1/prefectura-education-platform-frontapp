@@ -15,6 +15,7 @@
     background-color: $FUDMASTER-LIGHT;
     font-family: $font-principal;
     min-height: 100vh;
+    max-height: 100vh;
     width: 100%;
     &-view {
       width: 100%;
