@@ -4,7 +4,7 @@
 <template>
   <div class="layout main-wrapper">
     <div class="layout-menu-wrapper">
-      hola
+      aqui va el menu
     </div>
     <div class="layout-view-wrapper">
       <RouterView />
