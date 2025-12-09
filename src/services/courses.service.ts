@@ -48,6 +48,10 @@ class CoursesService extends APIBase {
   async getVideo<T>(courseId: string | number, lectureId: string | number, videoId: string | number, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.get<T>(`courses/${courseId}/lectures/${lectureId}/videos/${videoId}`, undefined, config)
   }
+
+  async getEnrolledByUser<T>(userId: string | number, params?: Record<string, unknown>, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+    return this.get<T>(`courses/enrolled/${userId}`, undefined, { ...(config || {}), params })
+  }
 }
 
 const coursesService = new CoursesService()
