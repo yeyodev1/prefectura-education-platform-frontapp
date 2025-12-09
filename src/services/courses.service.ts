@@ -1,8 +1,8 @@
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 import APIBase from './httpBase'
 
-export interface EnrollUserBody extends Record<string, unknown> {}
-export interface CompleteLectureBody extends Record<string, unknown> {}
+export interface EnrollUserBody extends Record<string, unknown> { }
+export interface CompleteLectureBody extends Record<string, unknown> { }
 
 class CoursesService extends APIBase {
   async list<T>(params?: Record<string, unknown>, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
