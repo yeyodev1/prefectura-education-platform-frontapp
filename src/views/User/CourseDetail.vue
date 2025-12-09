@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useCoursesStore } from '@/stores/courses'
 
 const route = useRoute()
+const router = useRouter()
 const store = useCoursesStore()
 
 const id = computed(() => route.params.id as string)
@@ -22,7 +23,7 @@ onMounted(() => {
 
 function openLecture(lectureId: number | string) {
   if (!id.value) return
-  store.fetchLecture(id.value, lectureId)
+  router.push(`/courses/${id.value}/lectures/${lectureId}`)
 }
 </script>
 
