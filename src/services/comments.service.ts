@@ -56,7 +56,7 @@ class CommentsService extends APIBase {
     return this.post<T>(`comments/${commentId}/likes`, body, { 'Content-Type': 'application/json' }, config)
   }
 
-  async unlike<T = { message: string }>(commentId: string, userId: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+  async unlike<T = { message: string }>(commentId: string, userId: string, _config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.delete<T>(`comments/${commentId}/likes/${userId}`)
   }
 }
