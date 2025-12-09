@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import PayphoneService from '@/services/payphone.service'
+import { useCheckoutStore } from '@/stores/checkout'
 
+const checkoutStore = useCheckoutStore()
 const name = ref('')
 const email = ref('')
 const loading = ref(false)
@@ -23,6 +25,9 @@ onMounted(() => {
   updateTimer()
   const id = setInterval(updateTimer, 1000)
   ;(window as any)._checkout_timer = id
+  checkoutStore.hydrate()
+  if (checkoutStore.name) name.value = checkoutStore.name
+  if (checkoutStore.email) email.value = checkoutStore.email
 })
 
 onBeforeUnmount(() => {
@@ -47,13 +52,8 @@ async function pay() {
       customerEmail: email.value.trim(),
     })
     if (result.payWithPayPhone) {
-      try {
-        localStorage.setItem('pending_checkout', JSON.stringify({
-          name: name.value.trim(),
-          email: email.value.trim(),
-          clientTransactionId: result.clientTransactionId
-        }))
-      } catch {}
+      checkoutStore.setFromForm(name.value, email.value)
+      checkoutStore.setClientTransactionId(result.clientTransactionId)
       PayphoneService.redirectToPayment(result.payWithPayPhone)
     } else {
       error.value = 'No se pudo obtener la URL de pago.'
