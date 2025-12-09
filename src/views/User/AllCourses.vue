@@ -37,7 +37,7 @@ onMounted(() => {
           <span>No hay cursos disponibles por ahora.</span>
         </div>
         <div v-else class="cards">
-          <RouterLink v-for="c in store.courses" :key="c._id || c.id" class="card" :to="`/courses/${c.id}`">
+          <RouterLink v-for="c in store.courses" :key="c._id || c.id" class="card" :to="`/courses/${c.id}`" :class="{ disabled: !c.is_published }">
             <div class="cover">
               <img :src="coverOf(c)" alt="cover" />
             </div>
@@ -46,7 +46,11 @@ onMounted(() => {
               <p class="desc">{{ c.heading || c.description || c.shortDescription || 'Detalles próximamente.' }}</p>
             </div>
             <div class="meta">
-              <span><i class="fa-solid fa-clapperboard" /> {{ c.lecturesCount ?? c.lectures?.length ?? 0 }} lecciones</span>
+              <span class="status" :class="c.is_published ? 'published' : 'upcoming'">{{ c.is_published ? 'Publicado' : 'Próximamente' }}</span>
+              <span class="cta" :class="{ disabled: !c.is_published }">
+                {{ c.is_published ? 'Ver curso' : 'Muy pronto' }}
+                <i v-if="c.is_published" class="fa-solid fa-arrow-right" />
+              </span>
             </div>
           </RouterLink>
         </div>
@@ -124,6 +128,7 @@ onMounted(() => {
 }
 
 .card { background: $white; border: 1px solid #e6e6e6; border-radius: 16px; overflow: hidden; display: grid; text-decoration: none; }
+.card.disabled { pointer-events: none; opacity: 0.7; }
 
 .cover img {
   width: 100%;
@@ -157,6 +162,11 @@ onMounted(() => {
   color: #555;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
+.status { border-radius: 999px; padding: 4px 8px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; }
+.status.published { background: rgba($FUDMASTER-GREEN, 0.12); border: 1px solid rgba($FUDMASTER-GREEN, 0.4); color: $FUDMASTER-GREEN; }
+.status.upcoming { background: $overlay-purple; color: $FUDMASTER-BLUE; border: 1px solid rgba($FUDMASTER-DARK, 0.06); }
+.cta { background: $FUDMASTER-PINK; color: $white; border-radius: 999px; padding: 6px 10px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
+.cta.disabled { background: $FUDMASTER-LIGHT; color: rgba($FUDMASTER-DARK, 0.5); border: 1px solid rgba($FUDMASTER-DARK, 0.08); }
 </style>
