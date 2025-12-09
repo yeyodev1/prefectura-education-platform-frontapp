@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Hero from './components/Hero.vue';
+import Problem from './components/Problem.vue';
 import UrgentBar from './components/UrgentBar.vue';
 </script>
 
@@ -7,6 +8,7 @@ import UrgentBar from './components/UrgentBar.vue';
   <div class="wrapper">
     <UrgentBar />
     <Hero />
+    <Problem />
   </div>
 </template>
 
