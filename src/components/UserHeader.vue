@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import usersService from '@/services/users.service'
 
 const props = defineProps({
   showMenuButton: {
@@ -30,6 +31,11 @@ function onTokenExpired() {
   router.push('/login')
 }
 
+async function logout() {
+  await usersService.logout()
+  isLoggedIn.value = false
+}
+
 onMounted(() => {
   window.addEventListener('auth:token-expired', onTokenExpired as EventListener)
 })
@@ -51,10 +57,16 @@ onBeforeUnmount(() => {
         </div>
       </div>
       <div class="user-header-wrapper-right">
-        <div v-if="isLoggedIn" class="user-pill" title="Sesión iniciada">
-          <i class="fa-solid fa-user"></i>
-          Mi cuenta
-        </div>
+        <template v-if="isLoggedIn">
+          <div class="user-pill" title="Sesión iniciada">
+            <i class="fa-solid fa-user"></i>
+            Mi cuenta
+          </div>
+          <button class="logout-button" @click="logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Cerrar sesión
+          </button>
+        </template>
         <button v-else-if="route.path !== '/login' && route.path !== '/checkout'" class="login-button" @click="navigateToLogin">
           <i class="fa-solid fa-right-to-bracket"></i>
           Iniciar sesión
@@ -135,6 +147,22 @@ onBeforeUnmount(() => {
             padding: 8px 12px;
             font-size: 14px;
             font-weight: 600;
+          }
+
+          .logout-button {
+            background: $FUDMASTER-DARK;
+            color: $white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            &:hover { filter: brightness(0.95); }
           }
         }
       }
