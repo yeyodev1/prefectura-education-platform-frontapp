@@ -1,16 +1,24 @@
 <script setup lang="ts">
-  import UserSidebar from '../components/UserSidebar.vue';
-  import UserHeader from '../components/UserHeader.vue';
+import { ref } from 'vue';
+import UserSidebar from '../components/UserSidebar.vue';
+import UserHeader from '../components/UserHeader.vue';
+
+const menuIsOpen = ref(false);
+
+function openCloseMenu() {
+  console.log('toggling menu');
+  menuIsOpen.value = !menuIsOpen.value;
+}
 </script>
 
 <template>
   <div class="wrapper">
     <div class="header">
-      <UserHeader />
+      <UserHeader @toggle-sidebar="openCloseMenu" />
     </div>
     <div class="layout">
       <div class="layout-menu-wrapper">
-        <UserSidebar />
+        <UserSidebar :menuIsOpen="menuIsOpen" />
       </div>
       <div class="layout-view-wrapper">
         <RouterView />

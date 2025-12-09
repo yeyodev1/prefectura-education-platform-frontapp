@@ -1,10 +1,17 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const emit = defineEmits(['toggleSidebar']);
+
+function handleMenuClick() {
+  emit('toggleSidebar');
+  console.log('me emito');
+}
+</script>
 
 <template>
   <header class="user-header">
     <div class="user-header-wrapper">
       <div class="user-header-wrapper-left">
-        <button class="menu-button">
+        <button class="menu-button" @click="handleMenuClick">
           <i class="fa-solid fa-bars"></i>
         </button>
         <div class="logo">
