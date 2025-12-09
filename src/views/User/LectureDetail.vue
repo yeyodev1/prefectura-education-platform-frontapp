@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted, computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useCoursesStore } from '@/stores/courses'
+import CommentsThread from '@/components/CommentsThread.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -140,6 +141,8 @@ onMounted(async () => {
             </li>
           </ul>
         </div>
+
+        <CommentsThread :course-id="Number(courseId)" :lecture-id="Number(lectureId)" />
       </div>
     </div>
   </div>
