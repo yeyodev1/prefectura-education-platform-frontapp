@@ -41,9 +41,9 @@ function isSelected(link: string) {
 <style lang="scss" scoped>
 .user {
   &-sidebar {
-    background-color: $FUDMASTER-LIGHT;
+    background-color: $white;
     height: 100%;
-    border-right: 1px solid #e0e0e0;
+    border-right: 1px solid rgba($FUDMASTER-DARK, 0.08);
     width: 200px;
     display: flex;
     flex-direction: column;
@@ -55,7 +55,7 @@ function isSelected(link: string) {
       padding: 12px;
       cursor: pointer;
       font-size: 18px;
-      color: #333;
+      color: $FUDMASTER-DARK;
       margin-bottom: 12px;
 
     &:hover {
@@ -97,7 +97,7 @@ function isSelected(link: string) {
 
       a, .router-link-active, .router-link-exact-active {
         text-decoration: none;
-        color: #333;
+        color: $FUDMASTER-DARK;
         font-weight: 500;
 
         &:hover {

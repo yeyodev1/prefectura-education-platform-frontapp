@@ -119,11 +119,10 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else points.value = null })
 <style lang="scss" scoped>
   .user {
     &-header {
-      background-color: $FUDMASTER-LIGHT;
-      color: white;
+      background-color: $white;
+      color: $FUDMASTER-DARK;
       padding: 16px;
-      // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid rgba($FUDMASTER-DARK, 0.08);
 
       &-wrapper {
         width: 100%;
@@ -150,9 +149,7 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else points.value = null })
           
           .logo {
             width: 120px;
-            img {
-              width: 100%;
-            }
+            img { width: 100%; }
           }
         }
         &-right {
@@ -182,7 +179,7 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else points.value = null })
   gap: 8px;
   background: $white;
   color: $FUDMASTER-DARK;
-  border: 1px solid #e0e0e0;
+  border: 1px solid rgba($FUDMASTER-DARK, 0.08);
   border-radius: 999px;
   padding: 8px 12px;
   font-size: 14px;
@@ -204,7 +201,7 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else points.value = null })
           .points-chip.loading {
             background: transparent;
             color: $FUDMASTER-DARK;
-            border: 1px dashed #e0e0e0;
+            border: 1px dashed rgba($FUDMASTER-DARK, 0.12);
           }
 
           .logout-button {

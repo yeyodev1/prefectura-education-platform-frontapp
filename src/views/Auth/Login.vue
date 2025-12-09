@@ -100,10 +100,10 @@ async function submit() {
   display: flex;
   align-items: center;
   gap: 10px;
-  border: 1px solid #e6e6e6;
+  border: 1px solid rgba($FUDMASTER-DARK, 0.15);
   border-radius: 10px;
   padding: 14px 16px;
-  background: $FUDMASTER-LIGHT;
+  background: rgba($FUDMASTER-DARK, 0.06);
 }
 .input i { color: $FUDMASTER-DARK; }
 .input input {

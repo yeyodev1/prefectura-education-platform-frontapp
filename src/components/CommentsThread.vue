@@ -230,7 +230,7 @@ onMounted(fetchComments)
 .state { display: inline-flex; align-items: center; gap: 8px; color: rgba($FUDMASTER-DARK, 0.6); }
 .state.error { color: $alert-error; }
 .composer { display: grid; gap: 8px; }
-.input { width: 100%; resize: vertical; padding: 10px; border-radius: 8px; border: 1px solid rgba($FUDMASTER-DARK, 0.15); font-family: inherit; background: $FUDMASTER-LIGHT; color: $FUDMASTER-DARK; }
+.input { width: 100%; resize: vertical; padding: 10px; border-radius: 8px; border: 1px solid rgba($FUDMASTER-DARK, 0.15); font-family: inherit; background: rgba($FUDMASTER-DARK, 0.06); color: $FUDMASTER-DARK; }
 .send { align-self: end; background: $FUDMASTER-GREEN; color: $white; border: none; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
 .list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
 .item { background: $white; border: 1px solid rgba($FUDMASTER-DARK, 0.08); border-radius: 10px; padding: 10px; display: grid; gap: 8px; }
@@ -246,6 +246,6 @@ onMounted(fetchComments)
 .replies-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
 .reply-item { background: $FUDMASTER-LIGHT; border: 1px solid rgba($FUDMASTER-DARK, 0.08); border-radius: 8px; padding: 8px; display: grid; gap: 6px; }
 .reply-composer { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
-.reply-input { width: 100%; padding: 8px; border: 1px solid rgba($FUDMASTER-DARK, 0.15); border-radius: 6px; background: $FUDMASTER-LIGHT; color: $FUDMASTER-DARK; }
+.reply-input { width: 100%; padding: 8px; border: 1px solid rgba($FUDMASTER-DARK, 0.15); border-radius: 6px; background: rgba($FUDMASTER-DARK, 0.06); color: $FUDMASTER-DARK; }
 @media (max-width: 600px) { .input { font-size: 14px; } }
 </style>

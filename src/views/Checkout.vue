@@ -178,7 +178,7 @@ async function pay() {
 }
 
 .subtitle {
-  color: #777;
+  color: rgba($FUDMASTER-DARK, 0.6);
   font-size: 14px;
   margin: 0 0 8px;
 }
@@ -190,17 +190,17 @@ async function pay() {
 
 .label {
   font-size: 13px;
-  color: #555;
+  color: rgba($FUDMASTER-DARK, 0.7);
 }
 
 .input {
   display: flex;
   align-items: center;
   gap: 10px;
-  border: 1px solid #e6e6e6;
+  border: 1px solid rgba($FUDMASTER-DARK, 0.15);
   border-radius: 10px;
   padding: 12px 14px;
-  background: $FUDMASTER-LIGHT;
+  background: rgba($FUDMASTER-DARK, 0.06);
 }
 
 .input i {
@@ -246,7 +246,7 @@ async function pay() {
 
 .legal {
   text-align: center;
-  color: #777;
+  color: rgba($FUDMASTER-DARK, 0.6);
   font-size: 12px;
 }
 

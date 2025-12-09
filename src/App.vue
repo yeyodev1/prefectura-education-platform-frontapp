@@ -12,7 +12,7 @@
 
 <style lang="scss">
   .app-container  {
-    background-color: $FUDMASTER-LIGHT;
+    background-color: $white;
     font-family: $font-principal;
     min-height: 100vh;
     width: 100%;
