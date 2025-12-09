@@ -11,6 +11,7 @@ import UserHome from "../views/User/UserHome.vue";
 import NicoleLanding from "../views/Landing/NicoleLanding.vue";
 import LoginView from "../views/Auth/Login.vue";
 import Checkout from "../views/Checkout.vue";
+import PayResponse from "../views/PayResponse.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -51,6 +52,15 @@ const routes: Array<RouteRecordRaw> = [
     meta: { title: 'Checkout' },
     children: [
       { path: '', component: Checkout }
+    ]
+  }
+  ,
+  {
+    path: '/pay-response',
+    component: PublicLayout,
+    meta: { title: 'Respuesta de pago' },
+    children: [
+      { path: '', component: PayResponse }
     ]
   }
 ]
