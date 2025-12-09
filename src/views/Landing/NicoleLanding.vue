@@ -3,6 +3,7 @@ import Hero from './components/Hero.vue';
 import Problem from './components/Problem.vue';
 import SocialProof from './components/SocialProof.vue';
 import Solution from './components/Solution.vue';
+import TheGuarantee from './components/TheGuarantee.vue';
 import UrgentBar from './components/UrgentBar.vue';
 </script>
 
@@ -13,6 +14,7 @@ import UrgentBar from './components/UrgentBar.vue';
     <Problem />
     <Solution />
     <SocialProof />
+    <TheGuarantee />
   </div>
 </template>
 

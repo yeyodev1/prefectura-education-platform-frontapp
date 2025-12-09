@@ -2,18 +2,18 @@
   // Datos de las tarjetas de resultados (Case Studies)
   const results = [
     {
-      brand: 'Bakano',
-      category: 'Ventas WhatsApp',
-      metric: '$20,000+',
-      desc: 'Facturación mensual generada exclusivamente por canal de chat automatizado.',
+      brand: 'Taz Taz',
+      category: 'Ventas En Punto De Venta',
+      metric: '$23,000+',
+      desc: 'Facturación mensual generada exclusivamente visitando punto de venta.',
       icon: '💬',
       highlightColor: '#4ade80' // Green
     },
     {
-      brand: 'Delacrem',
-      category: 'Eficiencia Operativa',
-      metric: '$5,000',
-      desc: 'Incremento de facturación por empleado (de $3.5k a $5k) mediante estandarización.',
+      brand: 'SWEET GLASE',
+      category: 'Dark Kitchen & Delivery',
+      metric: '$3,000',
+      desc: 'Creación de producto estrella e identificación mercado para lograr product market fit.',
       icon: '⚡',
       highlightColor: '#facc15' // Yellow
     },
@@ -30,7 +30,7 @@
   // Aquí deberías importar las URLs reales de tus logos
   // Por ahora uso texto para el ejemplo visual
   const brands = [
-    'BAKANO', 'DELACREM', 'CASA MÍA', 'NICOLE PASTRY', 'SUCREE', 
+    'BAKANO', 'TAZ TAZ', 'SWEET GLASE', 'NICOLE PASTRY', 'SUCREE', 
     'BAKANO', 'DELACREM', 'CASA MÍA', 'NICOLE PASTRY', 'SUCREE' // Duplicado para efecto infinito
   ];
   </script>
