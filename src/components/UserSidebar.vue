@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useRoute } from 'vue-router'
+
 const props = defineProps({
   menuIsOpen: {
     type: Boolean,
@@ -7,10 +9,14 @@ const props = defineProps({
 });  
 
 const menu = [
-  { name: 'Cursos', link: '/courses', icon: 'fa-solid fa-book' },
-  { name: 'Perfil', link: '/profile', icon: 'fa-solid fa-user' },
-  // { name: 'Configuración', link: '/settings', icon: 'fa-gear' },
+  { name: 'Mis cursos', link: '/courses', icon: 'fa-solid fa-book' },
+  { name: 'Todos los cursos', link: '/courses/all', icon: 'fa-solid fa-list' },
 ];
+
+const route = useRoute()
+function isSelected(link: string) {
+  return route.path === link
+}
 </script>
 
 <template>
@@ -20,9 +26,9 @@ const menu = [
         <li
           v-for="item in menu"
           :key="item.name"
-          :class="{'active': !menuIsOpen}">
+          :class="{'active': !menuIsOpen, 'selected': isSelected(item.link)}">
           <i :class="item.icon" class="icon" />
-          <a :href="item.link" :class="{'active': menuIsOpen}">{{ item.name }}</a>
+          <RouterLink :to="item.link" :class="{'active': menuIsOpen, 'selected': isSelected(item.link)}">{{ item.name }}</RouterLink>
         </li>
       </ul>
     </div>
@@ -76,13 +82,20 @@ const menu = [
       margin: 36px 0;
       display: flex;
       justify-content: center;
-      
+      align-items: center;
+      gap: 8px;
+      border-left: 3px solid transparent;
+
       &.active {
         display: flex;
         justify-content: flex-start;
       }
 
-      a {
+      &.selected {
+        border-left-color: $FUDMASTER-GREEN;
+      }
+
+      a, .router-link-active, .router-link-exact-active {
         text-decoration: none;
         color: #333;
         font-weight: 500;
@@ -93,6 +106,11 @@ const menu = [
         
         &.active {
           display: none;
+        }
+
+        &.selected {
+          color: $FUDMASTER-GREEN;
+          font-weight: 700;
         }
       }
 
