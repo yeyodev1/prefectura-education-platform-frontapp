@@ -4,7 +4,9 @@ import coursesService from '@/services/courses.service'
 export const useCoursesStore = defineStore('courses', {
   state: () => ({
     courses: [] as any[],
+    enrolledCourses: [] as any[],
     currentCourse: null as any | null,
+    currentLecture: null as any | null,
     currentVideo: null as any | null,
     loading: false as boolean,
     error: '' as string,
@@ -41,6 +43,22 @@ export const useCoursesStore = defineStore('courses', {
         this.loading = false
       }
     },
+    async fetchEnrolled(userId: string | number, params?: Record<string, unknown>) {
+      this.loading = true
+      this.error = ''
+      try {
+        const { data } = await coursesService.getEnrolledByUser<any>(userId, params)
+        const payload = data as any
+        const items = Array.isArray(payload?.courses) ? payload.courses.map((e: any) => e?.course ?? e) : []
+        this.enrolledCourses = items
+        return items
+      } catch (e: any) {
+        this.error = e?.message || 'Error al obtener cursos inscritos'
+        return []
+      } finally {
+        this.loading = false
+      }
+    },
     async fetchById(courseId: string | number) {
       this.loading = true
       this.error = ''
@@ -65,6 +83,21 @@ export const useCoursesStore = defineStore('courses', {
         return data
       } catch (e: any) {
         this.error = e?.message || 'Error al obtener video'
+        return null
+      } finally {
+        this.loading = false
+      }
+    }
+    ,
+    async fetchLecture(courseId: string | number, lectureId: string | number) {
+      this.loading = true
+      this.error = ''
+      try {
+        const { data } = await coursesService.getLecture<any>(courseId, lectureId)
+        this.currentLecture = data?.lecture ?? data
+        return this.currentLecture
+      } catch (e: any) {
+        this.error = e?.message || 'Error al obtener lección'
         return null
       } finally {
         this.loading = false
