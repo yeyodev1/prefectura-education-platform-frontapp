@@ -9,6 +9,10 @@ const password = ref('')
 const loading = ref(false)
 const error = ref('')
 
+function goToCheckout() {
+  router.push('/checkout')
+}
+
 async function submit() {
   if (!email.value || !password.value) return
   loading.value = true
@@ -50,6 +54,12 @@ async function submit() {
           <span v-else><i class="fa-solid fa-spinner fa-spin" /> Procesando...</span>
         </button>
       </form>
+      <div class="alt-cta">
+        <span class="hint">¿Aún no tienes acceso?</span>
+        <button class="buy" type="button" @click="goToCheckout">
+          <i class="fa-solid fa-bag-shopping" /> Comprar servicio exclusivo ahora
+        </button>
+      </div>
     </div>
   </div>
   </template>
@@ -111,6 +121,23 @@ async function submit() {
   justify-content: center;
   gap: 10px;
   background: $FUDMASTER-GREEN;
+  color: $white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+}
+.alt-cta { display: grid; gap: 8px; margin-top: 12px; }
+.hint { color: #777; font-size: 12px; }
+.buy {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: $FUDMASTER-BLUE;
   color: $white;
   border: none;
   border-radius: 10px;
