@@ -4,6 +4,14 @@ import { useCoursesStore } from '@/stores/courses'
 
 const store = useCoursesStore()
 
+function sanitizeUrl(url?: string) {
+  return (url || '').toString().replace(/`/g, '').trim()
+}
+
+function coverOf(course: any) {
+  return sanitizeUrl(course.image_url) || sanitizeUrl(course.coverUrl) || '/src/assets/fudmaster-color.png'
+}
+
 onMounted(() => {
   store.fetchAll()
 })
@@ -31,11 +39,11 @@ onMounted(() => {
         <div v-else class="cards">
           <div v-for="c in store.courses" :key="c._id || c.id" class="card">
             <div class="cover">
-              <img :src="c.coverUrl || '/src/assets/fudmaster-color.png'" alt="cover" />
+              <img :src="coverOf(c)" alt="cover" />
             </div>
             <div class="info">
-              <h3 class="name">{{ c.title || c.name || 'Curso sin título' }}</h3>
-              <p class="desc">{{ c.shortDescription || c.description || 'Detalles próximamente.' }}</p>
+              <h3 class="name">{{ c.name || c.title || 'Curso sin título' }}</h3>
+              <p class="desc">{{ c.heading || c.description || c.shortDescription || 'Detalles próximamente.' }}</p>
             </div>
             <div class="meta">
               <span><i class="fa-solid fa-clapperboard" /> {{ c.lecturesCount ?? c.lectures?.length ?? 0 }} lecciones</span>
