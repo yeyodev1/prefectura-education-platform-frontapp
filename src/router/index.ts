@@ -10,6 +10,7 @@ import UserHome from "../views/User/UserHome.vue";
 // Landingpage
 import NicoleLanding from "../views/Landing/NicoleLanding.vue";
 import LoginView from "../views/Auth/Login.vue";
+import Checkout from "../views/Checkout.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -43,6 +44,14 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       { path: '', component: LoginView }
     ]
+  },
+  {
+    path: '/checkout',
+    component: PublicLayout,
+    meta: { title: 'Checkout' },
+    children: [
+      { path: '', component: Checkout }
+    ]
   }
 ]
 
@@ -56,10 +65,10 @@ router.beforeEach((to) => {
   const requiresAuth = to.matched.some((record) => record.meta?.requiresAuth)
 
   if (requiresAuth && !hasToken) {
-    return { path: '/login', replace: true }
+    return { path: '/checkout', replace: true }
   }
 
-  if (to.path === '/login' && hasToken) {
+  if ((to.path === '/login' || to.path === '/checkout') && hasToken) {
     return { path: '/', replace: true }
   }
 })
