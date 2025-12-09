@@ -53,7 +53,11 @@ class APIBase {
   private axiosInstance = axios.create()
 
   constructor() {
-    this.baseUrl = import.meta.env.VITE_BAKANO_API || 'http://localhost:8101/api'
+    const raw = (import.meta.env.VITE_FUDMASTER_API as string) || 'http://localhost:8101/api'
+    const trimmed = raw.replace(/\/+$/, '')
+    this.baseUrl = trimmed.endsWith('/api') || /\/api\//.test(trimmed)
+      ? trimmed
+      : `${trimmed}/api`
     this.setupInterceptors()
   }
 
