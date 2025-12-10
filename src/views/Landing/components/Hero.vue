@@ -40,7 +40,7 @@ function goToCheckout() { router.push('/checkout') }
 
           <div class="cta-wrapper">
             <button class="cta-button" @click="goToCheckout">
-              Acceso Limitado - ¡Actúa Ahora!
+              Desbloquea tus $693 de descuento
             </button>
             <p class="cta-subtitle">Solo para los primeros 50 - Quedan 28 cupos</p>
           </div>
