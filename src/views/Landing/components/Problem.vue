@@ -116,10 +116,10 @@ const problems = [
     }
     /* --- BOTÓN --- */
     .cta-button {
-      background: $FUDMASTER-ORANGE;
+      background: $FUDMASTER-PURPLE;
       color: $FUDMASTER-LIGHT;
       border: none;
-      padding: 18px 40px;
+      padding: 18px 28px;
       font-size: 1.1rem;
       font-weight: 700;
       border-radius: 50px;
