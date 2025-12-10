@@ -3,8 +3,11 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import PayphoneService from '@/services/payphone.service'
 import usersService from '@/services/users.service'
 import { useCheckoutStore } from '@/stores/checkout'
+import { useRouter } from 'vue-router'
+import { track, sendEvent } from '@/services/facebook.service'
 
 const checkoutStore = useCheckoutStore()
+const router = useRouter()
 const name = ref('')
 const email = ref('')
 const loading = ref(false)
@@ -29,6 +32,8 @@ onMounted(() => {
   checkoutStore.hydrate()
   if (checkoutStore.name) name.value = checkoutStore.name
   if (checkoutStore.email) email.value = checkoutStore.email
+  track('ViewContent', { content_name: 'Checkout' })
+  sendEvent('ViewContent', { content_name: 'Checkout' })
 })
 
 onBeforeUnmount(() => {
@@ -50,6 +55,8 @@ async function pay() {
       error.value = 'Ya existe una cuenta con ese correo. Por favor inicia sesión o usa otro correo.'
       return
     }
+    track('InitiateCheckout', { value: 297, currency: 'USD' })
+    sendEvent('InitiateCheckout', { value: 297, currency: 'USD' })
     const result = await PayphoneService.preparePayment({
       productId: 'FM-EXPERT-ANNUAL',
       productName: 'Plan Expert',
@@ -60,6 +67,8 @@ async function pay() {
     if (result.payWithPayPhone) {
       checkoutStore.setFromForm(name.value, email.value)
       checkoutStore.setClientTransactionId(result.clientTransactionId)
+      track('AddPaymentInfo')
+      sendEvent('AddPaymentInfo', { value: 297, currency: 'USD' })
       PayphoneService.redirectToPayment(result.payWithPayPhone)
     } else {
       error.value = 'No se pudo obtener la URL de pago.'
@@ -69,6 +78,10 @@ async function pay() {
   } finally {
     loading.value = false
   }
+}
+
+function goLogin() {
+  router.push('/login')
 }
 </script>
 
@@ -98,6 +111,11 @@ async function pay() {
           <div v-if="error" class="error">
             <i class="fa-solid fa-triangle-exclamation" />
             {{ error }}
+          </div>
+
+          <div class="login-hint">
+            <span>¿Ya tienes cuenta?</span>
+            <button type="button" class="login-link" @click="goLogin">Inicia sesión</button>
           </div>
 
           <button class="cta" type="submit" :disabled="!canPay">
@@ -232,6 +250,23 @@ async function pay() {
   border-radius: 10px;
   padding: 10px 12px;
   font-size: 14px;
+}
+
+.login-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba($FUDMASTER-DARK, 0.7);
+}
+
+.login-link {
+  background: transparent;
+  color: $FUDMASTER-GREEN;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-weight: 700;
 }
 
 .cta {

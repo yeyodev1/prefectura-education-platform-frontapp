@@ -16,6 +16,7 @@ import NicoleLanding from "../views/Landing/NicoleLanding.vue";
 import LoginView from "../views/Auth/Login.vue";
 import Checkout from "../views/Checkout.vue";
 import PayResponse from "../views/PayResponse.vue";
+import Careers from "../views/Careers.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -54,6 +55,12 @@ const routes: Array<RouteRecordRaw> = [
         path: 'courses/:id/lectures/:lectureId',
         component: LectureDetail,
         meta: { title: 'Clase', requiresAuth: true }
+      }
+      ,
+      {
+        path: 'careers',
+        component: Careers,
+        meta: { title: 'Escuelas o Carreras', requiresAuth: true }
       }
     ]
   },
@@ -107,6 +114,13 @@ router.beforeEach((to) => {
   if ((to.path === '/login' || to.path === '/checkout') && hasToken) {
     return { path: '/', replace: true }
   }
+})
+
+router.afterEach((to) => {
+  const base = 'Fudmaster | lleva tu cocina al siguiente nivel'
+  const recordWithTitle = to.matched.slice().reverse().find((r) => (r.meta as any)?.title)
+  const title = ((to.meta as any)?.title) || ((recordWithTitle?.meta as any)?.title) || base
+  document.title = String(title)
 })
 
 export default router
