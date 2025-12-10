@@ -34,7 +34,7 @@ function goToCheckout() { router.push('/checkout') }
   // Por ahora uso texto para el ejemplo visual
   const brands = [
     'BAKANO', 'TAZ TAZ', 'SWEET GLASE', 'NICOLE PASTRY', 'SUCREE', 
-    'BAKANO', 'DELACREM', 'CASA MÍA', 'NICOLE PASTRY', 'SUCREE' // Duplicado para efecto infinito
+    'BAKANO', 'TAZ TAZ', 'SWEET GLASE', 'NICOLE PASTRY', 'SUCREE' // Duplicado para efecto infinito
   ];
   </script>
   

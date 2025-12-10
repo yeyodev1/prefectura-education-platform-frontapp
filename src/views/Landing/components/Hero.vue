@@ -61,11 +61,11 @@ function goToCheckout() { router.push('/checkout') }
 .vsl {
   &-hero {
     background-color: $FUDMASTER-PRIMARY;
-    min-height: 100vh; /* Ocupa toda la pantalla */
+    // min-height: 100vh; /* Ocupa toda la pantalla */
     display: flex;
     align-items: center; /* Centra verticalmente todo el bloque */
     justify-content: center;
-    padding: 32px 20px;
+    padding: 48px 20px;
     position: relative;
     overflow: hidden;
   }
