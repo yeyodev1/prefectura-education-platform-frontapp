@@ -70,37 +70,37 @@ const nextLecture = computed(() => {
 function goToNext(scope: 'global' | 'section' = 'global') {
   if (!courseId.value) return
   console.log('[LectureDetail] Continuar click', { scope, courseId: courseId.value, lectureId: lectureId.value })
-  ;(async () => {
-    completing.value = true
-    completeError.value = ''
-    completeSuccess.value = ''
-    try {
-      if (courseId.value && lectureId.value) {
-        console.log('[LectureDetail] completeLecture start')
-        const res = await store.completeLecture(courseId.value, lectureId.value, { userId: userId.value, teachableUserId: teachableUserId.value })
-        console.log('[LectureDetail] completeLecture done')
-        if (res === null) {
-          const msg = store.error || 'No se pudo marcar la clase como completada.'
-          completeError.value = msg
-          console.log('[LectureDetail] completeLecture failed', msg)
-        } else {
-          completeSuccess.value = 'Clase marcada como completada.'
+    ; (async () => {
+      completing.value = true
+      completeError.value = ''
+      completeSuccess.value = ''
+      try {
+        if (courseId.value && lectureId.value) {
+          console.log('[LectureDetail] completeLecture start')
+          const res = await store.completeLecture(courseId.value, lectureId.value, { userId: userId.value, teachableUserId: teachableUserId.value })
+          console.log('[LectureDetail] completeLecture done')
+          if (res === null) {
+            const msg = store.error || 'No se pudo marcar la clase como completada.'
+            completeError.value = msg
+            console.log('[LectureDetail] completeLecture failed', msg)
+          } else {
+            completeSuccess.value = 'Clase marcada como completada.'
+          }
+          if (courseId.value && userId.value) {
+            console.log('[LectureDetail] fetchProgress start')
+            await store.fetchProgress(courseId.value, userId.value)
+            console.log('[LectureDetail] fetchProgress done', { progress: store.progress })
+          }
         }
-        if (courseId.value && userId.value) {
-          console.log('[LectureDetail] fetchProgress start')
-          await store.fetchProgress(courseId.value, userId.value)
-          console.log('[LectureDetail] fetchProgress done', { progress: store.progress })
-        }
+      } catch (e) {
+        console.log('[LectureDetail] error in completion/progress', e)
+        completeError.value = (e as any)?.message || 'Error al completar la clase.'
       }
-    } catch (e) {
-      console.log('[LectureDetail] error in completion/progress', e)
-      completeError.value = (e as any)?.message || 'Error al completar la clase.'
-    }
-    if (!completeError.value) {
-      store.goToNextLecture(courseId.value, router, scope, lectureId.value)
-    }
-    completing.value = false
-  })()
+      if (!completeError.value) {
+        store.goToNextLecture(courseId.value, router, scope, lectureId.value)
+      }
+      completing.value = false
+    })()
 }
 
 function goBack() { router.back() }
@@ -119,7 +119,7 @@ watch(lectureId, async (lid) => {
   store.setCurrentLectureFromCourse(lid)
   if (courseId.value) await store.fetchLecture(courseId.value, lid)
 })
-watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPercent', p) } catch {} })
+watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPercent', p) } catch { } })
 </script>
 
 <template>
@@ -178,7 +178,8 @@ watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPerce
 .lecture-detail-view {
   width: 100%;
   padding: 24px 16px;
-  background: $white;
+  background: var(--bg);
+  color: var(--text);
 }
 
 .container {
@@ -189,10 +190,24 @@ watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPerce
 }
 
 .progress { display: grid; gap: 6px; }
-.progress-bar { height: 8px; background: $FUDMASTER-GREEN; width: 0%; transition: width 0.3s ease; border-radius: 999px; }
-.progress-meta { color: rgba($FUDMASTER-DARK, 0.6); font-size: 12px; }
-.next-error { display: inline-flex; align-items: center; gap: 8px; color: $alert-error; font-size: 13px; }
-.next-success { display: inline-flex; align-items: center; gap: 8px; color: $FUDMASTER-GREEN; font-size: 13px; }
+.progress-bar { height: 8px; background: var(--accent); width: 0%; transition: width 0.3s ease; border-radius: 999px; }
+.progress-meta { color: color-mix(in oklab, var(--text), transparent 40%); font-size: 12px; }
+
+.next-error {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: $alert-error;
+  font-size: 13px;
+}
+
+.next-success {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: $FUDMASTER-GREEN;
+  font-size: 13px;
+}
 
 .header {
   display: grid;
@@ -202,7 +217,7 @@ watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPerce
 .back {
   background: none;
   border: none;
-  color: $FUDMASTER-GREEN;
+  color: var(--accent);
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -211,7 +226,7 @@ watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPerce
 }
 
 .title {
-  color: $FUDMASTER-DARK;
+  color: var(--text);
   margin: 0;
   font-size: 24px;
   display: inline-flex;
@@ -220,7 +235,7 @@ watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPerce
 }
 
 .meta {
-  color: rgba($FUDMASTER-DARK, 0.6);
+  color: color-mix(in oklab, var(--text), transparent 60%);
   margin: 0;
   font-size: 14px;
 }
@@ -231,9 +246,9 @@ watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPerce
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: rgba($FUDMASTER-DARK, 0.6);
-  background: $FUDMASTER-LIGHT;
-  border: 1px solid rgba($FUDMASTER-DARK, 0.08);
+  color: color-mix(in oklab, var(--text), transparent 40%);
+  background: color-mix(in oklab, var(--bg), var(--text) 6%);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 12px 14px;
 }
@@ -273,15 +288,15 @@ watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPerce
 }
 
 .player-wrap {
-  background: $FUDMASTER-DARK;
+  background: var(--bg);
   border-radius: 12px;
   box-shadow: 0 20px 40px -10px rgba($FUDMASTER-DARK, 0.1);
   overflow: hidden;
 }
 
 .next-panel {
-  background: $white;
-  border: 1px solid rgba($FUDMASTER-DARK, 0.08);
+  background: var(--bg);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 12px;
   display: grid;
@@ -294,7 +309,7 @@ watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPerce
 }
 
 .next-title {
-  color: $FUDMASTER-DARK;
+  color: var(--text);
   margin: 0;
   font-size: 18px;
   display: inline-flex;
@@ -303,7 +318,7 @@ watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPerce
 }
 
 .next-meta {
-  color: rgba($FUDMASTER-DARK, 0.6);
+  color: color-mix(in oklab, var(--text), transparent 60%);
   margin: 0;
   font-size: 14px;
 }
@@ -332,8 +347,8 @@ watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPerce
 }
 
 .comments-sidebar {
-  background: $white;
-  border: 1px solid rgba($FUDMASTER-DARK, 0.08);
+  background: var(--bg);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 12px;
   display: grid;
