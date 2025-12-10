@@ -5,7 +5,6 @@ import UserLayout from "../layout/UserLayout.vue";
 import PublicLayout from "../layout/PublicLayout.vue";
 
 // Views
-import UserHome from "../views/User/UserHome.vue";
 import MyCourses from "../views/User/MyCourses.vue";
 import AllCourses from "../views/User/AllCourses.vue";
 import CourseDetail from "../views/User/CourseDetail.vue";
