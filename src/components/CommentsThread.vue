@@ -236,7 +236,7 @@ onMounted(fetchComments)
 }
 
 .title {
-  color: $FUDMASTER-DARK;
+  color: var(--text);
   font-size: 18px;
   margin: 0;
   display: inline-flex;
@@ -244,32 +244,32 @@ onMounted(fetchComments)
   gap: 8px;
 }
 
-.count { background: $FUDMASTER-LIGHT; color: $FUDMASTER-DARK; border: 1px solid rgba($FUDMASTER-DARK, 0.12); border-radius: 999px; padding: 2px 8px; font-size: 12px; }
+.count { background: color-mix(in oklab, var(--bg), var(--text) 6%); color: var(--text); border: 1px solid var(--border); border-radius: 999px; padding: 2px 8px; font-size: 12px; }
 
-.state { display: inline-flex; align-items: center; gap: 8px; color: rgba($FUDMASTER-DARK, 0.6); }
+.state { display: inline-flex; align-items: center; gap: 8px; color: color-mix(in oklab, var(--text), transparent 40%); }
 .state.error { color: $alert-error; }
 .composer { display: grid; gap: 10px; }
-.input { width: 100%; resize: vertical; padding: 10px; border-radius: 10px; border: 1px solid rgba($FUDMASTER-DARK, 0.12); font-family: inherit; background: $white; color: $FUDMASTER-DARK; }
-.input::placeholder { color: rgba($FUDMASTER-DARK, 0.5); }
-.send { align-self: end; background: $FUDMASTER-GREEN; color: $white; border: none; border-radius: 999px; padding: 8px 12px; cursor: pointer; }
+.input { width: 100%; resize: vertical; padding: 10px; border-radius: 10px; border: 1px solid var(--border); font-family: inherit; background: var(--bg); color: var(--text); }
+.input::placeholder { color: color-mix(in oklab, var(--text), transparent 50%); }
+.send { align-self: end; background: var(--accent); color: $white; border: none; border-radius: 999px; padding: 8px 12px; cursor: pointer; }
 .list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
-.item { background: $white; border: 1px solid rgba($FUDMASTER-DARK, 0.08); border-radius: 12px; padding: 10px; display: grid; gap: 8px; }
-.composer-preview { background: $white; border: 1px solid rgba($FUDMASTER-DARK, 0.08); border-radius: 12px; padding: 10px; display: grid; gap: 8px; }
-.preview-label { color: rgba($FUDMASTER-DARK, 0.5); font-size: 12px; }
-.meta { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: rgba($FUDMASTER-DARK, 0.6); }
-.author { display: inline-flex; align-items: center; gap: 6px; color: $FUDMASTER-DARK; }
-.date { color: rgba($FUDMASTER-DARK, 0.5); }
-.content { color: rgba($FUDMASTER-DARK, 0.85); margin: 0; }
+.item { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px; display: grid; gap: 8px; }
+.composer-preview { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px; display: grid; gap: 8px; }
+.preview-label { color: color-mix(in oklab, var(--text), transparent 50%); font-size: 12px; }
+.meta { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: color-mix(in oklab, var(--text), transparent 60%); }
+.author { display: inline-flex; align-items: center; gap: 6px; color: var(--text); }
+.date { color: color-mix(in oklab, var(--text), transparent 50%); }
+.content { color: color-mix(in oklab, var(--text), transparent 15%); margin: 0; }
 .actions { display: inline-flex; align-items: center; gap: 10px; }
 .preview-actions button { cursor: default; }
 .preview-actions button:disabled { opacity: 0.6; }
 .like { background: none; border: none; color: $alert-error; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
-.reply { background: none; border: none; color: $FUDMASTER-DARK; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
-.reply .badge { background: $FUDMASTER-LIGHT; color: $FUDMASTER-DARK; border: 1px solid rgba($FUDMASTER-DARK, 0.12); border-radius: 999px; padding: 2px 6px; font-size: 11px; }
-.replies { border-left: 2px solid rgba($FUDMASTER-DARK, 0.08); margin-left: 8px; padding-left: 12px; display: grid; gap: 8px; }
+.reply { background: none; border: none; color: var(--text); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.reply .badge { background: color-mix(in oklab, var(--bg), var(--text) 6%); color: var(--text); border: 1px solid var(--border); border-radius: 999px; padding: 2px 6px; font-size: 11px; }
+.replies { border-left: 2px solid var(--border); margin-left: 8px; padding-left: 12px; display: grid; gap: 8px; }
 .replies-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-.reply-item { background: $FUDMASTER-LIGHT; border: 1px solid rgba($FUDMASTER-DARK, 0.08); border-radius: 10px; padding: 8px; display: grid; gap: 6px; }
+.reply-item { background: color-mix(in oklab, var(--bg), var(--text) 6%); border: 1px solid var(--border); border-radius: 10px; padding: 8px; display: grid; gap: 6px; }
 .reply-composer { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
-.reply-input { width: 100%; padding: 8px; border: 1px solid rgba($FUDMASTER-DARK, 0.12); border-radius: 8px; background: $white; color: $FUDMASTER-DARK; }
+.reply-input { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); }
 @media (max-width: 600px) { .input { font-size: 14px; } }
 </style>
