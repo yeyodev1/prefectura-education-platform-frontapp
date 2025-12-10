@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 type Lecture = { id: string | number; position?: number; is_published?: boolean; name?: string }
 type Section = { id: string | number; name: string; lectures?: Lecture[] }
 
-const props = defineProps<{ sections: Section[]; courseId: string | number; currentLectureId?: string | number }>()
+const props = defineProps<{ sections: Section[]; courseId: string | number; currentLectureId?: string | number; completedLectureIds?: Array<string | number> }>()
 
 const router = useRouter()
 const open = ref<Record<string | number, boolean>>({})
@@ -22,6 +22,11 @@ function isActive(l: Lecture) {
 
 function isBlocked(l: Lecture) {
   return !l?.is_published
+}
+
+function isCompleted(l: Lecture) {
+  const list = Array.isArray(props.completedLectureIds) ? props.completedLectureIds : []
+  return list.some((id) => String(id) === String(l?.id))
 }
 
 function goTo(l: Lecture) {
@@ -43,15 +48,16 @@ function goTo(l: Lecture) {
         </button>
         <ul v-show="open[s.id] !== false" class="lessons">
           <li v-for="l in (Array.isArray(s.lectures) ? s.lectures : [])" :key="l.id" class="lesson"
-              :class="[{ active: isActive(l), blocked: isBlocked(l) }]" @click="goTo(l)">
+              :class="[{ active: isActive(l), blocked: isBlocked(l), completed: isCompleted(l) }]" @click="goTo(l)">
             <div class="left">
               <i v-if="isBlocked(l)" class="fa-solid fa-lock" />
               <i v-else-if="isActive(l)" class="fa-solid fa-play" />
+              <i v-else-if="isCompleted(l)" class="fa-solid fa-check" />
               <i v-else class="fa-regular fa-circle" />
               <span class="name">{{ l.name || `Lección ${l.position}` }}</span>
             </div>
             <div class="right">
-              <i v-if="!isBlocked(l) && !isActive(l)" class="fa-solid fa-check" />
+              <i v-if="isCompleted(l) && !isActive(l) && !isBlocked(l)" class="fa-solid fa-check" />
             </div>
           </li>
         </ul>
@@ -71,6 +77,6 @@ function goTo(l: Lecture) {
 .lesson.active { background: $overlay-purple; }
 .lesson.blocked { opacity: 0.6; cursor: not-allowed; }
 .lesson .left { display: inline-flex; align-items: center; gap: 10px; color: $FUDMASTER-DARK; }
-.lesson .right { color: $FUDMASTER-GREEN; }
+.lesson.completed .right { color: $FUDMASTER-GREEN; }
 .name { font-size: 14px; }
 </style>
