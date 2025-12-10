@@ -110,14 +110,14 @@ onUnmounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.careers-view { width: 100%; padding: 24px 16px; }
+.careers-view { width: 100%; padding: 24px 16px; background: var(--bg); color: var(--text); }
 .container { width: 100%; margin: 0 auto; display: grid; gap: 16px; }
 .head { display: flex; align-items: center; justify-content: space-between; }
-.title { display: inline-flex; align-items: center; gap: 10px; color: $FUDMASTER-DARK; margin: 0; font-size: 22px; }
-.cta { background: $FUDMASTER-GREEN; color: $white; border: none; border-radius: 10px; padding: 10px 12px; font-weight: 700; cursor: pointer; }
+.title { display: inline-flex; align-items: center; gap: 10px; color: var(--text); margin: 0; font-size: 22px; }
+.cta { background: var(--accent); color: $white; border: none; border-radius: 10px; padding: 10px 12px; font-weight: 700; cursor: pointer; }
 .grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
 @media (min-width: 768px) { .grid { grid-template-columns: repeat(3, 1fr); } }
-.card { background: $white; border-radius: 12px; padding: 14px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06); display: grid; gap: 8px; }
+.card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06); display: grid; gap: 8px; }
 .cover { width: 100%; height: 120px; border-radius: 8px; }
 .pixelated {
   --c1: rgba($FUDMASTER-GREEN, 0.15);
@@ -128,12 +128,12 @@ onUnmounted(() => {
     repeating-linear-gradient(90deg, var(--c3) 0 12px, transparent 12px 24px);
   background-size: 24px 24px;
 }
-.name { color: $FUDMASTER-DARK; font-weight: 700; margin: 0; }
-.desc { color: rgba($FUDMASTER-DARK, 0.7); margin: 0; font-size: 14px; }
-.weeks { color: rgba($FUDMASTER-DARK, 0.7); font-size: 12px; }
-.label { color: rgba($FUDMASTER-DARK, 0.6); font-size: 12px; }
-.countdown { display: inline-flex; align-items: center; gap: 6px; font-family: monospace; font-weight: 700; color: $FUDMASTER-DARK; }
-.unit { background: rgba($FUDMASTER-GREEN, 0.1); padding: 6px 8px; border-radius: 6px; min-width: 42px; text-align: center; }
-.sep { color: rgba($FUDMASTER-DARK, 0.4); }
-.ends { color: rgba($FUDMASTER-DARK, 0.6); font-size: 12px; }
+.name { color: var(--text); font-weight: 700; margin: 0; }
+.desc { color: color-mix(in oklab, var(--text), transparent 30%); margin: 0; font-size: 14px; }
+.weeks { color: color-mix(in oklab, var(--text), transparent 30%); font-size: 12px; }
+.label { color: color-mix(in oklab, var(--text), transparent 40%); font-size: 12px; }
+.countdown { display: inline-flex; align-items: center; gap: 6px; font-family: monospace; font-weight: 700; color: var(--text); }
+.unit { background: color-mix(in oklab, var(--accent), transparent 85%); padding: 6px 8px; border-radius: 6px; min-width: 42px; text-align: center; }
+.sep { color: color-mix(in oklab, var(--text), transparent 60%); }
+.ends { color: color-mix(in oklab, var(--text), transparent 40%); font-size: 12px; }
 </style>
