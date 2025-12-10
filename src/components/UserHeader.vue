@@ -91,7 +91,10 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else points.value = null })
           <i class="fa-solid fa-bars"></i>
         </button>
         <div class="logo">
-          <img src="../assets/fudmaster-color.png" alt="fudmaster-logo">
+          <picture>
+            <source srcset="../assets/iso-verde.png" media="(max-width: 768px)">
+            <img src="../assets/fudmaster-color.png" alt="fudmaster-logo">
+          </picture>
         </div>
       </div>
       <div class="user-header-wrapper-right">
@@ -222,5 +225,10 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else points.value = null })
         }
       }
     }
+  }
+
+  @media (max-width: 1024px) {
+    .user-header-wrapper-left .menu-button { display: none; }
+    .user-header .logo { width: 88px; }
   }
 </style>
