@@ -33,8 +33,8 @@ function goToCheckout() { router.push('/checkout') }
   // Aquí deberías importar las URLs reales de tus logos
   // Por ahora uso texto para el ejemplo visual
   const brands = [
-    'BAKANO', 'TAZ TAZ', 'SWEET GLASE', 'NICOLE PASTRY', 'SUCREE', 
-    'BAKANO', 'TAZ TAZ', 'SWEET GLASE', 'NICOLE PASTRY', 'SUCREE' // Duplicado para efecto infinito
+    'BAKANO', 'TAZ TAZ', 'SWEET GLASE', 'NICOLE PASTRY ARTS', 'SUCREE', 
+    'BAKANO', 'TAZ TAZ', 'SWEET GLASE', 'NICOLE PASTRY ARTS', 'SUCREE' // Duplicado para efecto infinito
   ];
   </script>
   
@@ -80,7 +80,7 @@ function goToCheckout() { router.push('/checkout') }
       </div>
 
       <div class="actions">
-        <button class="cta" type="button" @click="goToCheckout">Quiero aplicar Food Stack</button>
+        <button class="cta" type="button" @click="goToCheckout">Quiero aplicar Formula Stack</button>
       </div>
   
     </section>

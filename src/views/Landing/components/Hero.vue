@@ -40,7 +40,7 @@ function goToCheckout() { router.push('/checkout') }
 
           <div class="cta-wrapper">
             <button class="cta-button" @click="goToCheckout">
-              Desbloquea tus $693 de descuento
+              Desbloquea tus descuento
             </button>
             <p class="cta-subtitle">Solo para los primeros 50 - Quedan 28 cupos</p>
           </div>
@@ -105,7 +105,13 @@ function goToCheckout() { router.push('/checkout') }
       display: block;
       border: none;
       height: 420px;  
+      @media screen and (max-width: 300px) {
+        height: 280px;  
+        // iframe {
+        // }
+      }
     }
+
   }
 
   /* --- COLUMNA TEXTO --- */
