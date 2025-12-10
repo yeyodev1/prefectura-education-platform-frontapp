@@ -35,10 +35,10 @@ function setTab(t: 'descripcion' | 'recursos' | 'qa') { active.value = t }
 </template>
 
 <style lang="scss" scoped>
-.tabs { background: $white; border-radius: 12px; padding: 12px; display: grid; gap: 12px; }
+.tabs { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: grid; gap: 12px; color: var(--text); }
 .tabbar { display: flex; align-items: center; gap: 8px; }
-.tab { background: none; border: 1px solid rgba($FUDMASTER-DARK, 0.08); color: $FUDMASTER-DARK; border-radius: 999px; padding: 8px 12px; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
-.tab.active { background: $overlay-purple; border-color: rgba($FUDMASTER-DARK, 0.12); }
+.tab { background: none; border: 1px solid var(--border); color: var(--text); border-radius: 999px; padding: 8px 12px; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.tab.active { background: color-mix(in oklab, var(--accent), transparent 92%); border-color: var(--border); }
 .panel { padding: 6px 2px; }
-.desc { color: rgba($FUDMASTER-DARK, 0.7); line-height: 1.6; }
+.desc { color: color-mix(in oklab, var(--text), transparent 40%); line-height: 1.6; }
 </style>
