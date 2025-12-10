@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import PayphoneService from '@/services/payphone.service'
 import usersService, { type RegisterFromPaymentBody, type RegisterFromPaymentResponse } from '@/services/users.service'
 import { useCheckoutStore } from '@/stores/checkout'
+import { track, sendEvent } from '@/services/facebook.service'
 
 const route = useRoute()
 const router = useRouter()
@@ -84,6 +85,8 @@ onMounted(async () => {
       } catch (err: any) {
         console.error('Error registrando usuario desde pago', err)
       }
+      track('Purchase', { value: amountDollars, currency: String(resAny.currency || 'USD'), contents: [{ id: 'FM-EXPERT-ANNUAL', quantity: 1 }] })
+      sendEvent('Purchase', { value: amountDollars, currency: String(resAny.currency || 'USD'), contents: [{ id: 'FM-EXPERT-ANNUAL', quantity: 1 }] })
     }
   } catch (e: any) {
     error.value = e?.message || 'No se pudo confirmar el pago.'

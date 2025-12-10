@@ -4,6 +4,7 @@ import PayphoneService from '@/services/payphone.service'
 import usersService from '@/services/users.service'
 import { useCheckoutStore } from '@/stores/checkout'
 import { useRouter } from 'vue-router'
+import { track, sendEvent } from '@/services/facebook.service'
 
 const checkoutStore = useCheckoutStore()
 const router = useRouter()
@@ -31,6 +32,8 @@ onMounted(() => {
   checkoutStore.hydrate()
   if (checkoutStore.name) name.value = checkoutStore.name
   if (checkoutStore.email) email.value = checkoutStore.email
+  track('ViewContent', { content_name: 'Checkout' })
+  sendEvent('ViewContent', { content_name: 'Checkout' })
 })
 
 onBeforeUnmount(() => {
@@ -52,6 +55,8 @@ async function pay() {
       error.value = 'Ya existe una cuenta con ese correo. Por favor inicia sesión o usa otro correo.'
       return
     }
+    track('InitiateCheckout', { value: 297, currency: 'USD' })
+    sendEvent('InitiateCheckout', { value: 297, currency: 'USD' })
     const result = await PayphoneService.preparePayment({
       productId: 'FM-EXPERT-ANNUAL',
       productName: 'Plan Expert',
@@ -62,6 +67,8 @@ async function pay() {
     if (result.payWithPayPhone) {
       checkoutStore.setFromForm(name.value, email.value)
       checkoutStore.setClientTransactionId(result.clientTransactionId)
+      track('AddPaymentInfo')
+      sendEvent('AddPaymentInfo', { value: 297, currency: 'USD' })
       PayphoneService.redirectToPayment(result.payWithPayPhone)
     } else {
       error.value = 'No se pudo obtener la URL de pago.'
