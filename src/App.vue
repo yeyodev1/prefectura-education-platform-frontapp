@@ -29,6 +29,11 @@ function onGlobalConfirm(e: Event) {
 
 onMounted(() => { window.addEventListener('app:confirm', onGlobalConfirm as EventListener) })
 onBeforeUnmount(() => { window.removeEventListener('app:confirm', onGlobalConfirm as EventListener) })
+
+onMounted(() => {
+  const t = localStorage.getItem('theme')
+  if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t)
+})
 </script>
 
 <template>
@@ -52,11 +57,12 @@ onBeforeUnmount(() => { window.removeEventListener('app:confirm', onGlobalConfir
 </template>
 
 <style lang="scss">
-.app-container {
-  background-color: $white;
-  font-family: $font-principal;
-  min-height: 100vh;
-  width: 100%;
+  @use '@/styles/global.scss' as *;
+  .app-container {
+    background-color: $white;
+    font-family: $font-principal;
+    min-height: 100vh;
+    width: 100%;
 
   &-view {
     width: 100%;
