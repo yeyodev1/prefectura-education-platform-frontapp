@@ -67,16 +67,85 @@ function goTo(l: Lecture) {
 </template>
 
 <style lang="scss" scoped>
-.playlist { background: $white; border-radius: 12px; padding: 12px; display: grid; gap: 10px; }
-.head .title { color: $FUDMASTER-DARK; font-size: 16px; margin: 0; display: inline-flex; align-items: center; gap: 8px; }
-.modules { display: grid; gap: 8px; }
-.module-toggle { background: none; border: none; color: $FUDMASTER-DARK; display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 8px; cursor: pointer; border-radius: 8px; }
-.lessons { list-style: none; padding: 0; margin: 0; display: grid; }
-.lesson { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; border-radius: 8px; cursor: pointer; }
-.lesson:hover { background: $overlay-purple; }
-.lesson.active { background: $overlay-purple; }
-.lesson.blocked { opacity: 0.6; cursor: not-allowed; }
-.lesson .left { display: inline-flex; align-items: center; gap: 10px; color: $FUDMASTER-DARK; }
-.lesson.completed .right { color: $FUDMASTER-GREEN; }
-.name { font-size: 14px; }
+.playlist {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+  color: var(--text);
+}
+
+.head .title {
+  color: var(--text);
+  font-size: 16px;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modules {
+  display: grid;
+  gap: 8px;
+}
+
+.module-toggle {
+  background: none;
+  border: none;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.lessons {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+}
+
+.lesson {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.lesson:hover {
+  background: color-mix(in oklab, var(--accent), transparent 92%);
+}
+
+.lesson.active {
+  background: color-mix(in oklab, var(--accent), transparent 92%);
+}
+
+.lesson.blocked {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.lesson .left {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+}
+
+.lesson.completed .right {
+  color: var(--accent);
+}
+
+.name {
+  font-size: 14px;
+}
 </style>
