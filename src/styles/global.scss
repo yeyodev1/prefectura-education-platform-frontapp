@@ -7,3 +7,22 @@ body {
   margin: 0;
   font-family: $font-principal;
 }
+
+:root {
+  --bg: #{$white};
+  --text: #{$FUDMASTER-DARK};
+  --border: #{rgba($FUDMASTER-DARK, 0.08)};
+  --accent: #{$FUDMASTER-GREEN};
+}
+
+[data-theme='dark'] {
+  --bg: #{$FUDMASTER-DARK};
+  --text: #{$text-light};
+  --border: #{rgba($white, 0.12)};
+  --accent: #{$FUDMASTER-SECONDARY};
+}
+
+body { background-color: var(--bg); color: var(--text); }
+
+.user-header { background-color: var(--bg); color: var(--text); border-bottom-color: var(--border); }
+.user-sidebar { background-color: var(--bg); border-right-color: var(--border); }
