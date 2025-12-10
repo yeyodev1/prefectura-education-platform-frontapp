@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onMounted, computed, watch } from 'vue'
+import { onMounted, computed, watch, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useCoursesStore } from '@/stores/courses'
+import { useUserStore } from '@/stores/user'
 import CommentsThread from '@/components/CommentsThread.vue'
 import LectureVideoPlayer from '@/components/lecture/LectureVideoPlayer.vue'
 import LectureAttachments from '@/components/lecture/LectureAttachments.vue'
@@ -10,9 +11,33 @@ import LectureTabs from '@/components/lecture/LectureTabs.vue'
 const route = useRoute()
 const router = useRouter()
 const store = useCoursesStore()
+const userStore = useUserStore()
 
 const courseId = computed(() => route.params.id as string)
 const lectureId = computed(() => route.params.lectureId as string)
+
+const userId = computed(() => {
+  if (!userStore.id) userStore.hydrate()
+  const uid = userStore.id
+  return typeof uid === 'number' ? String(uid) : (uid || '')
+})
+
+const teachableUserId = computed(() => {
+  if (!userStore.teachableUserId) userStore.hydrate()
+  const t = userStore.teachableUserId as any
+  return typeof t === 'number' ? String(t) : (t || '')
+})
+
+const progressPercent = computed(() => Number(store.progress?.percent || 0))
+const progressText = computed(() => {
+  const c = Number(store.progress?.completed || 0)
+  const t = Number(store.progress?.total || 0)
+  return `${c}/${t}`
+})
+
+const completing = ref(false)
+const completeError = ref('')
+const completeSuccess = ref('')
 
 const currentUrl = computed(() => {
   const att = (store.currentLecture?.attachments || []).find((a: any) => a?.kind === 'video' && a?.url)
@@ -44,7 +69,38 @@ const nextLecture = computed(() => {
 
 function goToNext(scope: 'global' | 'section' = 'global') {
   if (!courseId.value) return
-  store.goToNextLecture(courseId.value, router, scope, lectureId.value)
+  console.log('[LectureDetail] Continuar click', { scope, courseId: courseId.value, lectureId: lectureId.value })
+  ;(async () => {
+    completing.value = true
+    completeError.value = ''
+    completeSuccess.value = ''
+    try {
+      if (courseId.value && lectureId.value) {
+        console.log('[LectureDetail] completeLecture start')
+        const res = await store.completeLecture(courseId.value, lectureId.value, { userId: userId.value, teachableUserId: teachableUserId.value })
+        console.log('[LectureDetail] completeLecture done')
+        if (res === null) {
+          const msg = store.error || 'No se pudo marcar la clase como completada.'
+          completeError.value = msg
+          console.log('[LectureDetail] completeLecture failed', msg)
+        } else {
+          completeSuccess.value = 'Clase marcada como completada.'
+        }
+        if (courseId.value && userId.value) {
+          console.log('[LectureDetail] fetchProgress start')
+          await store.fetchProgress(courseId.value, userId.value)
+          console.log('[LectureDetail] fetchProgress done', { progress: store.progress })
+        }
+      }
+    } catch (e) {
+      console.log('[LectureDetail] error in completion/progress', e)
+      completeError.value = (e as any)?.message || 'Error al completar la clase.'
+    }
+    if (!completeError.value) {
+      store.goToNextLecture(courseId.value, router, scope, lectureId.value)
+    }
+    completing.value = false
+  })()
 }
 
 function goBack() { router.back() }
@@ -52,18 +108,27 @@ function goBack() { router.back() }
 onMounted(async () => {
   if (courseId.value) await store.fetchById(courseId.value)
   if (courseId.value && lectureId.value) await store.fetchLecture(courseId.value, lectureId.value)
+  if (courseId.value && userId.value) await store.fetchProgress(courseId.value, userId.value)
 })
 
 watch(lectureId, async (lid) => {
   if (!lid) return
+  completing.value = false
+  completeError.value = ''
+  completeSuccess.value = ''
   store.setCurrentLectureFromCourse(lid)
   if (courseId.value) await store.fetchLecture(courseId.value, lid)
 })
+watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPercent', p) } catch {} })
 </script>
 
 <template>
   <div class="lecture-detail-view">
     <div class="container">
+      <div class="progress">
+        <div class="progress-bar" :style="{ width: progressPercent + '%' }"></div>
+        <div class="progress-meta">Progreso: {{ progressPercent }}% · {{ progressText }}</div>
+      </div>
       <div class="header">
         <button class="back" type="button" @click="goBack"><i class="fa-solid fa-arrow-left" /> Volver</button>
         <h2 class="title"><i class="fa-solid fa-chalkboard" /> {{ store.currentLecture?.name || 'Clase' }}</h2>
@@ -90,8 +155,13 @@ watch(lectureId, async (lid) => {
               <p class="next-meta">{{ nextLecture.name || `Lección ${nextLecture.position}` }}</p>
             </div>
             <div class="next-actions">
-              <button class="next-cta" type="button" @click="goToNext('global')"><i class="fa-solid fa-check" /> Continuar</button>
+              <button class="next-cta" type="button" :disabled="completing" @click="goToNext('global')">
+                <i :class="completing ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-check'" />
+                {{ completing ? 'Procesando...' : 'Continuar' }}
+              </button>
             </div>
+            <div v-if="completeError" class="next-error"><i class="fa-solid fa-triangle-exclamation" /> {{ completeError }}</div>
+            <div v-else-if="completeSuccess" class="next-success"><i class="fa-solid fa-check" /> {{ completeSuccess }}</div>
           </div>
         </div>
         <div class="right">
@@ -117,6 +187,12 @@ watch(lectureId, async (lid) => {
   display: grid;
   gap: 16px;
 }
+
+.progress { display: grid; gap: 6px; }
+.progress-bar { height: 8px; background: $FUDMASTER-GREEN; width: 0%; transition: width 0.3s ease; border-radius: 999px; }
+.progress-meta { color: rgba($FUDMASTER-DARK, 0.6); font-size: 12px; }
+.next-error { display: inline-flex; align-items: center; gap: 8px; color: $alert-error; font-size: 13px; }
+.next-success { display: inline-flex; align-items: center; gap: 8px; color: $FUDMASTER-GREEN; font-size: 13px; }
 
 .header {
   display: grid;
