@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onUnmounted } from 'vue'
 import { RouterLink } from 'vue-router'
 
 const props = defineProps({
@@ -8,7 +8,11 @@ const props = defineProps({
   showPublishedBadge: { type: Boolean, required: false },
   showClassesCount: { type: Boolean, required: false },
   ctaText: { type: String, required: false },
+  disabled: { type: Boolean, required: false },
+  countdownTo: { type: Number, required: false },
 })
+
+const emit = defineEmits(['placeholder-click'])
 
 function sanitizeUrl(url?: string) { return (url || '').toString().replace(/`/g, '').trim() }
 function coverOf(course: any) { return sanitizeUrl(course?.image_url) || sanitizeUrl(course?.coverUrl) || '/src/assets/fudmaster-color.png' }
@@ -42,11 +46,36 @@ function truncated(text: string, limit = 180) {
 
 function toggleShowDesc(e: Event) { e.preventDefault(); e.stopPropagation(); showDesc.value = !showDesc.value }
 function toggleExpanded(e: Event) { e.preventDefault(); e.stopPropagation(); expanded.value = !expanded.value }
+
+const deadline = ref<number | null>(null)
+const tick = ref<number>(Date.now())
+let iv: number | null = null
+
+function startTimer() {
+  if (!props.countdownTo) { deadline.value = null; return }
+  deadline.value = Number(props.countdownTo)
+  if (iv) { clearInterval(iv as any); iv = null }
+  iv = window.setInterval(() => {
+    tick.value = Date.now()
+    if (deadline.value !== null && deadline.value - tick.value <= 0) {
+      deadline.value = Date.now() + 7 * 24 * 60 * 60 * 1000
+    }
+  }, 1000)
+}
+
+watch(() => props.countdownTo, () => startTimer(), { immediate: true })
+onUnmounted(() => { if (iv) clearInterval(iv as any) })
+function onCardClick(e: Event) {
+  if (!props.disabled) return
+  e.preventDefault()
+  e.stopPropagation()
+  emit('placeholder-click')
+}
 </script>
 
 <template>
-  <RouterLink :to="linkTo" class="course-card">
-    <img class="cover" :src="coverOf(course)" alt="cover" />
+  <component :is="props.disabled ? 'div' : RouterLink" :to="props.disabled ? undefined : linkTo" class="course-card" :class="{ disabled: props.disabled }" @click="onCardClick">
+    <img class="cover" :class="{ blur: props.disabled }" :src="coverOf(course)" alt="cover" />
     <h3 class="name">{{ nameOf(course) }}</h3>
     <div class="meta">
       <span class="badge" v-if="showPublished">Publicado</span>
@@ -68,7 +97,17 @@ function toggleExpanded(e: Event) { e.preventDefault(); e.stopPropagation(); exp
         </div>
       </div>
     </transition>
-  </RouterLink>
+    <div v-if="deadline !== null" class="countdown">
+      <span class="label">Disponible en:</span>
+      <span class="unit">{{ String(Math.floor(((deadline ?? tick) - tick) / (1000 * 60 * 60 * 24))).padStart(2, '0') }}d</span>
+      <span class="sep">:</span>
+      <span class="unit">{{ String(Math.floor((((deadline ?? tick) - tick) / (1000 * 60 * 60)) % 24)).padStart(2, '0') }}h</span>
+      <span class="sep">:</span>
+      <span class="unit">{{ String(Math.floor((((deadline ?? tick) - tick) / (1000 * 60)) % 60)).padStart(2, '0') }}m</span>
+      <span class="sep">:</span>
+      <span class="unit">{{ String(Math.floor((((deadline ?? tick) - tick) / 1000) % 60)).padStart(2, '0') }}s</span>
+    </div>
+  </component>
 </template>
 
 <style lang="scss" scoped>
@@ -84,7 +123,9 @@ function toggleExpanded(e: Event) { e.preventDefault(); e.stopPropagation(); exp
   transition: border-color 0.2s ease, transform 0.2s ease;
 }
 .course-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+.course-card.disabled { opacity: 0.85; }
 .cover { width: 100%; height: 160px; border-radius: 8px; object-fit: cover; }
+.cover.blur { filter: blur(6px); }
 .name { color: var(--text); font-weight: 700; margin: 0; font-size: 18px; }
 .meta { display: inline-flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 6px; }
 .badge { background: color-mix(in oklab, var(--accent), transparent 85%); color: var(--text); border-radius: 6px; padding: 6px 8px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; }
@@ -96,4 +137,8 @@ function toggleExpanded(e: Event) { e.preventDefault(); e.stopPropagation(); exp
 .read-more { background: none; border: none; color: var(--accent); font-weight: 700; cursor: pointer; padding: 0; }
 .fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
+.countdown { padding: 12px; border-top: 1px dashed var(--border); display: inline-flex; align-items: center; gap: 6px; font-family: monospace; font-weight: 700; color: var(--text); }
+.countdown .label { font-size: 12px; color: color-mix(in oklab, var(--text), transparent 60%); margin-right: 4px; }
+.countdown .unit { background: color-mix(in oklab, var(--accent), transparent 88%); color: var(--accent); padding: 4px 6px; border-radius: 6px; min-width: 36px; text-align: center; }
+.countdown .sep { color: color-mix(in oklab, var(--text), transparent 60%); }
 </style>
