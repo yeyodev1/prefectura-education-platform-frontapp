@@ -352,6 +352,7 @@ function leaveCheckout() {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  color: rgba($FUDMASTER-DARK, 0.8);
 }
 
 .row.small {
