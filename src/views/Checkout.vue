@@ -5,6 +5,7 @@ import usersService from '@/services/users.service'
 import { useCheckoutStore } from '@/stores/checkout'
 import { useRouter } from 'vue-router'
 import { track, sendEvent } from '@/services/facebook.service'
+import ExitIntentModal from '@/components/ExitIntentModal.vue'
 
 const checkoutStore = useCheckoutStore()
 const router = useRouter()
@@ -15,6 +16,10 @@ const error = ref('')
 
 const expiresAt = ref<number>(Date.now() + 24 * 60 * 60 * 1000)
 const remaining = ref<string>('')
+
+const exitOpen = ref(false)
+const allowLeave = ref(false)
+let popHandler: ((ev: PopStateEvent) => void) | null = null
 
 function updateTimer() {
   const diff = expiresAt.value - Date.now()
@@ -34,11 +39,23 @@ onMounted(() => {
   if (checkoutStore.email) email.value = checkoutStore.email
   track('ViewContent', { content_name: 'Checkout' })
   sendEvent('ViewContent', { content_name: 'Checkout' })
+
+  try {
+    history.pushState({ checkoutGuard: true }, '', location.href)
+    popHandler = () => {
+      if (!allowLeave.value) {
+        exitOpen.value = true
+        history.pushState({ checkoutGuard: true }, '', location.href)
+      }
+    }
+    window.addEventListener('popstate', popHandler)
+  } catch {}
 })
 
 onBeforeUnmount(() => {
   const id = (window as any)._checkout_timer
   if (id) clearInterval(id)
+  try { if (popHandler) window.removeEventListener('popstate', popHandler) } catch {}
 })
 
 const canPay = computed(() => {
@@ -82,6 +99,13 @@ async function pay() {
 
 function goLogin() {
   router.push('/login')
+}
+
+function stayOnCheckout() { exitOpen.value = false }
+function leaveCheckout() {
+  exitOpen.value = false
+  allowLeave.value = true
+  history.back()
 }
 </script>
 
@@ -163,6 +187,13 @@ function goLogin() {
       </div>
     </div>
   </div>
+  <ExitIntentModal
+    :open="exitOpen"
+    message="Estás a un paso de asegurar tu acceso. Si sales de esta página ahora, el sistema liberará tu cupo y no podemos garantizarte el precio de $297 cuando regreses."
+    @close="stayOnCheckout"
+    @stay="stayOnCheckout"
+    @leave="leaveCheckout"
+  />
 </template>
 
 <style lang="scss" scoped>
