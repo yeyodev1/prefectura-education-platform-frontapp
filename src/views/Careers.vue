@@ -22,16 +22,12 @@ const loading = computed(() => store.loading)
 const error = computed(() => store.error)
 
 const mockCareers = computed(() => makeCareerPlaceholders(4))
-const allCareers = computed(() => {
-  const list = Array.isArray(careers.value) ? careers.value : []
-  return [...list, ...mockCareers.value]
-})
+const upcomingCareers = computed(() => mockCareers.value)
 
 const userCareerIds = computed(() => {
   const list = Array.isArray(store.userCareers) ? store.userCareers : []
   const base = list.map((c: any) => String(c?.info?._id || c?.access?.careerId || ''))
-  const mocks = mockCareers.value.map((c) => String(c._id))
-  return new Set([...base, ...mocks])
+  return new Set(base)
 })
 
 const myCareers = computed(() => {
@@ -47,9 +43,6 @@ function coverOf(career: any) {
   return sanitizeUrl(career?.imageUrl) || '/src/assets/fudmaster-color.png'
 }
 
-function isMockCareer(career: any) {
-  return String(career?._id || '').startsWith('mock-')
-}
 
 function coursesCount(career: any) {
   const ids = Array.isArray(career?.courseIds) ? career.courseIds : []
@@ -101,18 +94,34 @@ async function addToMyCareers(career: any) {
 
         <h3 class="subtitle">Todas las carreras</h3>
         <div class="grid">
-          <div v-for="c in allCareers" :key="c._id" class="card">
-            <component :is="isMockCareer(c) ? 'div' : RouterLink" :to="isMockCareer(c) ? undefined : `/careers/${c._id}`">
-              <img class="cover" :class="{ blur: isMockCareer(c) }" :src="coverOf(c)" alt="cover" />
+          <div v-for="c in careers" :key="c._id" class="card">
+            <RouterLink :to="`/careers/${c._id}`">
+              <img class="cover" :src="coverOf(c)" alt="cover" />
               <h3 class="name">{{ c.name }}</h3>
               <p class="desc">{{ c.description || 'Detalles próximamente.' }}</p>
-            </component>
+            </RouterLink>
             <div class="meta">
               <span class="badge">{{ coursesCount(c) }} curso(s)</span>
               <span class="badge" :class="{ active: c.isActive }">{{ c.isActive ? 'Activa' : 'Inactiva' }}</span>
               <button class="add-button" :disabled="isInMyCareers(c)" @click="addToMyCareers(c)">
                 {{ isInMyCareers(c) ? 'Agregada' : 'Agregar a mis carreras' }}
               </button>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="subtitle">Próximamente</h3>
+        <div class="grid">
+          <div v-for="c in upcomingCareers" :key="c._id" class="card">
+            <div>
+              <img class="cover blur" :src="coverOf(c)" alt="cover" />
+              <h3 class="name">{{ c.name }}</h3>
+              <p class="desc">{{ c.description || 'Detalles próximamente.' }}</p>
+            </div>
+            <div class="meta">
+              <span class="badge">{{ coursesCount(c) }} curso(s)</span>
+              <span class="badge">Inactiva</span>
+              <button class="add-button" disabled>Próximamente</button>
             </div>
           </div>
         </div>
