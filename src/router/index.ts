@@ -103,7 +103,10 @@ const routes: Array<RouteRecordRaw> = [
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
+  scrollBehavior() {
+    return { left: 0, top: 0, behavior: 'smooth' }
+  }
 })
 
 router.beforeEach((to) => {
