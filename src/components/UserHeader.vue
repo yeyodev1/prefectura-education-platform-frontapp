@@ -4,6 +4,8 @@ import { useRouter, useRoute } from 'vue-router'
 import usersService from '@/services/users.service'
 import gamificationService from '@/services/gamification.service'
 import { useUserStore } from '@/stores/user'
+import lightLogo from '../assets/fudmaster-color.png'
+import darkLogo from '../assets/fudmaster-dark.png'
 
 const props = defineProps({
   showMenuButton: {
@@ -24,6 +26,11 @@ const userId = computed(() => {
   const uid = userStore.id
   return typeof uid === 'number' ? String(uid) : (uid || '')
 })
+
+const isDarkTheme = ref(false)
+let themeObserver: MutationObserver | null = null
+function updateThemeFlag() { isDarkTheme.value = document.documentElement.getAttribute('data-theme') === 'dark' }
+const logoSrc = computed(() => (isDarkTheme.value ? darkLogo : lightLogo))
 
 const points = ref<number | null>(null)
 const pointsLoading = ref(false)
@@ -84,12 +91,16 @@ onMounted(() => {
   fetchPoints()
   window.addEventListener('gamification:points-refresh', fetchPoints as EventListener)
   window.addEventListener('comments:created', fetchPoints as EventListener)
+  updateThemeFlag()
+  themeObserver = new MutationObserver(updateThemeFlag)
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('auth:token-expired', onTokenExpired as EventListener)
   window.removeEventListener('gamification:points-refresh', fetchPoints as EventListener)
   window.removeEventListener('comments:created', fetchPoints as EventListener)
+  try { themeObserver?.disconnect() } catch {}
 })
 
 watch(isLoggedIn, (val) => { if (val) fetchPoints(); else points.value = null })
@@ -105,7 +116,7 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else points.value = null })
         <div class="logo">
           <picture>
             <source srcset="../assets/iso-verde.png" media="(max-width: 768px)">
-            <img src="../assets/fudmaster-color.png" alt="fudmaster-logo">
+            <img :src="logoSrc" alt="fudmaster-logo">
           </picture>
         </div>
       </div>
