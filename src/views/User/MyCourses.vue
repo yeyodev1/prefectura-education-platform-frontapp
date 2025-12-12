@@ -32,16 +32,9 @@ const filtered = computed(() => {
   })
 })
 
-const display = computed(() => {
-  const list = Array.isArray(filtered.value) ? filtered.value : []
-  const need = Math.max(0, 12 - list.length)
-  const placeholders = makePlaceholders(need)
-  return [...list, ...placeholders]
-})
+const liveList = computed(() => Array.isArray(filtered.value) ? filtered.value : [])
+const upcoming = computed(() => makePlaceholders(6))
 
-function isMock(c: any): boolean {
-  return String(c?._id || c?.id || '').startsWith('mock-')
-}
 
 function openModal(c: any) {
   modalTitle.value = String(c?.name || 'Próximamente')
@@ -102,12 +95,22 @@ onMounted(() => {
         </div>
         <div v-else class="cards">
           <CourseCard
-            v-for="(c, i) in display"
-            :key="c._id || c.id"
+            v-for="c in liveList"
+            :key="c.id"
             :course="c"
-            :to="isMock(c) ? undefined : `/courses/${c.id}`"
-            :disabled="isMock(c)"
-            :countdown-to="isMock(c) ? countdownForIndex(i) : undefined"
+            :to="`/courses/${c.id}`"
+            :show-published-badge="true"
+            :show-classes-count="true"
+          />
+        </div>
+        <h3 class="subtitle">Próximamente</h3>
+        <div class="cards">
+          <CourseCard
+            v-for="(c, i) in upcoming"
+            :key="c.id"
+            :course="c"
+            :disabled="true"
+            :countdown-to="countdownForIndex(i)"
             :show-published-badge="true"
             :show-classes-count="true"
             @placeholder-click="openModal(c)"
