@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuizzesStore } from '@/stores/quizzes'
+import ExitIntentModal from '@/components/ExitIntentModal.vue'
 import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
@@ -60,21 +61,8 @@ const targetMs = computed(() => {
 })
 const remainingMs = computed(() => Math.max(targetMs.value - nowMs.value, 0))
 const canRetry = computed(() => remainingMs.value <= 0)
-const initialMs = ref(0)
-onMounted(() => { initialMs.value = remainingMs.value })
-watch([retryAfterMs, retryAvailableAt], () => { initialMs.value = remainingMs.value })
-const progressPct = computed(() => {
-  const total = initialMs.value
-  if (total <= 0) return 0
-  const remaining = Math.min(Math.max(remainingMs.value, 0), total)
-  return remaining / total
-})
 
-const retryAvailableText = computed(() => {
-  const t = targetMs.value
-  if (typeof t === 'number' && t > 0) return new Date(t).toLocaleString()
-  return ''
-})
+// Barra removida: se simplifica a solo contador
 
 function formatCountdown(ms: number): string {
   const total = Math.max(ms, 0)
@@ -93,11 +81,22 @@ function goToCourse() {
 
 function retryQuiz() {
   if (!courseId.value) return
+  if (!canRetry.value) {
+    exitOpen.value = true
+    return
+  }
   if (quizId.value) router.push(`/courses/${courseId.value}/quizzes/${quizId.value}`)
   else router.push(`/courses/${courseId.value}/quiz`)
 }
 
 function goBack() { router.back() }
+
+const exitOpen = ref(false)
+const modalTitle = computed(() => 'No puedes reintentar aún')
+const modalMessage = computed(() => `Podrás reintentar en ${formatCountdown(remainingMs.value)}`)
+function closeModal() { exitOpen.value = false }
+function onModalStay() { exitOpen.value = false }
+function onModalLeave() { if (courseId.value) router.push(`/courses/${courseId.value}`) }
 </script>
 
 <template>
@@ -132,17 +131,13 @@ function goBack() { router.back() }
         </div>
         <div class="score">Puntaje: {{ result.score }}</div>
         <p class="rule"><i class="fa-solid fa-circle-info" /> Necesitas mínimo 9 respuestas correctas para aprobar.</p>
-        <div v-if="!result.passed && (retryAfterMs || retryAvailableAt)" class="retry">
-          <i class="fa-solid fa-hourglass-half" /> Reintento disponible en: {{ formatCountdown(remainingMs) }}
-          <span v-if="retryAvailableText" class="retry-at">Podrás reintentar el {{ retryAvailableText }}</span>
-          <div class="progress-row">
-            <div class="progress"><div class="bar" :style="{ width: `${Math.round(progressPct * 100)}%` }" /></div>
-            <div class="pct">{{ Math.round(progressPct * 100) }}%</div>
-          </div>
+        <div v-if="!result.passed && (retryAfterMs || retryAvailableAt)" class="retry" aria-live="polite">
+          <span class="retry-label"><i class="fa-solid fa-hourglass-half" /> Podrás reintentar en</span>
+          <span class="countdown">{{ formatCountdown(remainingMs) }}</span>
         </div>
         <div class="actions">
           <button class="btn primary" type="button" @click="goToCourse">Volver al curso</button>
-          <button class="btn secondary" type="button" :disabled="!canRetry" @click="retryQuiz">Reintentar quiz</button>
+          <button class="btn secondary" type="button" @click="retryQuiz">Reintentar quiz</button>
         </div>
       </div>
 
@@ -151,21 +146,27 @@ function goBack() { router.back() }
           <i class="fa-solid fa-hourglass-half" />
           <span>{{ errorMsg || 'No puedes reintentar aún' }}</span>
         </div>
-        <div class="retry">
-          Reintento disponible en: {{ formatCountdown(remainingMs) }}
-          <span v-if="retryAvailableText" class="retry-at">Podrás reintentar el {{ retryAvailableText }}</span>
-          <div class="progress-row">
-            <div class="progress"><div class="bar" :style="{ width: `${Math.round(progressPct * 100)}%` }" /></div>
-            <div class="pct">{{ Math.round(progressPct * 100) }}%</div>
-          </div>
+        <div class="retry" aria-live="polite">
+          <span class="retry-label">Podrás reintentar en</span>
+          <span class="countdown">{{ formatCountdown(remainingMs) }}</span>
         </div>
         <div class="actions">
           <button class="btn primary" type="button" @click="goToCourse">Volver al curso</button>
-          <button class="btn secondary" type="button" :disabled="!canRetry" @click="retryQuiz">Reintentar quiz</button>
+          <button class="btn secondary" type="button" @click="retryQuiz">Reintentar quiz</button>
         </div>
       </div>
     </div>
   </div>
+  <ExitIntentModal
+    :open="exitOpen"
+    :title="modalTitle"
+    :message="modalMessage"
+    primary-label="Entendido"
+    secondary-label="Volver al curso"
+    @close="closeModal"
+    @stay="onModalStay"
+    @leave="onModalLeave"
+  />
 </template>
 
 <style lang="scss" scoped>
@@ -280,45 +281,23 @@ function goBack() { router.back() }
 }
 
 .retry {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  justify-content: center;
-  font-size: 14px;
-  color: color-mix(in oklab, var(--text), transparent 10%);
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  color: var(--text);
 }
 
-.retry-at {
+.retry-label {
+  font-size: 16px;
   opacity: 0.8;
 }
 
-.progress {
-  width: 100%;
-  max-width: 420px;
-  height: 8px;
-  border-radius: 999px;
-  background: color-mix(in oklab, var(--bg), var(--text) 10%);
-  overflow: hidden;
-  margin-top: 6px;
-}
-
-.bar {
-  height: 100%;
-  background: var(--accent);
-}
-
-.progress-row {
-  width: 100%;
-  max-width: 520px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 10px;
-}
-
-.pct {
-  font-size: 12px;
-  color: color-mix(in oklab, var(--text), transparent 30%);
+.countdown {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1;
+  letter-spacing: 0.02em;
 }
 
 .actions {
