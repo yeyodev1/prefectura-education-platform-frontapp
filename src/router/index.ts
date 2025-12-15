@@ -114,7 +114,7 @@ router.beforeEach((to) => {
   const requiresAuth = to.matched.some((record) => record.meta?.requiresAuth)
 
   if (requiresAuth && !hasToken) {
-    return { path: '/checkout', replace: true }
+    return { path: '/landing-page', replace: true }
   }
 
   if ((to.path === '/login' || to.path === '/checkout') && hasToken) {
