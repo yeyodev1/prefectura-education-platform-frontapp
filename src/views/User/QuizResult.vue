@@ -1,14 +1,21 @@
-<<script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from 'vue'
+<script setup lang="ts">
+import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuizzesStore } from '@/stores/quizzes'
+import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
 const router = useRouter()
 const store = useQuizzesStore()
+const userStore = useUserStore()
 
 const courseId = computed(() => route.params.id as string)
 const quizId = computed(() => route.params.quizId as (string | undefined))
+const userId = computed(() => {
+  if (!userStore.id) userStore.hydrate()
+  const uid = userStore.id
+  return typeof uid === 'number' ? String(uid) : (uid || '')
+})
 const result = computed(() => store.lastResult)
 const approvedAlready = computed(() => store.approvedAlready)
 const retryAfterMs = computed(() => store.retryAfterMs)
@@ -17,7 +24,27 @@ const errorMsg = computed(() => store.error)
 
 const nowMs = ref(Date.now())
 let timer: number | null = null
-onMounted(() => { timer = window.setInterval(() => { nowMs.value = Date.now() }, 1000) })
+onMounted(async () => {
+  timer = window.setInterval(() => { nowMs.value = Date.now() }, 1000)
+  if (!courseId.value) return
+  const hasResult = !!store.lastResult
+  if (hasResult) return
+  try {
+    if (quizId.value) {
+      await store.loadById(courseId.value, quizId.value, { userId: userId.value })
+      console.log('[QuizResult] loadById done', { hasQuiz: !!store.currentQuiz, error: store.error, retryAfterMs: store.retryAfterMs, retryAvailableAt: store.retryAvailableAt, approvedAlready: store.approvedAlready })
+    } else {
+      await store.loadByCourse(courseId.value)
+      const first = store.quizzes[0]
+      if (first?._id) {
+        await store.loadById(courseId.value, first._id, { userId: userId.value })
+        console.log('[QuizResult] load first quiz done', { quizId: first?._id, error: store.error, retryAfterMs: store.retryAfterMs, retryAvailableAt: store.retryAvailableAt, approvedAlready: store.approvedAlready })
+      }
+    }
+  } catch (e) {
+    console.error('[QuizResult] load error', e)
+  }
+})
 onUnmounted(() => { if (timer) { clearInterval(timer); timer = null } })
 
 const targetMs = computed(() => {
@@ -35,11 +62,18 @@ const remainingMs = computed(() => Math.max(targetMs.value - nowMs.value, 0))
 const canRetry = computed(() => remainingMs.value <= 0)
 const initialMs = ref(0)
 onMounted(() => { initialMs.value = remainingMs.value })
+watch([retryAfterMs, retryAvailableAt], () => { initialMs.value = remainingMs.value })
 const progressPct = computed(() => {
   const total = initialMs.value
-  if (total <= 0) return 1
-  const used = Math.min(Math.max(total - remainingMs.value, 0), total)
-  return used / total
+  if (total <= 0) return 0
+  const remaining = Math.min(Math.max(remainingMs.value, 0), total)
+  return remaining / total
+})
+
+const retryAvailableText = computed(() => {
+  const t = targetMs.value
+  if (typeof t === 'number' && t > 0) return new Date(t).toLocaleString()
+  return ''
 })
 
 function formatCountdown(ms: number): string {
@@ -74,7 +108,7 @@ function goBack() { router.back() }
         <h2 class="title"><i class="fa-solid fa-flag-checkered" /> Resultado del quiz</h2>
       </div>
 
-      <div v-if="!result && !approvedAlready && !retryAfterMs" class="empty">
+      <div v-if="!result && !approvedAlready && !retryAfterMs && !errorMsg" class="empty">
         <i class="fa-regular fa-face-meh" /> No hay resultado para mostrar.
         <button class="cta" type="button" @click="retryQuiz">Volver al quiz</button>
       </div>
@@ -98,9 +132,9 @@ function goBack() { router.back() }
         </div>
         <div class="score">Puntaje: {{ result.score }}</div>
         <p class="rule"><i class="fa-solid fa-circle-info" /> Necesitas mínimo 9 respuestas correctas para aprobar.</p>
-        <div v-if="!result.passed && retryAfterMs" class="retry">
+        <div v-if="!result.passed && (retryAfterMs || retryAvailableAt)" class="retry">
           <i class="fa-solid fa-hourglass-half" /> Reintento disponible en: {{ formatCountdown(remainingMs) }}
-          <span v-if="retryAvailableAt" class="retry-at">({{ new Date(retryAvailableAt).toLocaleString() }})</span>
+          <span v-if="retryAvailableText" class="retry-at">Podrás reintentar el {{ retryAvailableText }}</span>
           <div class="progress-row">
             <div class="progress"><div class="bar" :style="{ width: `${Math.round(progressPct * 100)}%` }" /></div>
             <div class="pct">{{ Math.round(progressPct * 100) }}%</div>
@@ -119,7 +153,7 @@ function goBack() { router.back() }
         </div>
         <div class="retry">
           Reintento disponible en: {{ formatCountdown(remainingMs) }}
-          <span v-if="retryAvailableAt" class="retry-at">({{ new Date(retryAvailableAt).toLocaleString() }})</span>
+          <span v-if="retryAvailableText" class="retry-at">Podrás reintentar el {{ retryAvailableText }}</span>
           <div class="progress-row">
             <div class="progress"><div class="bar" :style="{ width: `${Math.round(progressPct * 100)}%` }" /></div>
             <div class="pct">{{ Math.round(progressPct * 100) }}%</div>
@@ -135,44 +169,198 @@ function goBack() { router.back() }
 </template>
 
 <style lang="scss" scoped>
-.quiz-result { width: 100%; padding: 24px 16px; background: var(--bg); color: var(--text); }
-.container { max-width: 100%; margin: 0 auto; display: grid; gap: 16px; }
-.head { display: grid; gap: 8px; }
-.title { color: var(--text); margin: 0; font-size: 22px; display: inline-flex; align-items: center; gap: 10px; }
-.back { background: none; border: none; color: var(--accent); display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+.quiz-result {
+  width: 100%;
+  padding: 24px 16px;
+  background: var(--bg);
+  color: var(--text);
+}
 
-.empty { display: grid; gap: 12px; align-content: start; color: color-mix(in oklab, var(--text), transparent 40%); background: color-mix(in oklab, var(--bg), var(--text) 6%); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
-.empty .cta { justify-self: start; background: var(--accent); color: var(--bg); border: none; border-radius: 999px; padding: 10px 14px; cursor: pointer; }
+.container {
+  max-width: 100%;
+  margin: 0 auto;
+  display: grid;
+  gap: 16px;
+}
 
-.hero { display: grid; gap: 14px; align-content: start; text-align: center; border-radius: 16px; padding: 20px 16px; border: 1px solid var(--border); }
-.hero.pass { background: rgba($alert-success, 0.12); }
-.hero.fail { background: rgba($alert-error, 0.12); }
+.head {
+  display: grid;
+  gap: 8px;
+}
 
-.status { display: inline-flex; align-items: center; gap: 10px; justify-content: center; font-weight: 700; font-size: 20px; }
-.hero.pass .status { color: $alert-success; }
-.hero.fail .status { color: $alert-error; }
+.title {
+  color: var(--text);
+  margin: 0;
+  font-size: 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
 
-.score { font-size: 16px; color: color-mix(in oklab, var(--text), transparent 30%); }
+.back {
+  background: none;
+  border: none;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
 
-.rule { margin: 0; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; justify-content: center; color: color-mix(in oklab, var(--text), transparent 20%); }
+.empty {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  color: color-mix(in oklab, var(--text), transparent 40%);
+  background: color-mix(in oklab, var(--bg), var(--text) 6%);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
 
-.retry { display: inline-flex; align-items: center; gap: 8px; justify-content: center; font-size: 14px; color: color-mix(in oklab, var(--text), transparent 10%); }
-.retry-at { opacity: 0.8; }
+.empty .cta {
+  justify-self: start;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 999px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
 
-.progress { width: 100%; max-width: 420px; height: 8px; border-radius: 999px; background: color-mix(in oklab, var(--bg), var(--text) 10%); overflow: hidden; margin-top: 6px; }
-.bar { height: 100%; background: var(--accent); }
-.progress-row { width: 100%; max-width: 520px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; }
-.pct { font-size: 12px; color: color-mix(in oklab, var(--text), transparent 30%); }
+.hero {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  text-align: center;
+  border-radius: 16px;
+  padding: 20px 16px;
+  border: 1px solid var(--border);
+}
 
-.actions { display: grid; gap: 10px; grid-template-columns: 1fr; }
-.btn { display: inline-flex; align-items: center; gap: 8px; border: none; border-radius: 999px; padding: 10px 14px; cursor: pointer; font-size: 14px; justify-content: center; }
-.btn.primary { background: var(--accent); color: var(--bg); }
-.btn.secondary { background: color-mix(in oklab, var(--bg), var(--text) 6%); color: var(--text); border: 1px solid var(--border); }
+.hero.pass {
+  background: rgba($alert-success, 0.12);
+}
+
+.hero.fail {
+  background: rgba($alert-error, 0.12);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.hero.pass .status {
+  color: $alert-success;
+}
+
+.hero.fail .status {
+  color: $alert-error;
+}
+
+.score {
+  font-size: 16px;
+  color: color-mix(in oklab, var(--text), transparent 30%);
+}
+
+.rule {
+  margin: 0;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  color: color-mix(in oklab, var(--text), transparent 20%);
+}
+
+.retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  font-size: 14px;
+  color: color-mix(in oklab, var(--text), transparent 10%);
+}
+
+.retry-at {
+  opacity: 0.8;
+}
+
+.progress {
+  width: 100%;
+  max-width: 420px;
+  height: 8px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--bg), var(--text) 10%);
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.bar {
+  height: 100%;
+  background: var(--accent);
+}
+
+.progress-row {
+  width: 100%;
+  max-width: 520px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.pct {
+  font-size: 12px;
+  color: color-mix(in oklab, var(--text), transparent 30%);
+}
+
+.actions {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  justify-content: center;
+}
+
+.btn.primary {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.btn.secondary {
+  background: color-mix(in oklab, var(--bg), var(--text) 6%);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
 
 @media (min-width: 960px) {
-  .container { max-width: 980px; }
-  .hero { padding: 32px; }
-  .actions { grid-template-columns: repeat(2, 1fr); }
+  .container {
+    max-width: 980px;
+  }
+
+  .hero {
+    padding: 32px;
+  }
+
+  .actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 </style>
->
