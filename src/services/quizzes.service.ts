@@ -57,7 +57,17 @@ class QuizzesService extends APIBase {
   }
 
   async getById<T = GetQuizByIdResponse>(courseId: string | number, quizId: string | number, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.get<T>(`courses/${courseId}/quizzes/${quizId}`, undefined, config)
+    console.log('[QuizzesService] getById →', { courseId, quizId, params: config?.params })
+    try {
+      const res = await this.get<T>(`courses/${courseId}/quizzes/${quizId}`, undefined, config)
+      console.log('[QuizzesService] getById ← response', { status: res.status, data: res.data })
+      return res
+    } catch (error: any) {
+      const status = error?.response?.status ?? error?.status
+      const data = error?.response?.data ?? error?.data
+      console.error('[QuizzesService] getById × error', { status, data, message: error?.message })
+      throw error
+    }
   }
 
   async submit<T = SubmitQuizResponse>(courseId: string | number, quizId: string | number, body: SubmitQuizBody, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
