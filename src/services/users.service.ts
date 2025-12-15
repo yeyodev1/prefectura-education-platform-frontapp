@@ -28,6 +28,86 @@ export interface RegisterFromPaymentResponse {
   user: Record<string, unknown>
 }
 
+export type Gender = 'male' | 'female' | 'prefer_not_to_say' | 'other'
+export type HeardAboutUs =
+  | 'social_media_ad'
+  | 'friend_colleague'
+  | 'search_engine'
+  | 'online_article_blog'
+  | 'youtube_video'
+  | 'podcast'
+  | 'event_webinar'
+  | 'email_campaign'
+  | 'teachable_marketplace'
+  | 'other'
+
+export interface UpdateUserBody {
+  name?: string
+  email?: string
+  gender?: Gender
+  genderOther?: string | null
+  dateOfBirth?: string | null
+  heardAboutUs?: HeardAboutUs
+  heardAboutUsOther?: string | null
+}
+
+export interface CourseAccess {
+  teachableCourseId: number
+  status: 'active' | 'revoked'
+  enrolledAt: string
+  expiresAt: string | null
+  courseRef?: string | null
+}
+
+export interface CareerAccess {
+  careerId: string
+  name: string
+  courseIds: number[]
+  status: 'active' | 'revoked'
+  enrolledAt: string
+  careerRef?: string | null
+}
+
+export interface PaymentItem {
+  provider: 'teachable' | 'stripe' | 'other'
+  amount: number
+  currency: string
+  transactionId: string
+  status: 'pending' | 'completed' | 'failed'
+  createdAt: string
+  courseId?: number
+  careerId?: string
+}
+
+export interface SafeUser {
+  _id: string
+  name: string
+  email: string
+  teachableUserId?: number
+  gender: Gender | null
+  genderOther: string | null
+  dateOfBirth: string | null
+  heardAboutUs: HeardAboutUs | null
+  heardAboutUsOther: string | null
+  points: number
+  courses: CourseAccess[]
+  careers: CareerAccess[]
+  payments: PaymentItem[]
+  transactions: string[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface UpdateUserResponse {
+  message: string
+  user: SafeUser
+}
+
+export interface GetUserResponse {
+  message: string
+  user: SafeUser
+}
+
 class UsersService extends APIBase {
   async create<T>(body: CreateUserBody, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.post<T>('users', body, undefined, config)
@@ -48,12 +128,16 @@ class UsersService extends APIBase {
     return this.post<T>('users/register-from-payment', body, { 'Content-Type': 'application/json' }, config)
   }
 
-  async getById<T = { message: string; user: Record<string, unknown> }>(userId: string | number, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+  async getById<T = GetUserResponse>(userId: string | number, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.get<T>(`users/${userId}`, undefined, config)
   }
 
   async existsByEmail<T = { message: string; exists: boolean; user?: Record<string, unknown> }>(email: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.get<T>('users/exists', undefined, { ...(config || {}), params: { email } })
+  }
+
+  async updateById<T = UpdateUserResponse>(userId: string | number, body: UpdateUserBody): Promise<AxiosResponse<T>> {
+    return this.patch<T>(`users/${userId}`, body)
   }
 }
 
