@@ -108,6 +108,15 @@ export interface GetUserResponse {
   user: SafeUser
 }
 
+export interface ChangePasswordBody {
+  currentPassword: string
+  newPassword: string
+}
+
+export interface ChangePasswordResponse {
+  message: string
+}
+
 class UsersService extends APIBase {
   async create<T>(body: CreateUserBody, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.post<T>('users', body, undefined, config)
@@ -130,6 +139,10 @@ class UsersService extends APIBase {
 
   async getById<T = GetUserResponse>(userId: string | number, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.get<T>(`users/${userId}`, undefined, config)
+  }
+
+  async changePassword<T = ChangePasswordResponse>(userId: string | number, body: ChangePasswordBody): Promise<AxiosResponse<T>> {
+    return this.patch<T>(`users/${userId}/password`, body)
   }
 
   async existsByEmail<T = { message: string; exists: boolean; user?: Record<string, unknown> }>(email: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
