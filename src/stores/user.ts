@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import usersService, { type UpdateUserBody, type UpdateUserResponse, type Gender, type HeardAboutUs } from '@/services/users.service'
+import usersService, { type UpdateUserBody, type UpdateUserResponse, type Gender, type HeardAboutUs, type ChangePasswordBody, type ChangePasswordResponse } from '@/services/users.service'
 
 export interface UserState {
   id: string | number | null
@@ -82,6 +82,11 @@ export const useUserStore = defineStore('user', {
       this.heardAboutUs = u.heardAboutUs
       this.heardAboutUsOther = u.heardAboutUsOther
       this.points = typeof u.points === 'number' ? u.points : this.points ?? null
+      return data
+    }
+    ,
+    async changePassword(userId: string | number, payload: ChangePasswordBody): Promise<ChangePasswordResponse> {
+      const { data } = await usersService.changePassword<ChangePasswordResponse>(userId, payload)
       return data
     }
   }
