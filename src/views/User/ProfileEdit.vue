@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { type UpdateUserBody, type UpdateUserResponse, type Gender, type HeardAboutUs, type GetUserResponse, type SafeUser } from '@/services/users.service'
@@ -52,6 +52,10 @@ const initialized = ref(false)
 const loading = ref(false)
 const error = ref('')
 const success = ref('')
+const passLoading = ref(false)
+const passError = ref('')
+const passSuccess = ref('')
+const passBlocked = ref(false)
 
 const showGenderOther = computed(() => gender.value === 'other')
 const showHeardOther = computed(() => heardAboutUs.value === 'other')
@@ -154,6 +158,46 @@ async function submit() {
 }
 
 function goBack() { router.back() }
+
+const currentPassword = ref('')
+const newPassword = ref('')
+const confirmPassword = ref('')
+const passwordValid = computed(() => {
+  if (!currentPassword.value || !newPassword.value || !confirmPassword.value) return false
+  if (newPassword.value.length < 8) return false
+  if (newPassword.value === currentPassword.value) return false
+  if (newPassword.value !== confirmPassword.value) return false
+  return true
+})
+
+async function changePassword() {
+  passError.value = ''
+  passSuccess.value = ''
+  if (!userStore.id) { passError.value = 'Usuario no identificado'; return }
+  if (!passwordValid.value) { passError.value = 'Revisa los campos'; return }
+  passLoading.value = true
+  try {
+    const res = await userStore.changePassword(String(userStore.id), { currentPassword: currentPassword.value, newPassword: newPassword.value })
+    passSuccess.value = res.message || 'Contraseña actualizada'
+    currentPassword.value = ''
+    newPassword.value = ''
+    confirmPassword.value = ''
+  } catch (e) {
+    const isObj = (v: unknown): v is { status?: number; message?: string } => typeof v === 'object' && v !== null
+    if (isObj(e) && (e as { status?: number }).status === 401) {
+      passError.value = 'La contraseña actual no es correcta.'
+      passBlocked.value = true
+    } else {
+      passError.value = toMessage(e)
+    }
+  } finally {
+    passLoading.value = false
+  }
+}
+
+watch(currentPassword, () => {
+  if (passBlocked.value) { passBlocked.value = false; passError.value = '' }
+})
 </script>
 
 <template>
@@ -214,6 +258,28 @@ function goBack() { router.back() }
         <span class="loading" v-if="loading">Guardando...</span>
         <span class="error" v-if="error">{{ error }}</span>
         <span class="success" v-if="success">{{ success }}</span>
+      </div>
+    </form>
+    <div class="divider"></div>
+    <form class="form" @submit.prevent="changePassword">
+      <div class="field">
+        <label>Contraseña actual</label>
+        <input type="password" v-model="currentPassword" placeholder="Tu contraseña actual" :disabled="passLoading || passBlocked" />
+        <p v-if="passBlocked" class="hint error">La contraseña actual no coincide. Vuelve a intentarlo.</p>
+      </div>
+      <div class="field">
+        <label>Nueva contraseña</label>
+        <input type="password" v-model="newPassword" placeholder="Mínimo 8 caracteres" :disabled="passLoading || passBlocked" />
+      </div>
+      <div class="field">
+        <label>Confirmar nueva contraseña</label>
+        <input type="password" v-model="confirmPassword" placeholder="Repite la nueva contraseña" :disabled="passLoading || passBlocked" />
+      </div>
+      <div class="actions">
+        <button class="btn primary" type="submit" :disabled="passBlocked || passLoading || !passwordValid">Actualizar contraseña</button>
+        <span class="loading" v-if="passLoading">Actualizando...</span>
+        <span class="error" v-if="passError">{{ passError }}</span>
+        <span class="success" v-if="passSuccess">{{ passSuccess }}</span>
       </div>
     </form>
   </div>
@@ -301,9 +367,9 @@ input::placeholder {
   color: $alert-error;
 }
 
-.success {
-  color: $alert-success;
-}
+.success { color: $alert-success; }
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
+.hint { font-size: 12px; }
 
 .loading-pane {
   display: flex;
