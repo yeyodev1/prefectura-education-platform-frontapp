@@ -24,13 +24,13 @@ onMounted(async () => {
   quizzesStore.clear()
   console.log('[QuizView] init', { courseId: courseId.value, quizId: quizId.value })
   if (quizId.value) {
-    await quizzesStore.loadById(courseId.value, quizId.value)
+    await quizzesStore.loadById(courseId.value, quizId.value, { userId: userId.value })
     console.log('[QuizView] loadById done', { hasQuiz: !!quizzesStore.currentQuiz, error: quizzesStore.error })
   } else {
     await quizzesStore.loadByCourse(courseId.value)
     const first = quizzesStore.quizzes[0]
     if (first?._id) {
-      await quizzesStore.loadById(courseId.value, first._id)
+      await quizzesStore.loadById(courseId.value, first._id, { userId: userId.value })
       console.log('[QuizView] load first quiz done', { quizId: first?._id, hasQuiz: !!quizzesStore.currentQuiz, error: quizzesStore.error })
     }
   }
