@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import usersService, { type UpdateUserBody, type UpdateUserResponse, type Gender, type HeardAboutUs } from '@/services/users.service'
 
 export interface UserState {
   id: string | number | null
@@ -6,6 +7,12 @@ export interface UserState {
   email: string | null
   isAuthenticated: boolean
   teachableUserId?: string | number | null
+  gender?: Gender | null
+  genderOther?: string | null
+  dateOfBirth?: string | null
+  heardAboutUs?: HeardAboutUs | null
+  heardAboutUsOther?: string | null
+  points?: number | null
 }
 
 export const useUserStore = defineStore('user', {
@@ -15,6 +22,12 @@ export const useUserStore = defineStore('user', {
     email: null,
     isAuthenticated: false,
     teachableUserId: null,
+    gender: null,
+    genderOther: null,
+    dateOfBirth: null,
+    heardAboutUs: null,
+    heardAboutUsOther: null,
+    points: null,
   }),
   actions: {
     hydrate() {
@@ -44,8 +57,32 @@ export const useUserStore = defineStore('user', {
       this.email = null
       this.isAuthenticated = false
       this.teachableUserId = null
+      this.gender = null
+      this.genderOther = null
+      this.dateOfBirth = null
+      this.heardAboutUs = null
+      this.heardAboutUsOther = null
+      this.points = null
       try { localStorage.removeItem('user_id') } catch {}
       try { localStorage.removeItem('teachable_user_id') } catch {}
+    }
+    ,
+    async updateById(userId: string | number, body: UpdateUserBody): Promise<UpdateUserResponse> {
+      const { data } = await usersService.updateById<UpdateUserResponse>(userId, body)
+      const u = data.user
+      this.name = u.name
+      this.email = u.email
+      if (u.teachableUserId !== undefined) {
+        this.teachableUserId = u.teachableUserId ?? null
+        try { if (u.teachableUserId !== null) localStorage.setItem('teachable_user_id', String(u.teachableUserId)) } catch {}
+      }
+      this.gender = u.gender
+      this.genderOther = u.genderOther
+      this.dateOfBirth = u.dateOfBirth
+      this.heardAboutUs = u.heardAboutUs
+      this.heardAboutUsOther = u.heardAboutUsOther
+      this.points = typeof u.points === 'number' ? u.points : this.points ?? null
+      return data
     }
   }
 })
