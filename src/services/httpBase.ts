@@ -186,6 +186,7 @@ class APIBase {
         throw {
           status: error.response.status,
           message: error.response.data?.message || error.message,
+          data: error.response.data,
         }
       }
       throw { status: 500, message: 'Unknown error' }
