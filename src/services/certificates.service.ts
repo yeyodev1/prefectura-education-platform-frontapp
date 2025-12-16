@@ -44,6 +44,14 @@ class CertificatesService extends APIBase {
   async generate<T = { message: string, certificateId: string, pdfUrl: string }>(courseId: string | number, body: GenerateCertificateBody, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.post<T>(`courses/${courseId}/certificate`, body, undefined, config)
   }
+
+  /**
+   * Verify certificate by ID
+   * GET /courses/verify/:certificateId
+   */
+  async verify<T = { valid: boolean, certificate: Certificate, user: any, course: any }>(certificateId: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+    return this.get<T>(`courses/verify/${certificateId}`, undefined, config)
+  }
 }
 
 export default new CertificatesService()
