@@ -89,6 +89,13 @@ const modalMessage = computed(() => `Podrás reintentar en ${formatCountdown(rem
 function closeModal() { exitOpen.value = false }
 function onModalStay() { exitOpen.value = false }
 function onModalLeave() { if (courseId.value) router.push(`/courses/${courseId.value}`) }
+watch(() => quizzesStore.approvedAlready, (approved) => {
+  if (approved && courseId.value) {
+    const qid = quizId.value || quizzesStore.currentQuiz?._id
+    if (qid) router.replace(`/courses/${courseId.value}/quizzes/${qid}/result`)
+    else router.replace(`/courses/${courseId.value}/quiz/result`)
+  }
+}, { immediate: true })
 watch(blocked, (b) => { exitOpen.value = b })
 </script>
 
