@@ -2,12 +2,14 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuizzesStore } from '@/stores/quizzes'
+import { useCertificatesStore } from '@/stores/certificates'
 import ExitIntentModal from '@/components/ExitIntentModal.vue'
 import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
 const router = useRouter()
 const store = useQuizzesStore()
+const certStore = useCertificatesStore()
 const userStore = useUserStore()
 
 const courseId = computed(() => route.params.id as string)
@@ -22,28 +24,46 @@ const approvedAlready = computed(() => store.approvedAlready)
 const retryAfterMs = computed(() => store.retryAfterMs)
 const retryAvailableAt = computed(() => store.retryAvailableAt)
 const errorMsg = computed(() => store.error)
+const certStatus = computed(() => certStore.currentStatus)
+const isCertLoading = computed(() => certStore.loading || certStore.generating)
 
 const nowMs = ref(Date.now())
 let timer: number | null = null
 onMounted(async () => {
   timer = window.setInterval(() => { nowMs.value = Date.now() }, 1000)
   if (!courseId.value) return
+  
+  // 1. Load Quiz Result Logic
   const hasResult = !!store.lastResult
-  if (hasResult) return
-  try {
-    if (quizId.value) {
-      await store.loadById(courseId.value, quizId.value, { userId: userId.value })
-      console.log('[QuizResult] loadById done', { hasQuiz: !!store.currentQuiz, error: store.error, retryAfterMs: store.retryAfterMs, retryAvailableAt: store.retryAvailableAt, approvedAlready: store.approvedAlready })
-    } else {
-      await store.loadByCourse(courseId.value)
-      const first = store.quizzes[0]
-      if (first?._id) {
-        await store.loadById(courseId.value, first._id, { userId: userId.value })
-        console.log('[QuizResult] load first quiz done', { quizId: first?._id, error: store.error, retryAfterMs: store.retryAfterMs, retryAvailableAt: store.retryAvailableAt, approvedAlready: store.approvedAlready })
+  if (!hasResult) {
+    try {
+      if (quizId.value) {
+        await store.loadById(courseId.value, quizId.value, { userId: userId.value })
+        console.log('[QuizResult] loadById done', { hasQuiz: !!store.currentQuiz, error: store.error, retryAfterMs: store.retryAfterMs, retryAvailableAt: store.retryAvailableAt, approvedAlready: store.approvedAlready })
+      } else {
+        await store.loadByCourse(courseId.value)
+        const first = store.quizzes[0]
+        if (first?._id) {
+          await store.loadById(courseId.value, first._id, { userId: userId.value })
+          console.log('[QuizResult] load first quiz done', { quizId: first?._id, error: store.error, retryAfterMs: store.retryAfterMs, retryAvailableAt: store.retryAvailableAt, approvedAlready: store.approvedAlready })
+        }
       }
+    } catch (e) {
+      console.error('[QuizResult] load error', e)
     }
-  } catch (e) {
-    console.error('[QuizResult] load error', e)
+  }
+
+  // 2. Certificate Logic
+  const passed = store.approvedAlready || (store.lastResult && store.lastResult.passed)
+  if (passed && userId.value) {
+    try {
+      await certStore.fetchStatus(courseId.value, userId.value)
+      if (certStore.currentStatus?.passed && !certStore.currentStatus.certificate) {
+         await certStore.generate(courseId.value, userId.value)
+      }
+    } catch (e) {
+      console.error('[QuizResult] certificate error', e)
+    }
   }
 })
 onUnmounted(() => { if (timer) { clearInterval(timer); timer = null } })
@@ -77,6 +97,11 @@ function formatCountdown(ms: number): string {
 
 function goToCourse() {
   if (courseId.value) router.push(`/courses/${courseId.value}`)
+}
+
+function downloadCertificate() {
+  const url = certStatus.value?.certificate?.pdfUrl
+  if (url) window.open(url, '_blank')
 }
 
 function retryQuiz() {
@@ -120,6 +145,12 @@ function onModalLeave() { if (courseId.value) router.push(`/courses/${courseId.v
         <p class="rule"><i class="fa-solid fa-circle-info" /> Una vez aprobado, no es posible repetir el quiz.</p>
         <div class="actions">
           <button class="btn primary" type="button" @click="goToCourse">Volver al curso</button>
+          <button v-if="certStatus?.certificate" class="btn secondary" type="button" @click="downloadCertificate">
+            <i class="fa-solid fa-download" /> Certificado
+          </button>
+          <button v-else-if="isCertLoading" class="btn secondary" type="button" disabled>
+            <i class="fa-solid fa-spinner fa-spin" /> Generando...
+          </button>
         </div>
       </div>
 
@@ -137,7 +168,15 @@ function onModalLeave() { if (courseId.value) router.push(`/courses/${courseId.v
         </div>
         <div class="actions">
           <button class="btn primary" type="button" @click="goToCourse">Volver al curso</button>
-          <button class="btn secondary" type="button" @click="retryQuiz">Reintentar quiz</button>
+          <template v-if="result.passed">
+            <button v-if="certStatus?.certificate" class="btn secondary" type="button" @click="downloadCertificate">
+              <i class="fa-solid fa-download" /> Certificado
+            </button>
+            <button v-else-if="isCertLoading" class="btn secondary" type="button" disabled>
+              <i class="fa-solid fa-spinner fa-spin" /> Generando...
+            </button>
+          </template>
+          <button v-else class="btn secondary" type="button" @click="retryQuiz">Reintentar quiz</button>
         </div>
       </div>
 
