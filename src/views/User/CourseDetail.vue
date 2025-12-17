@@ -110,8 +110,14 @@ async function startQuiz() {
                 <span class="author-name"><i class="fa-solid fa-user" /> {{ store.currentCourse.author_bio.name }}</span>
               </div>
               <div class="actions">
-                <button class="cta-start" type="button" :disabled="!firstLectureId" @click="firstLectureId && openLecture(firstLectureId)"><i class="fa-solid fa-play" /> Iniciar clase</button>
-                <button class="cta-start" type="button" @click="startQuiz"><i class="fa-solid fa-list-check" /> Iniciar quiz</button>
+                <button class="cta-start" type="button" :disabled="!firstLectureId" @click="firstLectureId && openLecture(firstLectureId)">
+                  <i class="fa-solid fa-play" /> 
+                  <span>Iniciar clase</span>
+                </button>
+                <button class="cta-quiz" type="button" @click="startQuiz">
+                  <i class="fa-solid fa-list-check" /> 
+                  <span>Iniciar quiz</span>
+                </button>
               </div>
             </div>
           </div>
@@ -185,10 +191,61 @@ async function startQuiz() {
 .subtitle { color: color-mix(in oklab, var(--text), transparent 40%); margin: 0; font-size: 15px; line-height: 1.6; }
 .author { display: inline-flex; align-items: center; gap: 8px; color: color-mix(in oklab, var(--text), transparent 60%); font-size: 14px; }
 .author-name { color: var(--accent); }
-.actions { margin-top: 8px; }
-.cta-start { background: $FUDMASTER-PINK; color: $white; border: none; border-radius: 999px; padding: 10px 16px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
-.cta-start:disabled { background: color-mix(in oklab, var(--bg), var(--text) 6%); color: color-mix(in oklab, var(--text), transparent 50%); border: 1px solid var(--border); cursor: not-allowed; }
-.cta-start:hover { filter: brightness(0.95); }
+.actions { 
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cta-start, .cta-quiz { 
+  border: none; 
+  border-radius: 999px; 
+  padding: 12px 20px; 
+  font-size: 15px; 
+  font-weight: 600; 
+  cursor: pointer; 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 8px; 
+  transition: all 0.2s ease;
+}
+
+.cta-start {
+  background: $FUDMASTER-PINK; 
+  color: $white; 
+  box-shadow: 0 4px 12px rgba($FUDMASTER-PINK, 0.3);
+
+  &:hover { 
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &:disabled { 
+    background: color-mix(in oklab, var(--bg), var(--text) 6%); 
+    color: color-mix(in oklab, var(--text), transparent 50%); 
+    border: 1px solid var(--border); 
+    cursor: not-allowed; 
+    box-shadow: none;
+    transform: none;
+  }
+}
+
+.cta-quiz {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+
+  &:hover {
+    background: var(--bg-hover, rgba(0,0,0,0.05));
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+}
 
 .quiz-section { margin-top: 16px; }
 
