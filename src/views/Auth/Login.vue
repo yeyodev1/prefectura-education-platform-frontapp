@@ -90,7 +90,7 @@ async function submit() {
           <div class="form-group">
             <div class="label-row">
               <label for="password">Contraseña</label>
-              <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+              <router-link to="/request-password-recovery" class="forgot-link">¿Olvidaste tu contraseña?</router-link>
             </div>
             <div class="input-wrapper">
               <i class="fa-solid fa-lock icon" />

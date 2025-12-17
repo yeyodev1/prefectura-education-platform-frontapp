@@ -122,6 +122,22 @@ const routes: Array<RouteRecordRaw> = [
     ]
   },
   {
+    path: '/request-password-recovery',
+    component: PublicLayout,
+    meta: { title: 'Recuperar Contraseña' },
+    children: [
+      { path: '', component: () => import('../views/Auth/RequestPasswordRecovery.vue') }
+    ]
+  },
+  {
+    path: '/reset-password',
+    component: PublicLayout,
+    meta: { title: 'Restablecer Contraseña' },
+    children: [
+      { path: '', component: () => import('../views/Auth/ResetPassword.vue') }
+    ]
+  },
+  {
     path: '/checkout',
     component: PublicLayout,
     meta: { title: 'Checkout' },
