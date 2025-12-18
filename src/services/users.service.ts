@@ -41,6 +41,8 @@ export type HeardAboutUs =
   | 'teachable_marketplace'
   | 'other'
 
+export type AccountType = 'free' | 'premium' | 'student' | 'founder'
+
 export interface UpdateUserBody {
   name?: string
   email?: string
@@ -90,7 +92,7 @@ export interface SafeUser {
   heardAboutUs: HeardAboutUs | null
   heardAboutUsOther: string | null
   points: number
-  plan?: 'free' | 'founder' // Campo agregado para distinguir tipo de usuario
+  accountType: AccountType
   courses: CourseAccess[]
   careers: CareerAccess[]
   payments: PaymentItem[]
