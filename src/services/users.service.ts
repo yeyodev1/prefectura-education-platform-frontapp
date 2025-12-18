@@ -41,6 +41,8 @@ export type HeardAboutUs =
   | 'teachable_marketplace'
   | 'other'
 
+export type AccountType = 'free' | 'premium' | 'student' | 'founder'
+
 export interface UpdateUserBody {
   name?: string
   email?: string
@@ -90,6 +92,7 @@ export interface SafeUser {
   heardAboutUs: HeardAboutUs | null
   heardAboutUsOther: string | null
   points: number
+  accountType: AccountType
   courses: CourseAccess[]
   careers: CareerAccess[]
   payments: PaymentItem[]
@@ -117,6 +120,23 @@ export interface ChangePasswordResponse {
   message: string
 }
 
+export interface RequestPasswordRecoveryBody {
+  email: string
+}
+
+export interface RequestPasswordRecoveryResponse {
+  message: string
+}
+
+export interface ResetPasswordBody {
+  token: string
+  newPassword: string
+}
+
+export interface ResetPasswordResponse {
+  message: string
+}
+
 class UsersService extends APIBase {
   async create<T>(body: CreateUserBody, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.post<T>('users', body, undefined, config)
@@ -124,6 +144,21 @@ class UsersService extends APIBase {
 
   async login<T = LoginResponse>(body: LoginBody, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.post<T>('users/login', body, { 'Content-Type': 'application/json' }, config)
+  }
+
+  /**
+   * Inicia sesión o registra un usuario mediante Google (Firebase Auth).
+   * Envía el ID Token de Firebase al backend para verificación y creación de sesión.
+   * 
+   * @param firebaseToken El ID Token obtenido de result.user.getIdToken()
+   */
+  async googleLogin<T = LoginResponse>(firebaseToken: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+    // Sobrescribimos los headers para enviar el token de Firebase en lugar del token de la app
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${firebaseToken}`
+    }
+    return this.post<T>('users/google-login', {}, headers, config)
   }
 
   async logout(): Promise<void> {
@@ -151,6 +186,14 @@ class UsersService extends APIBase {
 
   async updateById<T = UpdateUserResponse>(userId: string | number, body: UpdateUserBody): Promise<AxiosResponse<T>> {
     return this.patch<T>(`users/${userId}`, body)
+  }
+
+  async requestPasswordRecovery<T = RequestPasswordRecoveryResponse>(body: RequestPasswordRecoveryBody): Promise<AxiosResponse<T>> {
+    return this.post<T>('users/request-password-recovery', body)
+  }
+
+  async resetPassword<T = ResetPasswordResponse>(body: ResetPasswordBody): Promise<AxiosResponse<T>> {
+    return this.post<T>('users/reset-password', body)
   }
 }
 

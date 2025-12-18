@@ -122,6 +122,22 @@ const routes: Array<RouteRecordRaw> = [
     ]
   },
   {
+    path: '/request-password-recovery',
+    component: PublicLayout,
+    meta: { title: 'Recuperar Contraseña' },
+    children: [
+      { path: '', component: () => import('../views/Auth/RequestPasswordRecovery.vue') }
+    ]
+  },
+  {
+    path: '/reset-password',
+    component: PublicLayout,
+    meta: { title: 'Restablecer Contraseña' },
+    children: [
+      { path: '', component: () => import('../views/Auth/ResetPassword.vue') }
+    ]
+  },
+  {
     path: '/checkout',
     component: PublicLayout,
     meta: { title: 'Checkout' },
@@ -136,6 +152,14 @@ const routes: Array<RouteRecordRaw> = [
     meta: { title: 'Respuesta de pago' },
     children: [
       { path: '', component: PayResponse }
+    ]
+  },
+  {
+    path: '/pay-cancel',
+    component: PublicLayout,
+    meta: { title: 'Pago Cancelado' },
+    children: [
+      { path: '', component: () => import('../views/PayCancel.vue') }
     ]
   },
   {
@@ -165,7 +189,7 @@ router.beforeEach((to) => {
     return { path: '/landing-page', replace: true }
   }
 
-  if ((to.path === '/login' || to.path === '/checkout') && hasToken) {
+  if (to.path === '/login' && hasToken) {
     return { path: '/', replace: true }
   }
 })

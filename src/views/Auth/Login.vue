@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { signInWithPopup } from 'firebase/auth' // Importamos signInWithPopup
 import usersService, { type LoginBody, type LoginResponse } from '@/services/users.service'
 import { useUserStore } from '@/stores/user'
+import { auth, provider } from '@/firebase' // Importamos nuestra configuración
 
 const router = useRouter()
 const route = useRoute()
@@ -11,8 +13,9 @@ const userStore = useUserStore()
 // State
 const email = ref(String(route.query.email || ''))
 const password = ref('')
-const showPassword = ref(false) // Nuevo: Toggle password
+const showPassword = ref(false)
 const loading = ref(false)
+const loadingGoogle = ref(false) // Nuevo estado para Google
 const error = ref('')
 const info = ref(String(route.query.msg || ''))
 
@@ -24,13 +27,65 @@ function togglePassword() {
   showPassword.value = !showPassword.value
 }
 
+// Lógica de Login con Google
+async function loginWithGoogle() {
+  loadingGoogle.value = true
+  error.value = ''
+  
+  try {
+    // 1. Abrir Popup de Google
+    const result = await signInWithPopup(auth, provider)
+    const user = result.user
+    
+    // 2. Obtener Token (Este token se enviará al Backend luego)
+    const token = await user.getIdToken()
+    
+    console.log('🚀 Google User:', user)
+    console.log('🔐 Firebase ID Token:', token)
+    
+    // 3. Enviar token al Backend para validar y crear sesión
+    const { data } = await usersService.googleLogin<LoginResponse>(token)
+    
+    // 4. Guardar sesión y redirigir (Igual que en login normal)
+    localStorage.setItem('access_token', data.token)
+    try {
+      // Manejo flexible de IDs según vengan del backend (_id, id, user_id)
+      const uid = (data.user as any)?.id || (data.user as any)?._id || (data.user as any)?.user_id
+      const name = (data.user as any)?.name || null
+      const emailVal = (data.user as any)?.email || null
+      
+      if (uid) localStorage.setItem('user_id', String(uid))
+      userStore.setUser({ id: uid, name, email: emailVal })
+    } catch (err) {
+      console.warn('Error parseando usuario:', err)
+    }
+    
+    router.push('/')
+    
+  } catch (e: any) {
+    console.error('Error Google Login:', e)
+    if (e.code === 'auth/popup-closed-by-user') {
+      // El usuario cerró el popup, no mostramos error rojo
+      return
+    }
+    // Si el error viene del backend (axios)
+    if (e.message && !e.code) { 
+         error.value = e.message
+    } else {
+         error.value = 'No se pudo iniciar sesión con Google. Inténtalo de nuevo.'
+    }
+  } finally {
+    loadingGoogle.value = false
+  }
+}
+
 async function submit() {
   if (!email.value || !password.value) return
   loading.value = true
   error.value = ''
   
   try {
-    const body: LoginBody = { email: email.value.trim(), password: password.value }
+    const body: LoginBody = { email: email.value.trim().toLowerCase(), password: password.value.trim() }
     const { data } = await usersService.login<LoginResponse>(body)
     
     localStorage.setItem('access_token', data.token)
@@ -90,7 +145,7 @@ async function submit() {
           <div class="form-group">
             <div class="label-row">
               <label for="password">Contraseña</label>
-              <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+              <router-link to="/request-password-recovery" class="forgot-link">¿Olvidaste tu contraseña?</router-link>
             </div>
             <div class="input-wrapper">
               <i class="fa-solid fa-lock icon" />
@@ -108,11 +163,21 @@ async function submit() {
             </div>
           </div>
 
-          <button class="submit-btn" type="submit" :disabled="loading">
+          <button class="submit-btn" type="submit" :disabled="loading || loadingGoogle">
             <span v-if="!loading">Iniciar Sesión <i class="fa-solid fa-arrow-right-to-bracket" /></span>
             <span v-else><i class="fa-solid fa-spinner fa-spin" /> Verificando...</span>
           </button>
         </form>
+
+        <div class="divider">
+          <span>O continúa con</span>
+        </div>
+
+        <button type="button" class="google-btn" @click="loginWithGoogle" :disabled="loading || loadingGoogle">
+          <i v-if="loadingGoogle" class="fa-solid fa-spinner fa-spin" />
+          <i v-else class="fa-brands fa-google icon" />
+          <span>Google</span>
+        </button>
       </div>
 
       <div class="card-footer">
@@ -305,6 +370,63 @@ $alert-info: #3b82f6;
   }
   
   &:disabled { opacity: 0.7; cursor: not-allowed; }
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  width: 100%;
+  
+  &::before, &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba($FUDMASTER-DARK, 0.1);
+  }
+  
+  span {
+    padding: 0 10px;
+    color: rgba($FUDMASTER-DARK, 0.5);
+    font-size: 13px;
+    font-weight: 500;
+  }
+}
+
+.google-btn {
+  width: 100%;
+  background: $white;
+  color: $FUDMASTER-DARK;
+  border: 1px solid rgba($FUDMASTER-DARK, 0.2);
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.2s;
+  
+  &:hover:not(:disabled) {
+    background: #f8f9fa;
+    border-color: rgba($FUDMASTER-DARK, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .icon {
+    font-size: 18px;
+    // Color oficial de Google si se desea, o mantener minimalista
+    // color: #DB4437; 
+  }
 }
 
 // Footer seccion (Upsell)
