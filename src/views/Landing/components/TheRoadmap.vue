@@ -6,7 +6,7 @@ const features = [
   { name: "Nuevos Cursos Todas las Semanas", founder: true, subscriber: true },
   { name: "Comunidad Privada de Dueños", founder: true, subscriber: true },
   { name: "Auditoría 1 a 1 si no tienes resultados", founder: true, subscriber: false }, // GOLPE BAJO
-  { name: "Precio Bloqueado de por Vida", founder: true, subscriber: false },
+  { name: "Acceso a todos los cursos de por Vida", founder: true, subscriber: false },
 ];
 </script>
 
