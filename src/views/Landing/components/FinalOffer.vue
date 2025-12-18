@@ -46,7 +46,7 @@ function goToCheckout() { router.push('/checkout') }
   
 
   .offer-section {
-    padding: 1rem 1rem 5rem 1rem;
+    padding: 3rem 1rem 5rem 1rem;
     background-color: #020617; // Dark bg
     display: flex;
     justify-content: center;
