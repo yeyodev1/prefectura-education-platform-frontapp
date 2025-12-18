@@ -8,6 +8,8 @@ import usersService, {
 	type ChangePasswordResponse,
 	type RequestPasswordRecoveryResponse,
 	type ResetPasswordResponse,
+	type GetUserResponse,
+	type AccountType,
 } from "@/services/users.service";
 
 export interface UserState {
@@ -22,6 +24,7 @@ export interface UserState {
 	heardAboutUs?: HeardAboutUs | null;
 	heardAboutUsOther?: string | null;
 	points?: number | null;
+	accountType: AccountType | null;
 }
 
 export const useUserStore = defineStore("user", {
@@ -37,21 +40,25 @@ export const useUserStore = defineStore("user", {
 		heardAboutUs: null,
 		heardAboutUsOther: null,
 		points: null,
+		accountType: null,
 	}),
 	actions: {
 		hydrate() {
 			const token = localStorage.getItem("access_token");
 			const id = localStorage.getItem("user_id");
 			const t = localStorage.getItem("teachable_user_id");
+			const at = localStorage.getItem("user_account_type"); // Recuperar accountType
 			this.isAuthenticated = !!token;
 			this.id = id || null;
 			this.teachableUserId = t || null;
+			this.accountType = (at as AccountType) || null;
 		},
 		setUser(payload: {
 			id?: string | number;
 			name?: string;
 			email?: string;
 			teachableUserId?: string | number;
+			accountType?: AccountType;
 		}) {
 			if (payload?.id !== undefined && payload?.id !== null) {
 				this.id = payload.id;
@@ -73,6 +80,12 @@ export const useUserStore = defineStore("user", {
 					);
 				} catch {}
 			}
+			if (payload?.accountType) {
+				this.accountType = payload.accountType;
+				try {
+					localStorage.setItem("user_account_type", payload.accountType);
+				} catch {}
+			}
 			this.isAuthenticated = true;
 		},
 		clear() {
@@ -87,11 +100,18 @@ export const useUserStore = defineStore("user", {
 			this.heardAboutUs = null;
 			this.heardAboutUsOther = null;
 			this.points = null;
+			this.accountType = null;
 			try {
 				localStorage.removeItem("user_id");
 			} catch {}
 			try {
 				localStorage.removeItem("teachable_user_id");
+			} catch {}
+			try {
+				localStorage.removeItem("user_account_type");
+			} catch {}
+			try {
+				localStorage.removeItem("user_plan"); // Limpiar legacy
 			} catch {}
 		},
 		async updateById(
@@ -113,6 +133,12 @@ export const useUserStore = defineStore("user", {
 							"teachable_user_id",
 							String(u.teachableUserId)
 						);
+				} catch {}
+			}
+			if (u.accountType) {
+				this.accountType = u.accountType;
+				try {
+					localStorage.setItem("user_account_type", u.accountType);
 				} catch {}
 			}
 			this.gender = u.gender;
@@ -152,6 +178,28 @@ export const useUserStore = defineStore("user", {
 				newPassword,
 			});
 			return data;
+		},
+		async fetchUser(id: string | number) {
+			try {
+				const { data } = await usersService.getById<GetUserResponse>(id);
+				const u = data.user;
+				this.setUser({
+					id: u._id,
+					name: u.name,
+					email: u.email,
+					teachableUserId: u.teachableUserId,
+					accountType: u.accountType,
+				});
+				// Actualizar campos adicionales que no están en setUser
+				this.gender = u.gender;
+				this.genderOther = u.genderOther;
+				this.dateOfBirth = u.dateOfBirth;
+				this.heardAboutUs = u.heardAboutUs;
+				this.heardAboutUsOther = u.heardAboutUsOther;
+				this.points = u.points;
+			} catch (error) {
+				console.error("Error fetching user data:", error);
+			}
 		},
 	},
 });

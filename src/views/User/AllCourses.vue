@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { onMounted, ref, watch, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useCoursesStore } from '@/stores/courses'
+import { useUserStore } from '@/stores/user'
+import UpgradeBanner from '@/components/UpgradeBanner.vue'
 import { makePlaceholders } from '@/mocks/courses.mock'
 
 const store = useCoursesStore()
+const userStore = useUserStore()
+const router = useRouter()
 
 function sanitizeUrl(url?: string) {
   return (url || '').toString().replace(/`/g, '').trim()
@@ -74,6 +79,11 @@ const displayCourses = computed(() => {
   return [...list, ...placeholders]
 })
 
+const isFreeUser = computed(() => {
+  if (!userStore.id) userStore.hydrate()
+  return userStore.accountType === 'free'
+})
+
 const modalOpen = ref(false)
 const modalTitle = ref('')
 function openUpcoming(c: any) { modalTitle.value = String(c?.name || c?.title || 'Próximamente'); modalOpen.value = true }
@@ -99,6 +109,9 @@ window.setInterval(() => {
       <div class="upcoming-notice">
         <i class="fa-regular fa-bell" /> Pronto estarán disponibles más cursos durante este mes.
       </div>
+      
+      <!-- CTA para usuarios Free -->
+      <UpgradeBanner />
 
       <div v-if="store.loading" class="loading">
         <i class="fa-solid fa-spinner fa-spin" /> Cargando cursos...

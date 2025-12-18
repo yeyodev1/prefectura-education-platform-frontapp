@@ -1,39 +1,46 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
-import { useCareersStore } from '@/stores/careers'
-import { useCoursesStore } from '@/stores/courses'
+import { onMounted, ref, computed } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { useCoursesStore } from '@/stores/courses'
+import { useCareersStore } from '@/stores/careers'
+import UpgradeBanner from '@/components/UpgradeBanner.vue'
 
-const props = defineProps({
-  menuIsOpen: {
-    type: Boolean,
-    required: true,
-  },
-});
-
-const menu = [
-  { name: 'Mis cursos', link: '/courses', icon: 'fa-solid fa-book' },
-  { name: 'Escuelas', link: '/careers', icon: 'fa-solid fa-graduation-cap' },
-  { name: 'Certificados', link: '/certificates', icon: 'fa-solid fa-certificate' },
-  { name: 'Todos los cursos', link: '/courses/all', icon: 'fa-solid fa-list' },
-  { name: 'Editar perfil', link: '/profile/edit', icon: 'fa-solid fa-user-pen' },
-];
-
-const route = useRoute()
-function isSelected(link: string) {
-  return route.path === link || route.path.startsWith(link + '/')
-}
-
-const careersStore = useCareersStore()
-const coursesStore = useCoursesStore()
 const userStore = useUserStore()
-
-const careersCount = computed(() => (Array.isArray(careersStore.careers) ? careersStore.careers.length : 0))
-const enrolledCount = computed(() => (Array.isArray(coursesStore.enrolledCourses) ? coursesStore.enrolledCourses.length : 0))
+const coursesStore = useCoursesStore()
+const careersStore = useCareersStore()
+const router = useRouter()
 
 const isDark = ref(false)
-function applyTheme() { document.documentElement.setAttribute('data-theme', isDark.value ? 'dark' : 'light') }
+const props = defineProps({
+  menuIsOpen: { type: Boolean, default: false }
+})
+
+const enrolledCount = computed(() => {
+  return Array.isArray(coursesStore.enrolledCourses) ? coursesStore.enrolledCourses.length : 0
+})
+
+const careersCount = computed(() => {
+  return Array.isArray(careersStore.careers) ? careersStore.careers.length : 0
+})
+
+const menu = [
+  { name: 'Inicio', link: '/', icon: 'fa-solid fa-house' },
+  { name: 'Mis Cursos', link: '/courses', icon: 'fa-solid fa-book-open' },
+  { name: 'Explorar', link: '/courses/all', icon: 'fa-solid fa-compass' },
+  { name: 'Escuelas', link: '/careers', icon: 'fa-solid fa-graduation-cap' },
+  { name: 'Certificados', link: '/certificates', icon: 'fa-solid fa-award' },
+  { name: 'Mi Perfil', link: '/profile/edit', icon: 'fa-solid fa-user-gear' },
+]
+
+function isSelected(link: string) {
+  return router.currentRoute.value.path === link || (link !== '/' && router.currentRoute.value.path.startsWith(link))
+}
+
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', isDark.value ? 'dark' : 'light')
+}
+
 function toggleTheme() { isDark.value = !isDark.value; localStorage.setItem('theme', isDark.value ? 'dark' : 'light'); applyTheme() }
 onMounted(async () => {
   const t = localStorage.getItem('theme'); isDark.value = t === 'dark'; applyTheme()
@@ -57,9 +64,15 @@ onMounted(async () => {
         </li>
       </ul>
     </div>
-    <button class="setting-button" type="button" @click="toggleTheme">
-      <i :class="isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon'" />
-    </button>
+
+    <div class="user-sidebar-footer">
+      <!-- CTA para usuarios Free en el Sidebar -->
+      <UpgradeBanner variant="sidebar" :compact="menuIsOpen" />
+      
+      <button class="setting-button" type="button" @click="toggleTheme">
+        <i :class="isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon'" />
+      </button>
+    </div>
   </div>
 </template>
 
@@ -73,28 +86,49 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    
-
-    .setting-button {
-      background: none;
-      border: none;
-      padding: 12px;
-      cursor: pointer;
-      font-size: 18px;
-      color: var(--text);
-      margin-bottom: 12px;
-
-      &:hover {
-        color: var(--accent);
-      }
-    }
 
     &.active {
       width: 64px;
+      
+      .user-sidebar-footer {
+        padding: 8px;
+        align-items: center;
+      }
     }
 
+    &-wrapper {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    &-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px;
+      border-top: 1px solid transparent; // Optional separation
+    }
+
+    .setting-button {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      color: var(--text);
+      font-size: 18px;
+      transition: all 0.2s;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      &:hover {
+        background-color: color-mix(in oklab, var(--text), transparent 94%);
+      }
+    }
   }
-  
 
   &-menu {
     list-style: none;
@@ -155,7 +189,6 @@ onMounted(async () => {
         font-size: 11px;
         margin-left: auto;
       }
-
     }
   }
 }

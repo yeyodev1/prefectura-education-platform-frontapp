@@ -53,9 +53,13 @@ const firstLectureId = computed(() => {
 
 onMounted(async () => {
   if (id.value) {
-    await store.fetchById(id.value)
-    if (userId.value) {
-      await store.fetchProgress(id.value, userId.value)
+    try {
+      await store.fetchById(id.value)
+      if (userId.value) {
+        await store.fetchProgress(id.value, userId.value)
+      }
+    } catch (e) {
+      console.error('Error loading course details', e)
     }
   }
 })
@@ -84,6 +88,18 @@ async function startQuiz() {
       </div>
       <div v-if="store.loading" class="loading">
         <i class="fa-solid fa-spinner fa-spin" /> Cargando curso...
+      </div>
+
+      <div v-else-if="store.errorCode === 404 || store.error === 'Not Found'" class="no-access">
+        <div class="no-access-icon">
+          <i class="fa-solid fa-lock" />
+        </div>
+        <h3>Whoops, no tienes acceso aquí</h3>
+        <p>Pero puedes acceder a la plataforma y desbloquear todo el contenido.</p>
+        <button class="cta-start" type="button" @click="router.push('/checkout')">
+          <i class="fa-solid fa-crown" />
+          <span>Ir al Checkout</span>
+        </button>
       </div>
 
       <div v-else-if="store.error" class="error">
@@ -137,6 +153,53 @@ async function startQuiz() {
 .progress { display: grid; gap: 6px; }
 .progress-bar { height: 8px; background: var(--accent); width: 0%; transition: width 0.3s ease; border-radius: 999px; }
 .progress-meta { color: color-mix(in oklab, var(--text), transparent 40%); font-size: 12px; }
+
+.no-access {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 24px;
+  background: color-mix(in oklab, var(--bg), var(--text) 2%);
+  border: 1px dashed var(--border);
+  border-radius: 24px;
+  gap: 16px;
+  margin-top: 24px;
+
+  .no-access-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, color-mix(in oklab, var(--accent), transparent 80%) 0%, color-mix(in oklab, var(--accent), transparent 90%) 100%);
+    color: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin-bottom: 8px;
+    box-shadow: 0 10px 20px -5px color-mix(in oklab, var(--accent), transparent 85%);
+  }
+
+  h3 {
+    font-size: 24px;
+    margin: 0;
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0;
+    color: color-mix(in oklab, var(--text), transparent 40%);
+    max-width: 400px;
+    line-height: 1.6;
+    font-size: 16px;
+  }
+  
+  .cta-start {
+    margin-top: 8px;
+  }
+}
 
 .header { display: grid; gap: 8px; }
 .back { background: none; border: none; color: var(--accent); display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
