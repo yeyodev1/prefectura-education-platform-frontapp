@@ -301,17 +301,6 @@ function leaveCheckout() {
 </template>
 
 <style lang="scss" scoped>
-// --- TUS VARIABLES ---
-$FUDMASTER-PINK: #DA4167;
-$FUDMASTER-DARK: #010D27;
-$FUDMASTER-LIGHT: #f5f3ef;
-$FUDMASTER-BLUE: #0a81d1;
-$FUDMASTER-ORANGE: #F96E46;
-$FUDMASTER-GREEN: #2BBB92;
-$white: #ffffff;
-$alert-error: #ef4444;
-$alert-error-bg: rgba($alert-error, 0.1);
-
 // --- ESTILOS ---
 
 .checkout-wrapper {
