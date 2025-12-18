@@ -24,11 +24,6 @@ const careersCount = computed(() => {
   return Array.isArray(careersStore.careers) ? careersStore.careers.length : 0
 })
 
-const isFreeUser = computed(() => {
-  if (!userStore.id) userStore.hydrate()
-  return userStore.accountType === 'free'
-})
-
 const menu = [
   { name: 'Inicio', link: '/', icon: 'fa-solid fa-house' },
   { name: 'Mis Cursos', link: '/courses', icon: 'fa-solid fa-book-open' },
@@ -52,10 +47,6 @@ onMounted(async () => {
   try { await careersStore.fetchAll() } catch {}
   try { userStore.hydrate(); const uid = userStore.id || localStorage.getItem('user_id'); if (uid) await coursesStore.fetchEnrolled(String(uid)) } catch {}
 })
-
-function goToCheckout() {
-  router.push('/checkout')
-}
 </script>
 
 <template>
