@@ -63,13 +63,16 @@ onMounted(async () => {
           <span v-if="item.link === '/courses' && enrolledCount > 0" class="menu-badge">{{ enrolledCount }}</span>
         </li>
       </ul>
-
-      <!-- CTA para usuarios Free en el Sidebar -->
-      <UpgradeBanner variant="sidebar" />
     </div>
-    <button class="setting-button" type="button" @click="toggleTheme">
-      <i :class="isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon'" />
-    </button>
+
+    <div class="user-sidebar-footer">
+      <!-- CTA para usuarios Free en el Sidebar -->
+      <UpgradeBanner variant="sidebar" :compact="menuIsOpen" />
+      
+      <button class="setting-button" type="button" @click="toggleTheme">
+        <i :class="isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon'" />
+      </button>
+    </div>
   </div>
 </template>
 
@@ -79,117 +82,114 @@ onMounted(async () => {
     background-color: var(--bg);
     height: 100%;
     border-right: 1px solid var(--border);
+    width: 200px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 16px;
-    width: 260px;
-    transition: width 0.3s ease, transform 0.3s ease;
-    
-    // Mobile logic
-    @media (max-width: 1024px) {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 999;
-      transform: translateX(-100%);
+
+    &.active {
+      width: 64px;
       
-      &.active {
-        transform: translateX(0);
+      .user-sidebar-footer {
+        padding: 8px;
+        align-items: center;
       }
     }
-    
+
     &-wrapper {
       flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    &-footer {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 12px;
+      padding: 16px;
+      border-top: 1px solid transparent; // Optional separation
     }
-  }
-}
 
-.user-menu {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  
-  li {
-    position: relative;
-    display: flex;
-    align-items: center;
-    border-radius: 8px;
-    transition: all 0.2s;
-    padding: 10px 12px;
-    color: var(--text);
-    
-    .icon {
-      font-size: 18px;
-      margin-right: 12px;
-      color: color-mix(in oklab, var(--text), transparent 40%);
-      width: 24px;
-      text-align: center;
-    }
-    
-    a {
-      text-decoration: none;
-      color: inherit;
-      font-weight: 500;
-      font-size: 14px;
-      flex: 1;
-    }
-    
-    &:hover {
-      background-color: color-mix(in oklab, var(--text), transparent 94%);
+    .setting-button {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
       color: var(--text);
-      .icon { color: var(--accent); }
-    }
-    
-    &.selected {
-      background-color: color-mix(in oklab, var(--accent), transparent 90%);
-      color: var(--accent);
-      .icon { color: var(--accent); }
-      
-      &::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 4px;
-        height: 60%;
-        background-color: var(--accent);
-        border-radius: 0 4px 4px 0;
+      font-size: 18px;
+      transition: all 0.2s;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      &:hover {
+        background-color: color-mix(in oklab, var(--text), transparent 94%);
       }
     }
   }
-}
 
-.menu-badge {
-  background-color: var(--accent);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 99px;
-  min-width: 20px;
-  text-align: center;
-}
+  &-menu {
+    list-style: none;
+    padding: 0;
+    margin-top: 42px;
 
-.setting-button {
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px;
-  cursor: pointer;
-  color: var(--text);
-  font-size: 18px;
-  transition: all 0.2s;
-  
-  &:hover {
-    background-color: color-mix(in oklab, var(--text), transparent 94%);
+    .icon {
+      margin-right: 8px;
+    }
+
+    li {
+      padding: 0 12px;
+      margin: 36px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      border-left: 3px solid transparent;
+
+      &.active {
+        display: flex;
+        justify-content: flex-start;
+      }
+
+      &.selected {
+        border-left-color: var(--accent);
+      }
+
+      a,
+      .router-link-active,
+      .router-link-exact-active {
+        text-decoration: none;
+        color: var(--text);
+        font-weight: 500;
+
+        &:hover {
+          color: var(--accent);
+        }
+
+        &.active {
+          display: none;
+        }
+
+        &.selected {
+          color: var(--accent);
+          font-weight: 700;
+        }
+      }
+
+      .menu-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--accent);
+        color: $white;
+        border-radius: 999px;
+        padding: 2px 8px;
+        font-size: 11px;
+        margin-left: auto;
+      }
+    }
   }
 }
 </style>
