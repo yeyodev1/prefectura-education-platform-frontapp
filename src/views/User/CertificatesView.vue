@@ -3,6 +3,7 @@ import { onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCertificatesStore } from '@/stores/certificates'
 import { useUserStore } from '@/stores/user'
+import UpgradeBanner from '@/components/UpgradeBanner.vue'
 
 const router = useRouter()
 const store = useCertificatesStore()
@@ -46,6 +47,8 @@ function goToCourses() {
         <h2 class="title"><i class="fa-solid fa-certificate" /> Mis Certificados</h2>
       </div>
       <p class="subtitle">Aquí encontrarás todos los certificados obtenidos al completar tus cursos.</p>
+
+      <UpgradeBanner />
 
       <div v-if="store.loading" class="loading">
         <i class="fa-solid fa-spinner fa-spin" /> Cargando certificados...
