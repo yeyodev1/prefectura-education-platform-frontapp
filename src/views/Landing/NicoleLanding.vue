@@ -6,12 +6,14 @@ import Solution from './components/Solution.vue';
 import TheGuarantee from './components/TheGuarantee.vue';
 import UrgentBar from './components/UrgentBar.vue';
 import FinalOffer from './components/FinalOffer.vue';
+import OpportunityMatrix from './components/OpportunityMatrix.vue';
 </script>
 
 <template>
   <div class="wrapper">
     <UrgentBar />
     <Hero />
+    <OpportunityMatrix />
     <Problem />
     <Solution />
     <FinalOffer />
