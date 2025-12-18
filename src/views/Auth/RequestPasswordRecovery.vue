@@ -23,7 +23,7 @@ async function submit() {
   successMessage.value = ''
   
   try {
-    const response = await userStore.requestPasswordRecovery(email.value.trim())
+    const response = await userStore.requestPasswordRecovery(email.value.trim().toLowerCase())
     successMessage.value = response.message || 'Se ha enviado un correo con instrucciones.'
     // Optional: clear email or redirect after a delay
     // email.value = ''
