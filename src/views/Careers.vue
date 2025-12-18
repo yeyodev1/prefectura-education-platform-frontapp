@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, computed } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { useCareersStore } from '@/stores/careers'
 import { useUserStore } from '@/stores/user'
 import { useCoursesStore } from '@/stores/courses'
@@ -9,12 +9,18 @@ import { makeCareerPlaceholders } from '@/mocks/careers.mock'
 const store = useCareersStore()
 const userStore = useUserStore()
 const coursesStore = useCoursesStore()
+const router = useRouter()
 
 onMounted(async () => {
   await store.fetchAll()
   userStore.hydrate()
   const uid = userStore.id || localStorage.getItem('user_id')
   if (uid) await store.fetchUserCareers(String(uid))
+})
+
+const isFreeUser = computed(() => {
+  if (!userStore.id) userStore.hydrate()
+  return userStore.accountType === 'free'
 })
 
 const careers = computed(() => store.careers)
@@ -69,6 +75,23 @@ async function addToMyCareers(career: any) {
     <div class="container">
       <div class="head">
         <h2 class="title"><i class="fa-solid fa-graduation-cap" /> Escuelas o Carreras</h2>
+      </div>
+
+      <!-- CTA para usuarios Free -->
+      <div v-if="isFreeUser" class="upgrade-banner" @click="router.push('/checkout')">
+        <div class="upgrade-content">
+          <div class="upgrade-icon">
+            <i class="fa-solid fa-crown" />
+          </div>
+          <div class="upgrade-text">
+            <h3>Hazte Founder</h3>
+            <p>Accede a todas las carreras y contenido exclusivo.</p>
+          </div>
+        </div>
+        <button class="upgrade-btn">
+          Obtener Acceso
+          <i class="fa-solid fa-arrow-right" />
+        </button>
       </div>
 
       <div v-if="loading" class="hint">Cargando carreras…</div>
@@ -134,8 +157,90 @@ async function addToMyCareers(career: any) {
 .careers-view { width: 100%; padding: 24px 16px; background: var(--bg); color: var(--text); }
 .container { width: 100%; margin: 0 auto; display: grid; gap: 16px; }
 .head { display: flex; align-items: center; justify-content: space-between; }
-.title { display: inline-flex; align-items: center; gap: 10px; color: var(--text); margin: 0; font-size: 22px; }
-.subtitle { color: var(--text); margin: 8px 0; font-size: 18px; }
+.title { font-size: 24px; margin: 0; color: var(--text); display: inline-flex; align-items: center; gap: 10px; }
+
+.upgrade-banner {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.1) 100%);
+  border: 1px solid rgba(255, 165, 0, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 165, 0, 0.15);
+    
+    .upgrade-btn {
+      transform: scale(1.05);
+    }
+  }
+  
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: flex-start;
+    
+    .upgrade-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+.upgrade-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.upgrade-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #000;
+  flex-shrink: 0;
+}
+
+.upgrade-text {
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--text);
+  }
+  
+  p {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: color-mix(in oklab, var(--text), transparent 30%);
+  }
+}
+
+.upgrade-btn {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #000;
+  border: none;
+  border-radius: 99px;
+  padding: 10px 20px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s;
+  white-space: nowrap;
+}
+
+.subtitle { color: var(--text); margin: 8px 0; font-size: 20px; }
 .hint { color: color-mix(in oklab, var(--text), transparent 40%); }
 .error { color: var(--accent); }
 .grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
