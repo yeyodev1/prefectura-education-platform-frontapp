@@ -27,6 +27,13 @@ const userId = computed(() => {
   return typeof uid === 'number' ? String(uid) : (uid || '')
 })
 
+const isFreeUser = computed(() => {
+  // Asumimos que si no hay plan, es free por defecto o estamos cargando.
+  // Pero si ya está logueado y el plan es 'free', mostramos el banner.
+  if (!userStore.id) userStore.hydrate()
+  return userStore.plan === 'free'
+})
+
 const isDarkTheme = ref(false)
 let themeObserver: MutationObserver | null = null
 function updateThemeFlag() { isDarkTheme.value = document.documentElement.getAttribute('data-theme') === 'dark' }
@@ -65,6 +72,10 @@ function handleMenuClick() {
 
 function navigateToLogin() {
   router.push('/login')
+}
+
+function goToCheckout() {
+  router.push('/checkout')
 }
 
 
@@ -127,6 +138,12 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else points.value = null })
       </div>
       <div class="user-header-wrapper-right">
         <template v-if="isLoggedIn">
+          <!-- CTA para usuarios FREE -->
+          <button v-if="isFreeUser" class="upgrade-btn" @click="goToCheckout">
+            <i class="fa-solid fa-crown" />
+            <span>Hazte Founder</span>
+          </button>
+
           <div class="user-pill" title="Sesión iniciada">
             <i class="fa-solid fa-user"></i>
             <span class="account-text">Mi cuenta</span>
@@ -211,6 +228,30 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else points.value = null })
           }
         }
 
+        .upgrade-btn {
+          background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+          color: #000;
+          border: none;
+          border-radius: 999px;
+          padding: 8px 16px;
+          font-size: 14px;
+          font-weight: 700;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);
+          transition: transform 0.2s, box-shadow 0.2s;
+          margin-right: 8px;
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 165, 0, 0.4);
+          }
+          
+          i { font-size: 14px; }
+        }
+
         .user-pill {
           display: inline-flex;
           align-items: center;
@@ -288,6 +329,14 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else points.value = null })
 
   .user-header-wrapper-right .logout-button .logout-text {
     display: none;
+  }
+
+  .user-header-wrapper-right .upgrade-btn span {
+    display: none;
+  }
+  .user-header-wrapper-right .upgrade-btn {
+    padding: 8px;
+    border-radius: 50%;
   }
 }
 </style>
