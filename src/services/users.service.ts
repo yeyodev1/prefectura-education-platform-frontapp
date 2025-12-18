@@ -143,6 +143,21 @@ class UsersService extends APIBase {
     return this.post<T>('users/login', body, { 'Content-Type': 'application/json' }, config)
   }
 
+  /**
+   * Inicia sesión o registra un usuario mediante Google (Firebase Auth).
+   * Envía el ID Token de Firebase al backend para verificación y creación de sesión.
+   * 
+   * @param firebaseToken El ID Token obtenido de result.user.getIdToken()
+   */
+  async googleLogin<T = LoginResponse>(firebaseToken: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+    // Sobrescribimos los headers para enviar el token de Firebase en lugar del token de la app
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${firebaseToken}`
+    }
+    return this.post<T>('users/google-login', {}, headers, config)
+  }
+
   async logout(): Promise<void> {
     localStorage.removeItem('access_token')
     try {
