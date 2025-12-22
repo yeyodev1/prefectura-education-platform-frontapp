@@ -56,36 +56,43 @@ onMounted(async () => {
 
     // Pass '0' if no user logged in (backend handles creation/lookup)
     const userId = userStore.id || '0'
+    
+    // We pass the email/name from checkout to ensure the account is created/linked 
+    // to the correct email, not necessarily the one from the payment provider.
+    const checkoutEmail = user.value?.email || checkoutStore.email
+    const checkoutName = user.value?.name || checkoutStore.name
 
-    const { data } = await paymentService.confirmPayment(userId, id, ctId)
+    const { data } = await paymentService.confirmPayment(
+      userId, 
+      id, 
+      ctId, 
+      checkoutEmail, 
+      checkoutName
+    )
 
-    if (data.success) {
-      status.value = 'Approved'
-
-      const u = data.user
-      if (u) {
-        localStorage.setItem('user', JSON.stringify(u))
-
-        userStore.setUser({
-          id: u.id || u._id,
-          name: u.name,
-          email: u.email,
-          accountType: (u.account_type || u.accountType || 'expert')
-        })
-
-        user.value = { name: u.name, email: u.email }
-      }
-
-      checkoutStore.clear()
-
-      // Tracking
-      const amountDollars = 1
-      track('Purchase', { value: amountDollars, currency: 'USD', contents: [{ id: 'FM-FOUNDER-LIFETIME', quantity: 1 }] })
-      sendEvent('Purchase', { value: amountDollars, currency: 'USD', contents: [{ id: 'FM-FOUNDER-LIFETIME', quantity: 1 }] })
-
-    } else {
-      throw new Error(data.message || 'El pago fue procesado pero no aprobado.')
+    // Backend responds 200 OK on success, so we proceed directly
+    status.value = 'Approved'
+    
+    const u = data.user
+    if (u) {
+      localStorage.setItem('user', JSON.stringify(u))
+      
+      userStore.setUser({
+        id: u.id || u._id,
+        name: u.name,
+        email: u.email,
+        accountType: (u.account_type || u.accountType || 'expert')
+      })
+      
+      user.value = { name: u.name, email: u.email }
     }
+    
+    checkoutStore.clear()
+    
+    // Tracking
+    const amountDollars = 1 
+    track('Purchase', { value: amountDollars, currency: 'USD', contents: [{ id: 'FM-FOUNDER-LIFETIME', quantity: 1 }] })
+    sendEvent('Purchase', { value: amountDollars, currency: 'USD', contents: [{ id: 'FM-FOUNDER-LIFETIME', quantity: 1 }] })
 
   } catch (err: any) {
     console.error('❌ Error confirmando pago:', err)
