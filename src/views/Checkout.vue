@@ -18,23 +18,30 @@ const isLoggingOut = ref(false)
 const error = ref('')
 
 // Timer logic
-const expiresAt = ref<number>(Date.now() + 24 * 60 * 60 * 1000)
-const remaining = ref<string>('')
+const endOfYear = new Date(new Date().getFullYear(), 11, 31, 23, 59, 59).getTime() // Dec 31st
+const remaining = ref<{ d: number, h: number, m: number, s: number }>({ d: 0, h: 0, m: 0, s: 0 })
+
+function updateTimer() {
+  const now = Date.now()
+  const diff = endOfYear - now
+  
+  if (diff <= 0) {
+    remaining.value = { d: 0, h: 0, m: 0, s: 0 }
+    return
+  }
+
+  remaining.value = {
+    d: Math.floor(diff / (1000 * 60 * 60 * 24)),
+    h: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+    m: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+    s: Math.floor((diff % (1000 * 60)) / 1000)
+  }
+}
 
 // Exit Intent logic
 const exitOpen = ref(false)
 const allowLeave = ref(false)
 let popHandler: ((ev: PopStateEvent) => void) | null = null
-
-function updateTimer() {
-  const diff = expiresAt.value - Date.now()
-  const clamped = Math.max(diff, 0)
-  const h = Math.floor(clamped / (1000 * 60 * 60))
-  const m = Math.floor((clamped % (1000 * 60 * 60)) / (1000 * 60))
-  const s = Math.floor((clamped % (1000 * 60)) / 1000)
-  // Formato más limpio estilo reloj digital
-  remaining.value = `${h}h : ${m}m : ${s}s`
-}
 
 onMounted(() => {
   updateTimer()
@@ -60,10 +67,15 @@ onMounted(() => {
 
   // Exit Intent setup
   try {
-    history.pushState({ checkoutGuard: true }, '', location.href)
+    // Evitamos duplicar el estado si el usuario refresca la página
+    if (!history.state?.checkoutGuard) {
+      history.pushState({ checkoutGuard: true }, '', location.href)
+    }
+
     popHandler = () => {
       if (!allowLeave.value) {
         exitOpen.value = true
+        // Volvemos a empujar el estado para "atrapar" al usuario
         history.pushState({ checkoutGuard: true }, '', location.href)
       }
     }
@@ -143,7 +155,10 @@ function stayOnCheckout() { exitOpen.value = false }
 function leaveCheckout() {
   exitOpen.value = false
   allowLeave.value = true
-  history.back()
+  // Retrocedemos 2 pasos: 
+  // 1. El estado "guard" que acabamos de empujar en el popHandler
+  // 2. El estado "clean" del checkout para volver a la página anterior real
+  history.go(-2)
 }
 </script>
 
@@ -235,7 +250,27 @@ function leaveCheckout() {
 
           <div class="timer-box">
             <span class="timer-label">🔥 Oferta Flash expira en:</span>
-            <span class="timer-digits">{{ remaining }}</span>
+            <div class="countdown-grid">
+              <div class="time-unit">
+                <span class="value">{{ remaining.d }}</span>
+                <span class="label">Días</span>
+              </div>
+              <div class="sep">:</div>
+              <div class="time-unit">
+                <span class="value">{{ remaining.h }}</span>
+                <span class="label">Hrs</span>
+              </div>
+              <div class="sep">:</div>
+              <div class="time-unit">
+                <span class="value">{{ remaining.m }}</span>
+                <span class="label">Min</span>
+              </div>
+              <div class="sep">:</div>
+              <div class="time-unit">
+                <span class="value">{{ remaining.s }}</span>
+                <span class="label">Seg</span>
+              </div>
+            </div>
           </div>
 
           <div class="pricing-stack">
@@ -352,6 +387,10 @@ function leaveCheckout() {
   .container {
     grid-template-columns: 1.2fr 1fr; // Izquierda un poco más ancha
     align-items: start;
+    
+    // Desktop: Left (Form) first, Right (Card) second
+    .left { order: 1; }
+    .right { order: 2; }
   }
 }
 
@@ -360,6 +399,15 @@ function leaveCheckout() {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  // Mobile: Form comes SECOND
+  order: 2;
+}
+
+// DERECHA (TARJETA)
+// NOTE: Styles moved here to group order property
+.right {
+  // Mobile: Card comes FIRST
+  order: 1;
 }
 
 .header-secure {
@@ -659,15 +707,55 @@ function leaveCheckout() {
 .timer-box {
   background: $FUDMASTER-ORANGE;
   color: $white;
-  padding: 10px 16px;
-  border-radius: 10px;
+  padding: 12px 16px;
+  border-radius: 12px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
+  gap: 8px;
   font-weight: 700;
   margin-bottom: 20px;
   font-size: 14px;
   box-shadow: 0 4px 10px rgba($FUDMASTER-ORANGE, 0.3);
+  text-align: center;
+
+  .timer-label {
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    opacity: 0.9;
+  }
+
+  .countdown-grid {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .time-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 40px;
+      
+      .value {
+        font-size: 1.5rem;
+        font-weight: 900;
+        line-height: 1;
+      }
+      .label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        opacity: 0.8;
+      }
+    }
+
+    .sep {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-top: -12px;
+      opacity: 0.6;
+    }
+  }
 }
 
 .pricing-stack {
