@@ -2,7 +2,6 @@ import APIBase from './httpBase'
 import type { AxiosResponse } from 'axios'
 
 export interface ConfirmPaymentResponse {
-  success: boolean
   message: string
   user: any
 }
@@ -13,15 +12,21 @@ class PaymentService extends APIBase {
    * @param userId - User ID (or '0'/'new' if not exists)
    * @param transactionId - Payphone Transaction ID
    * @param clientTransactionId - Generated Client Transaction ID
+   * @param email - (Optional) User email from checkout form (priority over Payphone email)
+   * @param name - (Optional) User name from checkout form
    */
   async confirmPayment(
     userId: string | number,
     transactionId: string,
-    clientTransactionId: string
+    clientTransactionId: string,
+    email?: string,
+    name?: string
   ): Promise<AxiosResponse<ConfirmPaymentResponse>> {
     return await this.post<ConfirmPaymentResponse>(`payment/${userId}/confirm`, {
       id: transactionId,
-      clientTransactionId
+      clientTransactionId,
+      email,
+      name
     })
   }
 }
