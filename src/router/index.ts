@@ -194,11 +194,4 @@ router.beforeEach((to) => {
   }
 })
 
-router.afterEach((to) => {
-  const base = 'Fudmaster | lleva tu cocina al siguiente nivel'
-  const recordWithTitle = to.matched.slice().reverse().find((r) => (r.meta as any)?.title)
-  const title = ((to.meta as any)?.title) || ((recordWithTitle?.meta as any)?.title) || base
-  document.title = String(title)
-})
-
 export default router

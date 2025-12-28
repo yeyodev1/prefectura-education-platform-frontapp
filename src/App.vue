@@ -1,6 +1,24 @@
-<script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useHead } from '@unhead/vue'
 import { useUserStore } from '@/stores/user'
+
+useHead({
+  title: 'Fudmaster | lleva tu cocina al siguiente nivel',
+  titleTemplate: (title) => title ? `${title} | Fudmaster` : 'Fudmaster',
+  meta: [
+    { name: 'description', content: 'Fudmaster es la plataforma líder para llevar tu cocina al siguiente nivel con cursos exclusivos y expertos.' },
+    { property: 'og:title', content: 'Fudmaster | lleva tu cocina al siguiente nivel' },
+    { property: 'og:description', content: 'Aprende cocina profesional con los mejores. Cursos online, técnicas avanzadas y comunidad gastronómica.' },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:image', content: '/favicon.png' }, // Should be a full URL in production
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Fudmaster | Aprende cocina profesional' },
+    { name: 'twitter:description', content: 'Plataforma de formación gastronómica para todos los niveles.' },
+  ],
+  link: [
+    { rel: 'canonical', href: 'https://fudmaster.com' } // Adjust to real domain
+  ]
+})
 
 type ConfirmPayload = { title?: string; message?: string; confirmText?: string; cancelText?: string; onConfirm?: () => void }
 
