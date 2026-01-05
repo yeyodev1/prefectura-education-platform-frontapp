@@ -5,6 +5,7 @@ import usersService from '@/services/users.service'
 import { useCheckoutStore } from '@/stores/checkout'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
+import { useEvergreenTimer } from '@/composables/useEvergreenTimer'
 import { track, sendEvent } from '@/services/facebook.service'
 import ExitIntentModal from '@/components/ExitIntentModal.vue'
 
@@ -18,25 +19,7 @@ const isLoggingOut = ref(false)
 const error = ref('')
 
 // Timer logic
-const endOfYear = new Date(new Date().getFullYear(), 11, 31, 23, 59, 59).getTime() // Dec 31st
-const remaining = ref<{ d: number, h: number, m: number, s: number }>({ d: 0, h: 0, m: 0, s: 0 })
-
-function updateTimer() {
-  const now = Date.now()
-  const diff = endOfYear - now
-  
-  if (diff <= 0) {
-    remaining.value = { d: 0, h: 0, m: 0, s: 0 }
-    return
-  }
-
-  remaining.value = {
-    d: Math.floor(diff / (1000 * 60 * 60 * 24)),
-    h: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-    m: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
-    s: Math.floor((diff % (1000 * 60)) / 1000)
-  }
-}
+const { remaining } = useEvergreenTimer()
 
 // Exit Intent logic
 const exitOpen = ref(false)
@@ -44,10 +27,6 @@ const allowLeave = ref(false)
 let popHandler: ((ev: PopStateEvent) => void) | null = null
 
 onMounted(() => {
-  updateTimer()
-  const id = setInterval(updateTimer, 1000)
-    ; (window as any)._checkout_timer = id
-  
   // Hydrate stores
   checkoutStore.hydrate()
   userStore.hydrate()
@@ -80,13 +59,11 @@ onMounted(() => {
       }
     }
     window.addEventListener('popstate', popHandler)
-  } catch {}
+  } catch { }
 })
 
 onBeforeUnmount(() => {
-  const id = (window as any)._checkout_timer
-  if (id) clearInterval(id)
-  try { if (popHandler) window.removeEventListener('popstate', popHandler) } catch {}
+  try { if (popHandler) window.removeEventListener('popstate', popHandler) } catch { }
 })
 
 const canPay = computed(() => {
@@ -98,10 +75,10 @@ const isUserLoggedIn = computed(() => userStore.isAuthenticated)
 async function logoutAndReset() {
   if (isLoggingOut.value) return
   isLoggingOut.value = true
-  
+
   // Simular delay para UX (que el usuario vea el spinner)
   await new Promise(resolve => setTimeout(resolve, 800))
-  
+
   userStore.clear()
   name.value = ''
   email.value = ''
@@ -125,7 +102,7 @@ async function pay() {
 
     track('InitiateCheckout', { value: 297, currency: 'USD' })
     sendEvent('InitiateCheckout', { value: 297, currency: 'USD' })
-    
+
     const result = await PayphoneService.preparePayment({
       productId: 'FM-FOUNDER-LIFETIME',
       productName: 'Plan Founder Lifetime',
@@ -133,7 +110,7 @@ async function pay() {
       customerName: name.value.trim(),
       customerEmail: email.value.trim(),
     })
-    
+
     if (result.payWithPayPhone) {
       checkoutStore.setFromForm(name.value, email.value)
       checkoutStore.setClientTransactionId(result.clientTransactionId)
@@ -343,7 +320,7 @@ function leaveCheckout() {
   min-height: 100vh;
   padding: 40px 20px;
   font-family: 'Inter', sans-serif;
-  
+
   // Variables CSS locales para manejo de temas (Dark/Light)
   --bg-page: #{$FUDMASTER-LIGHT};
   --bg-card: #{$white};
@@ -387,10 +364,15 @@ function leaveCheckout() {
   .container {
     grid-template-columns: 1.2fr 1fr; // Izquierda un poco más ancha
     align-items: start;
-    
+
     // Desktop: Left (Form) first, Right (Card) second
-    .left { order: 1; }
-    .right { order: 2; }
+    .left {
+      order: 1;
+    }
+
+    .right {
+      order: 2;
+    }
   }
 }
 
@@ -415,12 +397,12 @@ function leaveCheckout() {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
-  
+
   .brand img {
     height: 40px;
     width: auto;
   }
-  
+
   .secure-badge {
     display: flex;
     align-items: center;
@@ -441,11 +423,14 @@ function leaveCheckout() {
   color: var(--text-main);
   font-weight: 800;
   margin: 0;
-  
+
   .highlight {
     color: $FUDMASTER-ORANGE;
     display: block;
-    @media(min-width: 768px) { display: inline; }
+
+    @media(min-width: 768px) {
+      display: inline;
+    }
   }
 }
 
@@ -473,7 +458,7 @@ function leaveCheckout() {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  
+
   label {
     font-size: 14px;
     font-weight: 600;
@@ -490,18 +475,18 @@ function leaveCheckout() {
   border-radius: 12px;
   padding: 14px 16px;
   transition: all 0.2s;
-  
+
   &:focus-within {
     background: var(--bg-card);
     border-color: $FUDMASTER-BLUE;
     box-shadow: 0 0 0 4px rgba($FUDMASTER-BLUE, 0.1);
   }
-  
+
   .icon {
     color: var(--text-muted);
     font-size: 18px;
   }
-  
+
   input {
     width: 100%;
     border: none;
@@ -510,12 +495,13 @@ function leaveCheckout() {
     font-size: 16px;
     color: var(--input-text);
     font-weight: 500;
-    
+
     &::placeholder {
       color: var(--text-muted);
       opacity: 0.5;
     }
   }
+
   .input-locked {
     background-color: rgba($FUDMASTER-GREEN, 0.1);
     color: var(--text-muted);
@@ -536,7 +522,7 @@ function leaveCheckout() {
   padding: 10px 14px;
   border-radius: 10px;
   border: 1px solid var(--border-color);
-  
+
   strong {
     color: var(--text-main);
     font-weight: 600;
@@ -593,7 +579,7 @@ function leaveCheckout() {
   gap: 8px;
   font-size: 14px;
   color: var(--text-muted);
-  
+
   .link-btn {
     background: none;
     border: none;
@@ -624,16 +610,17 @@ function leaveCheckout() {
   cursor: pointer;
   transition: transform 0.2s, filter 0.2s;
   box-shadow: 0 10px 20px -5px rgba($FUDMASTER-GREEN, 0.4);
-  
+
   &:hover:not(:disabled) {
     transform: translateY(-2px);
     filter: brightness(1.05);
   }
+
   &:disabled {
     opacity: 0.7;
     cursor: not-allowed;
   }
-  
+
   .btn-content {
     display: flex;
     align-items: center;
@@ -649,7 +636,7 @@ function leaveCheckout() {
   gap: 15px;
   color: var(--text-muted);
   font-size: 24px;
-  
+
   .secure-text {
     font-size: 12px;
     display: flex;
@@ -684,7 +671,7 @@ function leaveCheckout() {
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 20px;
-  
+
   .plan-name {
     margin: 0;
     font-size: 20px;
@@ -692,7 +679,7 @@ function leaveCheckout() {
     color: var(--text-main);
     max-width: 60%;
   }
-  
+
   .badge-lifetime {
     background: var(--text-main);
     color: var(--bg-card);
@@ -736,12 +723,13 @@ function leaveCheckout() {
       flex-direction: column;
       align-items: center;
       min-width: 40px;
-      
+
       .value {
         font-size: 1.5rem;
         font-weight: 900;
         line-height: 1;
       }
+
       .label {
         font-size: 0.65rem;
         text-transform: uppercase;
@@ -762,23 +750,24 @@ function leaveCheckout() {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  
+
   .price-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
+
     &.total {
       font-size: 18px;
       color: var(--text-main);
       font-weight: 600;
-      
+
       .amount {
         font-size: 32px;
         font-weight: 900;
         letter-spacing: -1px;
         color: var(--text-main);
       }
+
       .currency {
         font-size: 14px;
         vertical-align: middle;
@@ -786,15 +775,15 @@ function leaveCheckout() {
         color: var(--text-muted);
       }
     }
-    
+
     &.savings {
       font-size: 14px;
-      
+
       .original {
         text-decoration: line-through;
         color: var(--text-muted);
       }
-      
+
       .saved-amount {
         color: $FUDMASTER-PINK;
         font-weight: 800;
@@ -803,7 +792,7 @@ function leaveCheckout() {
         border-radius: 4px;
       }
     }
-    
+
     &.note {
       font-size: 13px;
       color: $FUDMASTER-GREEN;
@@ -830,7 +819,7 @@ function leaveCheckout() {
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
-  
+
   ul {
     list-style: none;
     padding: 0;
@@ -838,7 +827,7 @@ function leaveCheckout() {
     display: grid;
     gap: 14px;
   }
-  
+
   li {
     display: flex;
     align-items: flex-start;
@@ -846,12 +835,12 @@ function leaveCheckout() {
     font-size: 14px;
     color: var(--text-muted);
     line-height: 1.4;
-    
+
     i {
       color: $FUDMASTER-GREEN;
       margin-top: 2px;
     }
-    
+
     strong {
       color: var(--text-main);
     }
@@ -861,13 +850,13 @@ function leaveCheckout() {
 .mini-proof {
   text-align: center;
   margin-top: 20px;
-  
+
   .stars {
     color: #FFC107;
     letter-spacing: 2px;
     font-size: 18px;
   }
-  
+
   p {
     font-size: 12px;
     font-style: italic;

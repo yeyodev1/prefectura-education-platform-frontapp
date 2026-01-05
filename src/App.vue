@@ -1,3 +1,4 @@
+<script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useHead } from '@unhead/vue'
 import { useUserStore } from '@/stores/user'
@@ -83,26 +84,84 @@ onMounted(() => {
 </template>
 
 <style lang="scss">
-  @use '@/styles/global.scss' as *;
-  .app-container {
-    background-color: $white;
-    font-family: $font-principal;
-    min-height: 100vh;
-    width: 100%;
+@use '@/styles/global.scss' as *;
+
+.app-container {
+  background-color: $white;
+  font-family: $font-principal;
+  min-height: 100vh;
+  width: 100%;
 
   &-view {
     width: 100%;
   }
-}  .global-modal { position: fixed; inset: 0; background: rgba($FUDMASTER-DARK, 0.4); z-index: 2000; display: grid; place-items: center; padding: 16px; }
-  .global-modal-panel { background: $white; border: 1px solid rgba($FUDMASTER-DARK, 0.08); border-radius: 12px; width: 100%; max-width: 440px; padding: 16px; display: grid; gap: 12px; }
-  .global-modal-title { margin: 0; color: $FUDMASTER-DARK; font-size: 18px; }
-  .global-modal-message { margin: 0; color: rgba($FUDMASTER-DARK, 0.8); font-size: 14px; }
-  .global-modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
-  .btn { border: none; border-radius: 8px; padding: 8px 12px; font-size: 14px; cursor: pointer; }
-  .btn.cancel { background: $FUDMASTER-LIGHT; color: $FUDMASTER-DARK; border: 1px solid rgba($FUDMASTER-DARK, 0.12); }
-  .btn.confirm { background: $FUDMASTER-DARK; color: $white; }
+}
 
-  .modal-fade-enter-active, .modal-fade-leave-active { transition: opacity 0.2s ease; }
-  .modal-fade-enter-from, .modal-fade-leave-to { opacity: 0; }
+.global-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba($FUDMASTER-DARK, 0.4);
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
 
+.global-modal-panel {
+  background: $white;
+  border: 1px solid rgba($FUDMASTER-DARK, 0.08);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 440px;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.global-modal-title {
+  margin: 0;
+  color: $FUDMASTER-DARK;
+  font-size: 18px;
+}
+
+.global-modal-message {
+  margin: 0;
+  color: rgba($FUDMASTER-DARK, 0.8);
+  font-size: 14px;
+}
+
+.global-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.btn {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn.cancel {
+  background: $FUDMASTER-LIGHT;
+  color: $FUDMASTER-DARK;
+  border: 1px solid rgba($FUDMASTER-DARK, 0.12);
+}
+
+.btn.confirm {
+  background: $FUDMASTER-DARK;
+  color: $white;
+}
+
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
 </style>

@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, watch, onUnmounted } from 'vue'
+import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
+
+import { useEvergreenTimer } from '@/composables/useEvergreenTimer'
 
 const props = defineProps({
   course: { type: Object, required: true },
@@ -47,24 +49,8 @@ function truncated(text: string, limit = 180) {
 function toggleShowDesc(e: Event) { e.preventDefault(); e.stopPropagation(); showDesc.value = !showDesc.value }
 function toggleExpanded(e: Event) { e.preventDefault(); e.stopPropagation(); expanded.value = !expanded.value }
 
-const deadline = ref<number | null>(null)
-const tick = ref<number>(Date.now())
-let iv: number | null = null
+const { remaining } = useEvergreenTimer()
 
-function startTimer() {
-  if (!props.countdownTo) { deadline.value = null; return }
-  deadline.value = Number(props.countdownTo)
-  if (iv) { clearInterval(iv as any); iv = null }
-  iv = window.setInterval(() => {
-    tick.value = Date.now()
-    if (deadline.value !== null && deadline.value - tick.value <= 0) {
-      deadline.value = Date.now() + 7 * 24 * 60 * 60 * 1000
-    }
-  }, 1000)
-}
-
-watch(() => props.countdownTo, () => startTimer(), { immediate: true })
-onUnmounted(() => { if (iv) clearInterval(iv as any) })
 function onCardClick(e: Event) {
   if (!props.disabled) return
   e.preventDefault()
@@ -97,15 +83,15 @@ function onCardClick(e: Event) {
         </div>
       </div>
     </transition>
-    <div v-if="deadline !== null" class="countdown">
+    <div v-if="remaining" class="countdown">
       <span class="label">Disponible en:</span>
-      <span class="unit">{{ String(Math.floor(((deadline ?? tick) - tick) / (1000 * 60 * 60 * 24))).padStart(2, '0') }}d</span>
+      <span class="unit">{{ String(remaining.d).padStart(2, '0') }}d</span>
       <span class="sep">:</span>
-      <span class="unit">{{ String(Math.floor((((deadline ?? tick) - tick) / (1000 * 60 * 60)) % 24)).padStart(2, '0') }}h</span>
+      <span class="unit">{{ String(remaining.h).padStart(2, '0') }}h</span>
       <span class="sep">:</span>
-      <span class="unit">{{ String(Math.floor((((deadline ?? tick) - tick) / (1000 * 60)) % 60)).padStart(2, '0') }}m</span>
+      <span class="unit">{{ String(remaining.m).padStart(2, '0') }}m</span>
       <span class="sep">:</span>
-      <span class="unit">{{ String(Math.floor((((deadline ?? tick) - tick) / 1000) % 60)).padStart(2, '0') }}s</span>
+      <span class="unit">{{ String(remaining.s).padStart(2, '0') }}s</span>
     </div>
   </component>
 </template>
@@ -122,23 +108,140 @@ function onCardClick(e: Event) {
   text-decoration: none;
   transition: border-color 0.2s ease, transform 0.2s ease;
 }
-.course-card:hover { border-color: var(--accent); transform: translateY(-1px); }
-.course-card.disabled { opacity: 0.85; }
-.cover { width: 100%; height: 160px; border-radius: 8px; object-fit: cover; }
-.cover.blur { filter: blur(6px); }
-.name { color: var(--text); font-weight: 700; margin: 0; font-size: 18px; }
-.meta { display: inline-flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 6px; }
-.badge { background: color-mix(in oklab, var(--accent), transparent 85%); color: var(--text); border-radius: 6px; padding: 6px 8px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; }
-.cta { background: var(--accent); color: $white; border-radius: 999px; padding: 8px 12px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
-.desc-toggle { background: transparent; color: var(--accent); border: 1px dashed var(--border); border-radius: 8px; padding: 6px 8px; font-weight: 700; cursor: pointer; justify-self: start; }
-.desc-panel { background: color-mix(in oklab, var(--bg), var(--text) 6%); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
-.desc { color: color-mix(in oklab, var(--text), transparent 30%); margin: 0; font-size: 14px; }
-.desc-actions { display: flex; justify-content: flex-end; }
-.read-more { background: none; border: none; color: var(--accent); font-weight: 700; cursor: pointer; padding: 0; }
-.fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
-.countdown { padding: 12px; border-top: 1px dashed var(--border); display: inline-flex; align-items: center; gap: 6px; font-family: monospace; font-weight: 700; color: var(--text); }
-.countdown .label { font-size: 12px; color: color-mix(in oklab, var(--text), transparent 60%); margin-right: 4px; }
-.countdown .unit { background: color-mix(in oklab, var(--accent), transparent 88%); color: var(--accent); padding: 4px 6px; border-radius: 6px; min-width: 36px; text-align: center; }
-.countdown .sep { color: color-mix(in oklab, var(--text), transparent 60%); }
+
+.course-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.course-card.disabled {
+  opacity: 0.85;
+}
+
+.cover {
+  width: 100%;
+  height: 160px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.cover.blur {
+  filter: blur(6px);
+}
+
+.name {
+  color: var(--text);
+  font-weight: 700;
+  margin: 0;
+  font-size: 18px;
+}
+
+.meta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.badge {
+  background: color-mix(in oklab, var(--accent), transparent 85%);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cta {
+  background: var(--accent);
+  color: $white;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.desc-toggle {
+  background: transparent;
+  color: var(--accent);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-weight: 700;
+  cursor: pointer;
+  justify-self: start;
+}
+
+.desc-panel {
+  background: color-mix(in oklab, var(--bg), var(--text) 6%);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.desc {
+  color: color-mix(in oklab, var(--text), transparent 30%);
+  margin: 0;
+  font-size: 14px;
+}
+
+.desc-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.read-more {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.countdown {
+  padding: 12px;
+  border-top: 1px dashed var(--border);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: monospace;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.countdown .label {
+  font-size: 12px;
+  color: color-mix(in oklab, var(--text), transparent 60%);
+  margin-right: 4px;
+}
+
+.countdown .unit {
+  background: color-mix(in oklab, var(--accent), transparent 88%);
+  color: var(--accent);
+  padding: 4px 6px;
+  border-radius: 6px;
+  min-width: 36px;
+  text-align: center;
+}
+
+.countdown .sep {
+  color: color-mix(in oklab, var(--text), transparent 60%);
+}
 </style>
