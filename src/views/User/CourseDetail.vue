@@ -148,11 +148,12 @@ async function startQuiz() {
 </template>
 
 <style lang="scss" scoped>
-.course-detail { width: 100%; padding: 24px 16px; background: var(--bg); color: var(--text); }
+.course-detail { width: 100%; padding: 24px 16px; background: var(--bg-main); color: var(--text-main); }
 .container { max-width: 100%; margin: 0 auto; display: grid; gap: 16px; }
 .progress { display: grid; gap: 6px; }
 .progress-bar { height: 8px; background: var(--accent); width: 0%; transition: width 0.3s ease; border-radius: 999px; }
-.progress-meta { color: color-mix(in oklab, var(--text), transparent 40%); font-size: 12px; }
+.progress-meta { color: var(--text-sec); font-size: 12px; }
+
 
 .no-access {
   display: flex;
@@ -236,8 +237,9 @@ async function startQuiz() {
   object-fit: cover;
   border-radius: 12px;
   display: block;
-  box-shadow: 0 20px 40px -10px rgba($FUDMASTER-DARK, 0.06);
+  box-shadow: var(--shadow);
 }
+
 
 .info {
   display: grid;
@@ -275,9 +277,9 @@ async function startQuiz() {
 }
 
 .cta-start {
-  background: $FUDMASTER-PINK; 
-  color: $white; 
-  box-shadow: 0 4px 12px rgba($FUDMASTER-PINK, 0.3);
+  background: var(--accent); 
+  color: #111613; 
+  box-shadow: 0 4px 12px rgba(134, 239, 172, 0.3);
 
   &:hover { 
     filter: brightness(1.1);
@@ -289,8 +291,8 @@ async function startQuiz() {
   }
   
   &:disabled { 
-    background: color-mix(in oklab, var(--bg), var(--text) 6%); 
-    color: color-mix(in oklab, var(--text), transparent 50%); 
+    background: var(--bg-card); 
+    color: var(--text-sec); 
     border: 1px solid var(--border); 
     cursor: not-allowed; 
     box-shadow: none;
@@ -300,15 +302,16 @@ async function startQuiz() {
 
 .cta-quiz {
   background: transparent;
-  color: var(--text);
+  color: var(--text-main);
   border: 1px solid var(--border);
 
   &:hover {
-    background: var(--bg-hover, rgba(0,0,0,0.05));
+    background: rgba(134, 239, 172, 0.05);
     border-color: var(--accent);
     color: var(--accent);
   }
 }
+
 
 .quiz-section { margin-top: 16px; }
 
