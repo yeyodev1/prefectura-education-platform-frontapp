@@ -31,36 +31,36 @@ function togglePassword() {
 async function loginWithGoogle() {
   loadingGoogle.value = true
   error.value = ''
-  
+
   try {
     // 1. Abrir Popup de Google
     const result = await signInWithPopup(auth, provider)
     const user = result.user
-    
+
     // 2. Obtener Token (Este token se enviará al Backend luego)
     const token = await user.getIdToken()
-    
+
     console.log('🚀 Google User:', user)
     console.log('🔐 Firebase ID Token:', token)
-    
+
     // 3. Enviar token al Backend para validar y crear sesión
     const { data } = await usersService.googleLogin<LoginResponse>(token)
-    
+
     // 4. Guardar sesión y redirigir (Igual que en login normal)
     localStorage.setItem('access_token', data.token)
-    
+
     try {
       // Manejo flexible de IDs según vengan del backend (_id, id, user_id)
       const uid = (data.user as any)?.id || (data.user as any)?._id || (data.user as any)?.user_id
-      
+
       if (uid) {
         localStorage.setItem('user_id', String(uid))
-        
+
         // 5. RE-FETCH: Obtener perfil completo y fresco para asegurar accountType (Founder, etc.)
         try {
           const { data: userData } = await usersService.getById(uid)
           const freshUser = userData.user
-          
+
           localStorage.setItem('user', JSON.stringify(freshUser))
           userStore.setUser({
             id: freshUser._id || (freshUser as any).id,
@@ -71,19 +71,19 @@ async function loginWithGoogle() {
         } catch (fetchErr) {
           console.warn('Error refrescando perfil post-login:', fetchErr)
           // Fallback al usuario que vino en login
-          userStore.setUser({ 
-            id: uid, 
-            name: (data.user as any)?.name, 
-            email: (data.user as any)?.email 
+          userStore.setUser({
+            id: uid,
+            name: (data.user as any)?.name,
+            email: (data.user as any)?.email
           })
         }
       }
     } catch (err) {
       console.warn('Error parseando usuario:', err)
     }
-    
+
     router.push('/')
-    
+
   } catch (e: any) {
     console.error('Error Google Login:', e)
     if (e.code === 'auth/popup-closed-by-user') {
@@ -91,10 +91,10 @@ async function loginWithGoogle() {
       return
     }
     // Si el error viene del backend (axios)
-    if (e.message && !e.code) { 
-         error.value = e.message
+    if (e.message && !e.code) {
+      error.value = e.message
     } else {
-         error.value = 'No se pudo iniciar sesión con Google. Inténtalo de nuevo.'
+      error.value = 'No se pudo iniciar sesión con Google. Inténtalo de nuevo.'
     }
   } finally {
     loadingGoogle.value = false
@@ -105,23 +105,23 @@ async function submit() {
   if (!email.value || !password.value) return
   loading.value = true
   error.value = ''
-  
+
   try {
     const body: LoginBody = { email: email.value.trim().toLowerCase(), password: password.value.trim() }
     const { data } = await usersService.login<LoginResponse>(body)
-    
+
     localStorage.setItem('access_token', data.token)
     try {
       const uid = (data.user as any)?.id || (data.user as any)?._id || (data.user as any)?.user_id
-      
+
       if (uid) {
         localStorage.setItem('user_id', String(uid))
-        
+
         // RE-FETCH: Asegurar perfil fresco
         try {
           const { data: userData } = await usersService.getById(uid)
           const freshUser = userData.user
-          
+
           localStorage.setItem('user', JSON.stringify(freshUser))
           userStore.setUser({
             id: freshUser._id || (freshUser as any).id,
@@ -131,15 +131,15 @@ async function submit() {
           })
         } catch (fetchErr) {
           console.warn('Error refrescando perfil submit:', fetchErr)
-          userStore.setUser({ 
-            id: uid, 
-            name: (data.user as any)?.name, 
-            email: (data.user as any)?.email 
+          userStore.setUser({
+            id: uid,
+            name: (data.user as any)?.name,
+            email: (data.user as any)?.email
           })
         }
       }
-    } catch {}
-    
+    } catch { }
+
     router.push('/')
   } catch (e: any) {
     error.value = e?.message || 'Credenciales incorrectas. Intenta de nuevo.'
@@ -153,7 +153,7 @@ async function submit() {
   <div class="login-page">
     
     <div class="brand-header">
-      <img src="/src/assets/fudmaster-color.png" alt="Fudmaster" class="logo" />
+      <img src="/src/assets/logos/logo-prefectura.png" alt="Prefectura" class="logo" />
     </div>
 
     <div class="card">
@@ -231,13 +231,13 @@ async function submit() {
       </div>
     </div>
     
-    <p class="copyright">© Füdmaster Inc. Sistema seguro.</p>
+    <p class="copyright">© Prefectura Sambo. Sistema seguro.</p>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.login-page { 
-  width: 100%; 
+.login-page {
+  width: 100%;
   min-height: 100vh;
   padding: 40px 16px;
   background-color: var(--bg-main);
@@ -250,6 +250,7 @@ async function submit() {
 
 .brand-header {
   text-align: center;
+
   .logo {
     height: 48px;
     width: auto;
@@ -294,13 +295,13 @@ async function submit() {
   align-items: center;
   gap: 10px;
   margin-bottom: 20px;
-  
+
   &.error {
     background: rgba(239, 68, 68, 0.1);
     color: #ef4444;
     border: 1px solid rgba(239, 68, 68, 0.2);
   }
-  
+
   &.info {
     background: rgba(59, 130, 246, 0.1);
     color: #3b82f6;
@@ -308,13 +309,16 @@ async function submit() {
   }
 }
 
-.form { display: grid; gap: 20px; }
+.form {
+  display: grid;
+  gap: 20px;
+}
 
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  
+
   label {
     font-size: 14px;
     font-weight: 600;
@@ -333,8 +337,10 @@ async function submit() {
   color: var(--accent);
   text-decoration: none;
   font-weight: 500;
-  
-  &:hover { text-decoration: underline; }
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .input-wrapper {
@@ -346,18 +352,18 @@ async function submit() {
   border-radius: 12px;
   padding: 12px 16px;
   transition: all 0.2s ease;
-  
+
   &:focus-within {
     background: var(--bg-card);
     border-color: var(--accent);
     box-shadow: 0 0 0 4px rgba(134, 239, 172, 0.15);
   }
-  
+
   .icon {
     color: var(--text-sec);
     font-size: 18px;
   }
-  
+
   input {
     flex: 1;
     border: none;
@@ -365,10 +371,13 @@ async function submit() {
     outline: none;
     font-size: 16px;
     color: var(--text-main);
-    
-    &::placeholder { color: var(--text-sec); opacity: 0.5; }
+
+    &::placeholder {
+      color: var(--text-sec);
+      opacity: 0.5;
+    }
   }
-  
+
   .eye-btn {
     background: none;
     border: none;
@@ -376,8 +385,10 @@ async function submit() {
     cursor: pointer;
     color: var(--text-sec);
     transition: color 0.2s;
-    
-    &:hover { color: var(--accent); }
+
+    &:hover {
+      color: var(--accent);
+    }
   }
 }
 
@@ -397,13 +408,16 @@ async function submit() {
   justify-content: center;
   gap: 10px;
   transition: transform 0.2s;
-  
+
   &:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 10px 20px -5px rgba(134, 239, 172, 0.3);
   }
-  
-  &:disabled { opacity: 0.7; cursor: not-allowed; }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
 }
 
 .divider {
@@ -412,14 +426,15 @@ async function submit() {
   justify-content: center;
   margin: 20px 0;
   width: 100%;
-  
-  &::before, &::after {
+
+  &::before,
+  &::after {
     content: '';
     flex: 1;
     height: 1px;
     background: var(--border);
   }
-  
+
   span {
     padding: 0 10px;
     color: var(--text-sec);
@@ -443,19 +458,19 @@ async function submit() {
   justify-content: center;
   gap: 12px;
   transition: all 0.2s;
-  
+
   &:hover:not(:disabled) {
     background: rgba(255, 255, 255, 0.05);
     border-color: var(--accent);
     transform: translateY(-1px);
     box-shadow: var(--shadow);
   }
-  
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
   }
-  
+
   .icon {
     font-size: 18px;
   }
@@ -470,12 +485,12 @@ async function submit() {
   align-items: center;
   gap: 10px;
   text-align: center;
-  
+
   .hint {
     font-size: 14px;
     color: var(--text-sec);
   }
-  
+
   .buy-btn {
     background: transparent;
     border: 2px solid var(--accent);
@@ -486,7 +501,7 @@ async function submit() {
     cursor: pointer;
     transition: all 0.2s;
     font-size: 14px;
-    
+
     &:hover {
       background: var(--accent);
       color: #111613;
@@ -500,7 +515,14 @@ async function submit() {
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>
