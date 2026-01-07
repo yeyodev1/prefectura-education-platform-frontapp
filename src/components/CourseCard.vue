@@ -12,12 +12,19 @@ const props = defineProps({
   ctaText: { type: String, required: false },
   disabled: { type: Boolean, required: false },
   countdownTo: { type: Number, required: false },
+  index: { type: Number, required: false, default: 0 },
+  isUpcoming: { type: Boolean, required: false },
 })
 
 const emit = defineEmits(['placeholder-click'])
 
 function sanitizeUrl(url?: string) { return (url || '').toString().replace(/`/g, '').trim() }
-function coverOf(course: any) { return sanitizeUrl(course?.image_url) || sanitizeUrl(course?.coverUrl) || '/src/assets/fudmaster-color.png' }
+function coverOf(course: any): string | undefined {
+  const url = sanitizeUrl(course?.image_url) || sanitizeUrl(course?.coverUrl)
+  return url || undefined
+}
+
+
 function nameOf(course: any) { return course?.name || course?.title || 'Curso sin título' }
 function descriptionOf(course: any) { return course?.heading || course?.description || course?.shortDescription || 'Detalles próximamente.' }
 
@@ -31,11 +38,21 @@ function classesCount(course: any) {
   return Number(course?.lecturesCount ?? (Array.isArray(course?.lectures) ? course.lectures.length : 0) ?? 0)
 }
 
+function pixelStyle(i: number) {
+  const hues = [120, 200, 20, 280]
+  const h = hues[i % hues.length]
+  return {
+    '--c1': `hsla(${h}, 60%, 60%, 0.18)`,
+    '--c2': `hsla(${h}, 40%, 40%, 0.14)`,
+    '--c3': `hsla(${h}, 30%, 30%, 0.10)`,
+  } as Record<string, string>
+}
+
 const linkTo = computed(() => props.to || `/courses/${(props.course as any)?.id}`)
 const published = computed(() => !!(props.course as any)?.is_published)
 const showPublished = computed(() => props.showPublishedBadge && published.value)
 const showClasses = computed(() => !!props.showClassesCount)
-const cta = computed(() => props.ctaText || 'Ver curso')
+const cta = computed(() => props.ctaText || (props.isUpcoming ? 'Muy pronto' : 'Ver curso'))
 
 const showDesc = ref(false)
 const expanded = ref(false)
@@ -61,12 +78,18 @@ function onCardClick(e: Event) {
 
 <template>
   <component :is="props.disabled ? 'div' : RouterLink" :to="props.disabled ? undefined : linkTo" class="course-card" :class="{ disabled: props.disabled }" @click="onCardClick">
-    <img class="cover" :class="{ blur: props.disabled }" :src="coverOf(course)" alt="cover" />
+    <div v-if="!coverOf(course)" class="cover pixelated" :style="pixelStyle(props.index)"></div>
+    <img v-else class="cover" :class="{ blur: props.disabled }" :src="coverOf(course)" alt="cover" />
+    
     <h3 class="name">{{ nameOf(course) }}</h3>
     <div class="meta">
       <span class="badge" v-if="showPublished">Publicado</span>
+      <span class="badge upcoming" v-if="props.isUpcoming">Próximamente</span>
       <span class="badge" v-if="showClasses"><i class="fa-solid fa-clapperboard" /> {{ classesCount(course) }} clases</span>
-      <span class="cta">{{ cta }} <i class="fa-solid fa-arrow-right" /></span>
+      <span class="cta" :class="{ disabled: props.isUpcoming }">
+        {{ cta }} 
+        <i class="fa-solid fa-arrow-right" v-if="!props.isUpcoming" />
+      </span>
     </div>
 
     <button class="desc-toggle" @click="toggleShowDesc">{{ showDesc ? 'Ocultar descripción' : 'Ver descripción' }}</button>
@@ -109,7 +132,7 @@ function onCardClick(e: Event) {
   transition: all 0.2s ease;
 }
 
-.course-card:hover {
+.course-card:hover:not(.disabled) {
   border-color: var(--accent);
   transform: translateY(-2px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
@@ -128,6 +151,17 @@ function onCardClick(e: Event) {
 
 .cover.blur {
   filter: blur(6px);
+}
+
+.cover.pixelated {
+  // Base colors for repeating pattern (overwritten by :style)
+  --c1: rgba(134, 239, 172, 0.15);
+  --c2: rgba(26, 36, 33, 0.12);
+  --c3: rgba(26, 36, 33, 0.06);
+  background-image:
+    repeating-linear-gradient(0deg, var(--c1) 0 12px, var(--c2) 12px 24px),
+    repeating-linear-gradient(90deg, var(--c3) 0 12px, transparent 12px 24px);
+  background-size: 24px 24px;
 }
 
 .name {
@@ -154,6 +188,12 @@ function onCardClick(e: Event) {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+
+  &.upcoming {
+    background: rgba(134, 239, 172, 0.05);
+    color: var(--text-sec);
+    border: 1px solid var(--border);
+  }
 }
 
 .cta {
@@ -246,5 +286,4 @@ function onCardClick(e: Event) {
 .countdown .sep {
   color: var(--text-sec);
 }
-
 </style>
