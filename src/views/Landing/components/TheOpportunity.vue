@@ -26,38 +26,65 @@
 
 <style lang="scss" scoped>
 .roadmap-section {
-  background: #0f172a;
+  background: var(--bg-card);
   padding: 4rem 1rem;
   text-align: center;
-  border-bottom: 1px solid #334155;
-  color: white;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-main);
 }
-.container { max-width: 800px; margin: 0 auto; }
-.highlight { color: #facc15; }
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.highlight {
+  color: var(--accent);
+}
+
 .timeline {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   margin: 2rem 0;
-  
+
   @media(min-width: 768px) {
     flex-direction: row;
     justify-content: space-between;
   }
 }
+
 .event {
-  background: rgba(255,255,255,0.05);
+  background: var(--bg-main);
   padding: 1rem;
   border-radius: 8px;
   flex: 1;
-  border: 1px solid transparent;
-  
+  border: 1px solid var(--border);
+
   &.current {
-    border-color: #facc15;
-    background: rgba(250, 204, 21, 0.1);
+    border-color: var(--accent);
+    background: rgba(134, 239, 172, 0.1);
   }
 }
-.date { display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px; }
-.title { font-weight: bold; font-size: 1rem; }
-.note { font-size: 0.9rem; color: #94a3b8; font-style: italic; }
+
+.date {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-sec);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 1rem;
+  color: var(--text-main);
+}
+
+.note {
+  font-size: 0.9rem;
+  color: var(--text-sec);
+  font-style: italic;
+}
 </style>
