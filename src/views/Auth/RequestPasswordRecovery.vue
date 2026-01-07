@@ -41,7 +41,7 @@ async function submit() {
   <div class="recovery-page">
     
     <div class="brand-header">
-      <img src="/src/assets/fudmaster-color.png" alt="Fudmaster" class="logo" />
+      <img src="/src/assets/logos/logo-prefectura.png" alt="Prefectura" class="logo" />
     </div>
 
     <div class="card">
@@ -96,7 +96,7 @@ async function submit() {
       </div>
     </div>
     
-    <p class="copyright">© Füdmaster Inc. Sistema seguro.</p>
+    <p class="copyright">© Prefectura Sambo. Sistema seguro.</p>
   </div>
 </template>
 
