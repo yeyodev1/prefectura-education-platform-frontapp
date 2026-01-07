@@ -262,9 +262,10 @@ watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPerce
 .lecture-detail-view {
   width: 100%;
   padding: 24px 16px;
-  background: var(--bg);
-  color: var(--text);
+  background: var(--bg-main);
+  color: var(--text-main);
 }
+
 
 .container {
   max-width: 100%;
@@ -281,7 +282,7 @@ watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPerce
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: $alert-error;
+  color: #ef4444;
   font-size: 13px;
 }
 
@@ -289,9 +290,10 @@ watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPerce
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: $FUDMASTER-GREEN;
+  color: var(--accent);
   font-size: 13px;
 }
+
 
 .header {
   display: grid;
@@ -330,12 +332,13 @@ watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPerce
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: color-mix(in oklab, var(--text), transparent 40%);
-  background: color-mix(in oklab, var(--bg), var(--text) 6%);
+  color: var(--text-sec);
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 12px 14px;
 }
+
 
 .error {
   color: $alert-error;
@@ -372,20 +375,21 @@ watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPerce
 }
 
 .player-wrap {
-  background: var(--bg);
+  background: var(--bg-main);
   border-radius: 12px;
-  box-shadow: 0 20px 40px -10px rgba($FUDMASTER-DARK, 0.1);
+  box-shadow: var(--shadow);
   overflow: hidden;
 }
 
 .next-panel {
-  background: var(--bg);
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 12px;
   display: grid;
   gap: 10px;
 }
+
 
 .next-head {
   display: grid;
@@ -413,8 +417,8 @@ watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPerce
 }
 
 .next-cta {
-  background: $FUDMASTER-PINK;
-  color: $white;
+  background: var(--accent);
+  color: #111613;
   border: none;
   border-radius: 999px;
   padding: 10px 16px;
@@ -426,17 +430,19 @@ watch(progressPercent, (p) => { try { console.log('[LectureDetail] progressPerce
   gap: 8px;
 }
 
+
 .next-cta:hover {
   filter: brightness(0.95);
 }
 
 
 .comments-sidebar {
-  background: var(--bg);
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 12px;
   display: grid;
   gap: 10px;
 }
+
 </style>
