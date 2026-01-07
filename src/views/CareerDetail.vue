@@ -63,15 +63,66 @@ const orderedCourses = computed(() => {
   </template>
 
 <style lang="scss" scoped>
-.career-detail { width: 100%; padding: 24px 16px; background: var(--bg); color: var(--text); }
-.container { width: 100%; margin: 0 auto; display: grid; gap: 16px; }
-.head { display: grid; gap: 8px; }
-.title { display: inline-flex; align-items: center; gap: 10px; color: var(--text); margin: 0; font-size: 22px; }
-.name { color: var(--text); font-weight: 700; margin: 0; font-size: 18px; }
-.desc { color: color-mix(in oklab, var(--text), transparent 30%); margin: 0; font-size: 14px; }
-.hint { color: color-mix(in oklab, var(--text), transparent 40%); }
-.error { color: var(--accent); }
-.grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-@media (min-width: 768px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+.career-detail {
+  width: 100%;
+  padding: 24px 16px;
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+.container {
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  gap: 16px;
+}
+
+.head {
+  display: grid;
+  gap: 8px;
+}
+
+.title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-main);
+  margin: 0;
+  font-size: 22px;
+}
+
+.name {
+  color: var(--text-main);
+  font-weight: 700;
+  margin: 0;
+  font-size: 18px;
+}
+
+.desc {
+  color: var(--text-sec);
+  margin: 0;
+  font-size: 14px;
+}
+
+.hint {
+  color: var(--text-sec);
+}
+
+.error {
+  color: var(--accent);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 /* cards are rendered via CourseCard component */
 </style>
