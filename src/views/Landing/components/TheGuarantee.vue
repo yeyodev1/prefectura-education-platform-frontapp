@@ -1,39 +1,39 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
-  import { useRouter } from 'vue-router'
-  const router = useRouter()
-  function goToCheckout() { router.push('/checkout') }
-  
-  // CORRECCIÓN APLICADA: Usamos ref() para la reactividad
-  const faqs = ref([
-    {
-      question: "¿Por qué no ofrecen reembolso?",
-      answer: "Porque Food Stack no es un curso para 'ver', es un sistema para 'implementar'. Entregamos propiedad intelectual, herramientas (Excel con macros) y estrategias que usamos en nuestros propios negocios. Buscamos dueños comprometidos, no curiosos.",
-      isOpen: true // La primera abierta por defecto
-    },
-    {
-      question: "¿Qué garantía tengo de que esto funciona?",
-      answer: "Nuestra garantía son nuestros 5 locales operativos (Bakano, Delacrem, etc.) y los resultados de nuestros alumnos. No enseñamos teoría; enseñamos lo que aplicamos ayer en nuestras cocinas para vender $20k/mes.",
-      isOpen: false
-    },
-    {
-      question: "¿Qué pasa si me trabo o no entiendo algo?",
-      answer: "No te dejamos solo. Como Miembro Fundador, tienes acceso a la Comunidad Privada donde Luis, Mauro y Denisse responden dudas. Si aplicas el método, el resultado es matemático.",
-      isOpen: false
-    },
-    {
-      question: "¿Sirve para mi tipo de comida?",
-      answer: "La ingeniería de menú y el control de costos son universales. Ya sea que vendas sushi, hamburguesas o encebollados, los números funcionan igual. El sistema se adapta a tu modelo.",
-      isOpen: false
-    }
-  ]);
-  
-  const toggleFaq = (index: number) => {
-    const item = faqs.value[index]
-    if (!item) return
-    item.isOpen = !item.isOpen
-  };
-  </script>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router'
+const router = useRouter()
+function goToCheckout() { router.push('/checkout') }
+
+// CORRECCIÓN APLICADA: Usamos ref() para la reactividad
+const faqs = ref([
+  {
+    question: "¿Por qué no ofrecen reembolso?",
+    answer: "Porque Food Stack no es un curso para 'ver', es un sistema para 'implementar'. Entregamos propiedad intelectual, herramientas (Excel con macros) y estrategias que usamos en nuestros propios negocios. Buscamos dueños comprometidos, no curiosos.",
+    isOpen: true // La primera abierta por defecto
+  },
+  {
+    question: "¿Qué garantía tengo de que esto funciona?",
+    answer: "Nuestra garantía son nuestros 5 locales operativos (Bakano, Delacrem, etc.) y los resultados de nuestros alumnos. No enseñamos teoría; enseñamos lo que aplicamos ayer en nuestras cocinas para vender $20k/mes.",
+    isOpen: false
+  },
+  {
+    question: "¿Qué pasa si me trabo o no entiendo algo?",
+    answer: "No te dejamos solo. Como Miembro Fundador, tienes acceso a la Comunidad Privada donde Luis, Mauro y Denisse responden dudas. Si aplicas el método, el resultado es matemático.",
+    isOpen: false
+  },
+  {
+    question: "¿Sirve para mi tipo de comida?",
+    answer: "La ingeniería de menú y el control de costos son universales. Ya sea que vendas sushi, hamburguesas o encebollados, los números funcionan igual. El sistema se adapta a tu modelo.",
+    isOpen: false
+  }
+]);
+
+const toggleFaq = (index: number) => {
+  const item = faqs.value[index]
+  if (!item) return
+  item.isOpen = !item.isOpen
+};
+</script>
   
   <template>
     <section class="guarantee-section">
@@ -104,13 +104,14 @@
   
   <style lang="scss" scoped>
   // Variables de diseño (Asegurando consistencia sin Tailwind)
-  $bg-dark: #020617;
-  $card-bg: #0f172a;
-  $accent: $FUDMASTER-ORANGE; // Amarillo Food Stack
-  $text-main: #ffffff;
-  $text-muted: #94a3b8;
-  $border: #334155;
-  
+  // Variables de diseño (Usando globales)
+  $bg-dark: var(--bg-main);
+  $card-bg: var(--bg-card);
+  $accent: var(--accent);
+  $text-main: var(--text-main);
+  $text-muted: var(--text-sec);
+  $border: var(--border);
+
   .guarantee-section {
     background-color: $bg-dark;
     padding: 3rem 1rem;
@@ -124,17 +125,17 @@
     display: block;
     margin: 3rem auto;
   }
-  
+
   .container {
     max-width: 900px;
     margin: 0 auto;
   }
-  
+
   // --- ESTILOS DE LA TARJETA ---
   .guarantee-card {
     display: flex;
     flex-direction: column;
-    background: linear-gradient(145deg, #1e293b, #0f172a);
+    background: var(--bg-card);
     border: 1px solid $border;
     border-left: 4px solid $accent;
     border-radius: 24px;
@@ -142,8 +143,8 @@
     position: relative;
     overflow: hidden;
     margin-bottom: 5rem;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-  
+    box-shadow: var(--shadow);
+
     @media (min-width: 768px) {
       flex-direction: row;
       align-items: center;
@@ -151,106 +152,106 @@
       padding: 4rem;
     }
   }
-  
+
   .badge-wrapper {
     flex-shrink: 0;
     display: flex;
     justify-content: center;
     margin-bottom: 2rem;
-  
+
     @media (min-width: 768px) {
       margin-bottom: 0;
     }
   }
-  
+
   // SELLO "REAL" CSS PURO
   .seal {
     width: 140px;
     height: 140px;
     border-radius: 50%;
-    // Degradado azul técnico para denotar seriedad
-    background: radial-gradient(circle at 30% 30%, $FUDMASTER-GREEN, $FUDMASTER-GREEN);
-    border: 4px solid #1e293b;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    background: var(--accent);
+    border: 4px solid var(--bg-card);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: #111613;
     font-weight: 900;
     position: relative;
-    
+
     // Anillo externo decorativo
     &::after {
       content: '';
       position: absolute;
       inset: -8px;
       border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
-  
+
     span {
       font-size: 2.5rem;
       line-height: 1;
     }
+
     small {
       font-size: 0.8rem;
       letter-spacing: 2px;
       opacity: 0.8;
     }
   }
-  
+
   .content {
     text-align: center;
-    
+
     @media (min-width: 768px) {
       text-align: left;
     }
-  
+
     h3 {
       font-size: 2rem;
       margin-bottom: 1rem;
       font-weight: 800;
-      
+
       .highlight {
         color: $accent;
       }
     }
-  
+
     .promise {
       font-size: 1.1rem;
       font-weight: 600;
       margin-bottom: 1rem;
-      color: white;
+      color: var(--text-main);
     }
-  
+
     .terms {
       color: $text-muted;
       line-height: 1.6;
       margin-bottom: 2rem;
       font-size: 0.95rem;
-  
+
       strong {
-        color: white;
+        color: var(--text-main);
         font-weight: 600;
       }
     }
   }
-  
+
   .founder-signature {
-    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding-top: 1.5rem;
-    
+
     .signature {
       font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
       font-size: 1.5rem;
       font-style: italic;
-      color: white;
+      color: var(--text-main);
       opacity: 0.9;
       display: inline-block;
       margin-right: 0.5rem;
     }
-  
+
     .role {
       font-size: 0.75rem;
       text-transform: uppercase;
@@ -260,65 +261,65 @@
       font-weight: 700;
     }
   }
-  
+
   // --- ESTILOS DEL FAQ ---
   .faq-wrapper {
     margin-top: 4rem;
   }
-  
+
   .faq-title {
     text-align: center;
     font-size: 2rem;
     margin-bottom: 3rem;
-    color: white;
+    color: var(--text-main);
     font-weight: 800;
   }
 
-   .cta-wrapper {
-      display: flex;
-      width: fit-content;
-      margin: 0 auto;
-      flex-direction: column;
-      align-items: flex-center; /* Alinea botón y subtitulo a la derecha */
-      margin-top: 36px;
-    }
-    /* --- BOTÓN --- */
-    .cta-button {
-      background: $FUDMASTER-GREEN;
-      color: $FUDMASTER-LIGHT;
-      border: none;
-      padding: 18px 24px;
+  .cta-wrapper {
+    display: flex;
+    width: fit-content;
+    margin: 0 auto;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 36px;
+  }
+
+  /* --- BOTÓN --- */
+  .cta-button {
+    background: var(--accent);
+    color: #111613;
+    border: none;
+    padding: 18px 24px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 15px rgba(134, 239, 172, 0.4);
+    white-space: nowrap;
+
+    span {
+      color: inherit;
+      font-weight: 800;
       font-size: 1.1rem;
-      font-weight: 700;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
-      white-space: nowrap;
-
-      span {
-        color: $FUDMASTER-DARK;
-        font-weight: 600;
-        font-size: 1rem;
-        margin: 0;
-      }
-
-      @media screen and (max-width: 320px) {
-        padding: 14px 16px;
-        font-size: 0.75rem;
-      }
-
-      &:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(233, 30, 99, 0.6);
-        // filter: brightness(1.1); // Opcional para brillo
-      }
-
-      &:active {
-        transform: translateY(0);
-      }
+      margin: 0;
     }
-  
+
+    @media screen and (max-width: 320px) {
+      padding: 14px 16px;
+      font-size: 0.75rem;
+    }
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(134, 239, 172, 0.6);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
   .faq-grid {
     display: flex;
     flex-direction: column;
@@ -330,16 +331,17 @@
     justify-content: center;
     margin-top: 2rem;
   }
+
   .cta {
-    background: $FUDMASTER-GREEN;
-    color: $FUDMASTER-LIGHT;
+    background: var(--accent);
+    color: #111613;
     border: none;
     border-radius: 12px;
     padding: 12px 18px;
     font-weight: 800;
     cursor: pointer;
   }
-  
+
   .faq-item {
     background-color: $card-bg;
     border: 1px solid $border;
@@ -347,53 +349,61 @@
     padding: 1.5rem;
     cursor: pointer;
     transition: all 0.3s ease;
-  
+
     &:hover {
-      border-color: $text-muted;
+      border-color: var(--accent);
     }
-  
+
     &.active {
-      border-color: $FUDMASTER-PURPLE;
-      background-color: lighten($card-bg, 3%);
-      
+      border-color: var(--accent);
+      background-color: color-mix(in srgb, $card-bg, white 3%);
+
       .icon {
-        transform: rotate(180deg); // Animación del signo +/-
+        transform: rotate(180deg);
         color: $accent;
       }
-      
+
       .faq-question {
-        color: $FUDMASTER-LIGHT;
+        color: var(--text-main);
       }
     }
   }
-  
+
   .faq-question {
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-weight: 700;
     font-size: 1.1rem;
-    color: white;
+    color: var(--text-main);
     transition: color 0.3s;
-  
+
     .icon {
       font-size: 1.5rem;
       font-weight: 400;
       transition: transform 0.3s;
     }
   }
-  
+
   .faq-answer {
     margin-top: 1rem;
     color: $text-muted;
     line-height: 1.6;
-    border-top: 1px solid rgba(255,255,255,0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
     padding-top: 1rem;
     animation: slideDown 0.3s ease-out;
   }
-  
+
   @keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
-  </style>
+
+</style>
