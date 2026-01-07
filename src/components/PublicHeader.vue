@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import lightLogo from '../assets/fudmaster-color.png'
-import darkLogo from '../assets/fudmaster-dark.png'
+import lightLogo from '../assets/logos/logo-prefectura.png'
+import darkLogo from '../assets/logos/logo-prefectura.png'
 import ExitIntentModal from './ExitIntentModal.vue'
 
 const router = useRouter()
@@ -44,7 +44,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  try { themeObserver?.disconnect() } catch {}
+  try { themeObserver?.disconnect() } catch { }
 })
 </script>
 
@@ -54,7 +54,7 @@ onBeforeUnmount(() => {
       <div class="public-header-wrapper-left">
         <div class="logo">
           <picture>
-            <source srcset="../assets/iso-verde.png" media="(max-width: 768px)">
+            <source srcset="../assets/logos/logo-prefectura.png" media="(max-width: 768px)">
             <img :src="logoSrc" alt="fudmaster-logo" @click="onLogoClick">
           </picture>
         </div>
@@ -154,9 +154,10 @@ onBeforeUnmount(() => {
         display: flex;
         align-items: center;
         gap: 16px;
-        
+
         .logo {
           width: 120px;
+
           img {
             width: 100%;
             cursor: pointer;
@@ -183,7 +184,7 @@ onBeforeUnmount(() => {
           color: var(--text);
           cursor: pointer;
           padding: 4px;
-          
+
           &:hover {
             color: var(--accent);
           }
@@ -323,7 +324,7 @@ onBeforeUnmount(() => {
       color: var(--text);
       cursor: pointer;
       padding: 4px;
-      
+
       &:hover {
         color: var(--accent);
       }
@@ -357,7 +358,8 @@ onBeforeUnmount(() => {
         text-align: center;
       }
 
-      &:hover, &.active {
+      &:hover,
+      &.active {
         background: var(--bg-hover, #f5f5f5);
         color: var(--accent);
       }
@@ -389,7 +391,7 @@ onBeforeUnmount(() => {
     .desktop-menu {
       display: none; // Hide desktop menu on mobile
     }
-    
+
     .mobile-toggle {
       display: block; // Show toggle button
     }
