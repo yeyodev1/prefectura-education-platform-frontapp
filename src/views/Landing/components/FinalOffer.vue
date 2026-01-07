@@ -47,21 +47,21 @@ function goToCheckout() { router.push('/checkout') }
 
   .offer-section {
     padding: 3rem 1rem 5rem 1rem;
-    background-color: #020617; // Dark bg
+    background-color: var(--bg-main);
     display: flex;
     justify-content: center;
   }
   
   .offer-container {
-    background-color: #0f172a;
-    border: 4px solid $FUDMASTER-ORANGE; // Borde dorado grueso
+    background-color: var(--bg-card);
+    border: 4px solid var(--accent);
     border-radius: 24px;
     padding: 3rem 2rem;
     max-width: 500px;
     width: 100%;
     text-align: center;
     position: relative;
-    box-shadow: 0 0 60px rgba(250, 204, 21, 0.15);
+    box-shadow: 0 0 60px rgba(134, 239, 172, 0.15);
   }
   
   .best-value-badge {
@@ -69,8 +69,8 @@ function goToCheckout() { router.push('/checkout') }
     top: -20px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: $FUDMASTER-ORANGE;
-    color: black;
+    background-color: var(--accent);
+    color: #111613;
     font-weight: 800;
     padding: 0.8rem 2rem;
     border-radius: 99px;
@@ -81,7 +81,7 @@ function goToCheckout() { router.push('/checkout') }
   }
   
   .title {
-    color: white;
+    color: var(--text-main);
     font-size: 2.2rem;
     font-weight: 800;
     margin-top: 1rem;
@@ -89,7 +89,7 @@ function goToCheckout() { router.push('/checkout') }
   }
   
   .subtitle {
-    color: #94a3b8;
+    color: var(--text-sec);
     margin-bottom: 2rem;
   }
   
@@ -103,21 +103,21 @@ function goToCheckout() { router.push('/checkout') }
   }
   
   .old-price {
-    color: #64748b;
+    color: var(--text-sec);
     text-decoration: line-through;
     font-size: 1.5rem;
     margin-bottom: 10px;
   }
   
   .new-price {
-    color: white;
+    color: var(--text-main);
     font-size: 5rem;
     font-weight: 900;
     line-height: 1;
   }
   
   .currency {
-    color: #4ade80;
+    color: var(--accent);
     font-weight: 700;
     margin-bottom: 10px;
   }
@@ -127,7 +127,7 @@ function goToCheckout() { router.push('/checkout') }
     padding: 0;
     text-align: left;
     margin-bottom: 2.5rem;
-    color: #e2e8f0;
+    color: var(--text-main);
     
     li {
       margin-bottom: 0.8rem;
@@ -137,37 +137,38 @@ function goToCheckout() { router.push('/checkout') }
   
   .buy-btn {
     width: 100%;
-    background-color: $FUDMASTER-GREEN; // Verde venta
-    color: white;
+    background-color: var(--accent);
+    color: #111613;
     font-size: 1.5rem;
     font-weight: 900;
     padding: 1.2rem;
     border: none;
     border-radius: 12px;
     cursor: pointer;
-    box-shadow: 0 10px 0 $FUDMASTER-GREEN; // Efecto 3D
+    box-shadow: 0 10px 0 var(--accent-dark);
     transition: transform 0.1s, box-shadow 0.1s;
     margin-bottom: 1.5rem;
   
     &:active {
       transform: translateY(4px);
-      box-shadow: 0 2px 0 #15803d;
+      box-shadow: 0 2px 0 var(--accent-dark);
     }
   }
   
   .trust-badges {
     font-size: 0.9rem;
-    color: #94a3b8;
+    color: var(--text-sec);
     
     .transfer-link {
       font-size: 0.8rem;
       margin-top: 0.5rem;
       
       a {
-        color: #facc15;
+        color: var(--accent);
         text-decoration: none;
         font-weight: bold;
       }
     }
   }
+
   </style>
