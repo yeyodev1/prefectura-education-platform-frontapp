@@ -28,7 +28,7 @@ const menu = [
   { name: 'Inicio', link: '/', icon: 'fa-solid fa-house' },
   { name: 'Mis Cursos', link: '/courses', icon: 'fa-solid fa-book-open' },
   { name: 'Explorar', link: '/courses/all', icon: 'fa-solid fa-compass' },
-  { name: 'Escuelas', link: '/careers', icon: 'fa-solid fa-graduation-cap' },
+  { name: 'Rutas de Aprendizaje', link: '/careers', icon: 'fa-solid fa-graduation-cap' },
   { name: 'Certificados', link: '/certificates', icon: 'fa-solid fa-award' },
   { name: 'Mi Perfil', link: '/profile/edit', icon: 'fa-solid fa-user-gear' },
 ]
@@ -44,8 +44,8 @@ function applyTheme() {
 function toggleTheme() { isDark.value = !isDark.value; localStorage.setItem('theme', isDark.value ? 'dark' : 'light'); applyTheme() }
 onMounted(async () => {
   const t = localStorage.getItem('theme'); isDark.value = t === 'dark'; applyTheme()
-  try { await careersStore.fetchAll() } catch {}
-  try { userStore.hydrate(); const uid = userStore.id || localStorage.getItem('user_id'); if (uid) await coursesStore.fetchEnrolled(String(uid)) } catch {}
+  try { await careersStore.fetchAll() } catch { }
+  try { userStore.hydrate(); const uid = userStore.id || localStorage.getItem('user_id'); if (uid) await coursesStore.fetchEnrolled(String(uid)) } catch { }
 })
 </script>
 
@@ -89,7 +89,7 @@ onMounted(async () => {
 
     &.active {
       width: 64px;
-      
+
       .user-sidebar-footer {
         padding: 8px;
         align-items: center;
@@ -192,5 +192,4 @@ onMounted(async () => {
     }
   }
 }
-
 </style>

@@ -3,6 +3,10 @@ import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import UserSidebar from '../components/UserSidebar.vue';
 import UserHeader from '../components/UserHeader.vue';
+import WelcomeModal from '../components/WelcomeModal.vue';
+import { useUserStore } from '../stores/user';
+
+const userStore = useUserStore();
 
 const menuIsOpen = ref(false);
 const route = useRoute();
@@ -48,6 +52,10 @@ watch(() => route.fullPath, () => {
         <RouterView />
       </div>
     </div>
+    <WelcomeModal 
+      v-if="userStore.isAuthenticated && !userStore.welcomeModalShown" 
+      @close="userStore.setWelcomeModalShown(true)" 
+    />
   </div>
 </template>
 

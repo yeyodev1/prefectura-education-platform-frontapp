@@ -74,7 +74,7 @@ async function addToMyCareers(career: any) {
   <div class="careers-view">
     <div class="container">
       <div class="head">
-        <h2 class="title"><i class="fa-solid fa-graduation-cap" /> Escuelas o Carreras</h2>
+        <h2 class="title"><i class="fa-solid fa-graduation-cap" /> Rutas de Aprendizaje</h2>
       </div>
 
       <!-- CTA para usuarios Free -->
@@ -85,7 +85,7 @@ async function addToMyCareers(career: any) {
           </div>
           <div class="upgrade-text">
             <h3>Hazte Founder</h3>
-            <p>Accede a todas las carreras y contenido exclusivo.</p>
+            <p>Accede a todas las rutas y contenido exclusivo.</p>
           </div>
         </div>
         <button class="upgrade-btn">
@@ -98,9 +98,9 @@ async function addToMyCareers(career: any) {
       <div v-else-if="error" class="error">{{ error }}</div>
 
       <template v-else>
-        <h3 class="subtitle">Mis carreras</h3>
+        <h3 class="subtitle">Mis rutas</h3>
         <div class="grid">
-          <div v-if="myCareers.length === 0" class="empty">Aún no tienes carreras asignadas.</div>
+          <div v-if="myCareers.length === 0" class="empty">Aún no tienes rutas asignadas.</div>
           <div v-for="c in myCareers" :key="c._id || c.careerId" class="card">
             <RouterLink :to="`/careers/${c._id || c.careerId}`">
               <img class="cover" :src="coverOf(c)" alt="cover" />
@@ -115,7 +115,7 @@ async function addToMyCareers(career: any) {
           </div>
         </div>
 
-        <h3 class="subtitle">Todas las carreras</h3>
+        <h3 class="subtitle">Todas las rutas</h3>
         <div class="grid">
           <div v-for="c in careers" :key="c._id" class="card">
             <RouterLink :to="`/careers/${c._id}`">
@@ -127,7 +127,7 @@ async function addToMyCareers(career: any) {
               <span class="badge">{{ coursesCount(c) }} curso(s)</span>
               <span class="badge" :class="{ active: c.isActive }">{{ c.isActive ? 'Activa' : 'Inactiva' }}</span>
               <button class="add-button" :disabled="isInMyCareers(c)" @click="addToMyCareers(c)">
-                {{ isInMyCareers(c) ? 'Agregada' : 'Agregar a mis carreras' }}
+                {{ isInMyCareers(c) ? 'Agregada' : 'Agregar a mis rutas' }}
               </button>
             </div>
           </div>

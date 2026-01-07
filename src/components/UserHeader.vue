@@ -139,6 +139,11 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else gamificationStore.rese
             <span>Hazte Founder</span>
           </button>
 
+          <button class="welcome-trigger" @click="userStore.setWelcomeModalShown(false)" title="Ver mensaje de la Prefecta">
+            <i class="fa-solid fa-circle-play" />
+            <span class="trigger-text">Mensaje de nuestra Prefecta</span>
+          </button>
+
           <div class="user-pill" title="Sesión iniciada">
             <i class="fa-solid fa-user"></i>
             <span class="account-text">Mi cuenta</span>
@@ -249,6 +254,32 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else gamificationStore.rese
           }
         }
 
+        .welcome-trigger {
+          background: rgba(var(--accent-rgb, 134, 239, 172), 0.1);
+          color: var(--accent);
+          border: 1px solid color-mix(in oklab, var(--accent), transparent 70%);
+          border-radius: 999px;
+          padding: 8px 16px;
+          font-size: 13px;
+          font-weight: 700;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          transition: all 0.2s ease;
+
+          &:hover {
+            background: var(--accent);
+            color: #FFFFFF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px color-mix(in oklab, var(--accent), transparent 80%);
+          }
+
+          i {
+            font-size: 16px;
+          }
+        }
+
         .user-pill {
           display: inline-flex;
           align-items: center;
@@ -355,6 +386,14 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else gamificationStore.rese
   .user-header-wrapper-right .upgrade-btn {
     padding: 8px;
     border-radius: 50%;
+  }
+
+  .user-header-wrapper-right .welcome-trigger {
+    padding: 8px;
+
+    .trigger-text {
+      display: none;
+    }
   }
 }
 </style>

@@ -85,13 +85,13 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'careers',
         component: Careers,
-        meta: { title: 'Escuelas o Carreras', requiresAuth: true }
+        meta: { title: 'Rutas de Aprendizaje', requiresAuth: true }
       }
       ,
       {
         path: 'careers/:id',
         component: CareerDetail,
-        meta: { title: 'Detalle de carrera', requiresAuth: true }
+        meta: { title: 'Detalle de ruta', requiresAuth: true }
       }
       ,
       {

@@ -25,6 +25,7 @@ export interface UserState {
 	heardAboutUsOther?: string | null;
 	points?: number | null;
 	accountType: AccountType | null;
+	welcomeModalShown: boolean;
 }
 
 export const useUserStore = defineStore("user", {
@@ -41,6 +42,7 @@ export const useUserStore = defineStore("user", {
 		heardAboutUsOther: null,
 		points: null,
 		accountType: null,
+		welcomeModalShown: false,
 	}),
 	actions: {
 		hydrate() {
@@ -64,7 +66,7 @@ export const useUserStore = defineStore("user", {
 				this.id = payload.id;
 				try {
 					localStorage.setItem("user_id", String(payload.id));
-				} catch {}
+				} catch { }
 			}
 			if (payload?.name) this.name = payload.name;
 			if (payload?.email) this.email = payload.email;
@@ -78,13 +80,13 @@ export const useUserStore = defineStore("user", {
 						"teachable_user_id",
 						String(payload.teachableUserId)
 					);
-				} catch {}
+				} catch { }
 			}
 			if (payload?.accountType) {
 				this.accountType = payload.accountType;
 				try {
 					localStorage.setItem("user_account_type", payload.accountType);
-				} catch {}
+				} catch { }
 			}
 			this.isAuthenticated = true;
 		},
@@ -101,18 +103,19 @@ export const useUserStore = defineStore("user", {
 			this.heardAboutUsOther = null;
 			this.points = null;
 			this.accountType = null;
+			this.welcomeModalShown = false;
 			try {
 				localStorage.removeItem("user_id");
-			} catch {}
+			} catch { }
 			try {
 				localStorage.removeItem("teachable_user_id");
-			} catch {}
+			} catch { }
 			try {
 				localStorage.removeItem("user_account_type");
-			} catch {}
+			} catch { }
 			try {
 				localStorage.removeItem("user_plan"); // Limpiar legacy
-			} catch {}
+			} catch { }
 		},
 		async updateById(
 			userId: string | number,
@@ -133,13 +136,13 @@ export const useUserStore = defineStore("user", {
 							"teachable_user_id",
 							String(u.teachableUserId)
 						);
-				} catch {}
+				} catch { }
 			}
 			if (u.accountType) {
 				this.accountType = u.accountType;
 				try {
 					localStorage.setItem("user_account_type", u.accountType);
-				} catch {}
+				} catch { }
 			}
 			this.gender = u.gender;
 			this.genderOther = u.genderOther;
@@ -200,6 +203,9 @@ export const useUserStore = defineStore("user", {
 			} catch (error) {
 				console.error("Error fetching user data:", error);
 			}
+		},
+		setWelcomeModalShown(value: boolean) {
+			this.welcomeModalShown = value;
 		},
 	},
 });
