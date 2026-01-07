@@ -29,16 +29,9 @@ const error = computed(() => store.error)
 
 const upcomingCareers = computed(() => {
   const courses = coursesStore.courses
-  // Prioritize using real course images if available
+  // Prioritize using real course images if available, otherwise use official logo
   const getImg = (idx: number) => {
-    if (courses && courses[idx]) return courses[idx].imageUrl
-    // Different fallbacks to keep variety
-    const fallbacks = [
-      'https://images.unsplash.com/photo-1509228468518-180dd482180c',
-      'https://images.unsplash.com/photo-1636466484292-713cf81ea445',
-      'https://images.unsplash.com/photo-1532187875605-2fe358a77e82'
-    ]
-    return fallbacks[idx] || fallbacks[0]
+    return courses[idx]?.imageUrl || '/src/assets/logos/logo-prefectura.png'
   }
 
   return [
