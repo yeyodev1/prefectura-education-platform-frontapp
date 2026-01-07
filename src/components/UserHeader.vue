@@ -4,8 +4,8 @@ import { useRouter, useRoute } from 'vue-router'
 import usersService from '@/services/users.service'
 import { useUserStore } from '@/stores/user'
 import { useGamificationStore } from '@/stores/gamification.store'
-import lightLogo from '../assets/fudmaster-color.png'
-import darkLogo from '../assets/fudmaster-dark.png'
+import lightLogo from '../assets/logos/logo-prefectura.png'
+import darkLogo from '../assets/logos/logo-prefectura.png'
 
 const props = defineProps({
   showMenuButton: {
@@ -111,7 +111,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('auth:token-expired', onTokenExpired as EventListener)
   window.removeEventListener('gamification:points-refresh', fetchPoints as EventListener)
   window.removeEventListener('comments:created', fetchPoints as EventListener)
-  try { themeObserver?.disconnect() } catch {}
+  try { themeObserver?.disconnect() } catch { }
 })
 
 watch(isLoggedIn, (val) => { if (val) fetchPoints(); else gamificationStore.reset() })
@@ -126,7 +126,7 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else gamificationStore.rese
         </button>
         <div class="logo">
           <picture>
-            <source srcset="../assets/iso-verde.png" media="(max-width: 768px)">
+            <source srcset="../assets/logos/logo-prefectura.png" media="(max-width: 768px)">
             <img :src="logoSrc" alt="fudmaster-logo" @click="onLogoClick">
           </picture>
         </div>
@@ -243,8 +243,10 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else gamificationStore.rese
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(255, 165, 0, 0.4);
           }
-          
-          i { font-size: 14px; }
+
+          i {
+            font-size: 14px;
+          }
         }
 
         .user-pill {
@@ -283,9 +285,18 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else gamificationStore.rese
         }
 
         @keyframes points-gain {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.2); background: var(--accent); }
-          100% { transform: scale(1); }
+          0% {
+            transform: scale(1);
+          }
+
+          50% {
+            transform: scale(1.2);
+            background: var(--accent);
+          }
+
+          100% {
+            transform: scale(1);
+          }
         }
 
         .logout-button {
@@ -340,6 +351,7 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else gamificationStore.rese
   .user-header-wrapper-right .upgrade-btn span {
     display: none;
   }
+
   .user-header-wrapper-right .upgrade-btn {
     padding: 8px;
     border-radius: 50%;
