@@ -49,14 +49,15 @@ function goToCheckout() {
 <style lang="scss" scoped>
 .giant-countdown {
   width: 100%;
-  background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%); // Rojo intenso urgente
-  color: white;
+  background: var(--bg-main);
+  color: var(--text-main);
   padding: 40px 20px;
   text-align: center;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-principal, sans-serif);
   box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
   position: relative;
   overflow: hidden;
+  border-bottom: 2px solid var(--accent);
 
   // Efecto de brillo/urgencia
   &::before {
@@ -66,7 +67,7 @@ function goToCheckout() {
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(134, 239, 172, 0.1) 0%, transparent 70%);
     pointer-events: none;
   }
 }
@@ -86,6 +87,7 @@ function goToCheckout() {
   letter-spacing: 2px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   animation: pulse 2s infinite;
+  color: var(--accent);
 
   @media(min-width: 768px) {
     font-size: 2rem;
@@ -108,11 +110,11 @@ function goToCheckout() {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--bg-card);
   padding: 10px;
   border-radius: 8px;
   min-width: 70px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border);
 
   @media(min-width: 768px) {
     min-width: 100px;
@@ -124,6 +126,7 @@ function goToCheckout() {
     font-weight: 900;
     line-height: 1;
     font-variant-numeric: tabular-nums;
+    color: var(--text-main);
 
     @media(min-width: 768px) {
       font-size: 4rem;
@@ -136,6 +139,7 @@ function goToCheckout() {
     margin-top: 5px;
     opacity: 0.9;
     letter-spacing: 1px;
+    color: var(--text-sec);
 
     @media(min-width: 768px) {
       font-size: 0.9rem;
@@ -148,6 +152,7 @@ function goToCheckout() {
   font-weight: 900;
   margin-top: -20px; // Alinear con los números
   opacity: 0.6;
+  color: var(--accent);
 
   @media(min-width: 768px) {
     font-size: 3rem;
@@ -160,6 +165,7 @@ function goToCheckout() {
   margin: 0;
   opacity: 0.9;
   font-style: italic;
+  color: var(--text-sec);
 
   @media(min-width: 768px) {
     font-size: 1.1rem;
@@ -167,30 +173,22 @@ function goToCheckout() {
 }
 
 @keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.05);
-  }
-
-  100% {
-    transform: scale(1);
-  }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 .cta-button {
   margin-top: 25px;
-  background: #ffeb3b; // Yellow
-  color: #d32f2f; // Red text
+  background: var(--accent);
+  color: #111613;
   border: none;
   padding: 16px 32px;
   font-size: 1.2rem;
   font-weight: 800;
   border-radius: 50px;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(134, 239, 172, 0.4);
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -200,8 +198,8 @@ function goToCheckout() {
 
   &:hover {
     transform: translateY(-3px) scale(1.05);
-    background: #fff;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    filter: brightness(1.1);
+    box-shadow: 0 6px 20px rgba(134, 239, 172, 0.6);
   }
 
   i {
@@ -213,4 +211,5 @@ function goToCheckout() {
     padding: 20px 40px;
   }
 }
+
 </style>
