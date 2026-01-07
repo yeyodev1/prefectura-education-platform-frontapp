@@ -15,7 +15,7 @@ import QuizResult from "../views/User/QuizResult.vue";
 import CertificatesView from "../views/User/CertificatesView.vue";
 
 // Landingpage
-import NicoleLanding from "../views/Landing/NicoleLanding.vue";
+import PrefecturaLanding from "../views/Landing/NicoleLanding.vue";
 import LoginView from "../views/Auth/Login.vue";
 import Checkout from "../views/Checkout.vue";
 import PayResponse from "../views/PayResponse.vue";
@@ -115,9 +115,9 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/landing-page',
-    component: NicoleLanding,
+    component: PrefecturaLanding,
     meta: {
-      title: 'Cambia tu vida gastronómica con Nicole y su equipo'
+      title: 'Prefectura del Guayas | Educación Online'
     }
   },
   {

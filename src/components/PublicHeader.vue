@@ -3,7 +3,6 @@ import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import lightLogo from '../assets/logos/logo-prefectura.png'
 import darkLogo from '../assets/logos/logo-prefectura.png'
-import ExitIntentModal from './ExitIntentModal.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -15,19 +14,12 @@ function updateThemeFlag() { isDarkTheme.value = document.documentElement.getAtt
 const logoSrc = computed(() => (isDarkTheme.value ? darkLogo : lightLogo))
 
 // Exit Intent Logic (Mainly for Checkout)
-const exitOpen = ref(false)
 const isMobileMenuOpen = ref(false)
 function toggleMobileMenu() { isMobileMenuOpen.value = !isMobileMenuOpen.value }
 function closeMobileMenu() { isMobileMenuOpen.value = false }
 function onLogoClick() {
-  if (route.path === '/checkout') {
-    exitOpen.value = true
-  } else {
-    router.push('/landing-page')
-  }
+  router.push('/landing-page')
 }
-function stayOnCheckout() { exitOpen.value = false }
-function goToLanding() { exitOpen.value = false; router.push('/landing-page') }
 
 function goToVerify() {
   router.push('/verify-certificate')
@@ -55,17 +47,13 @@ onBeforeUnmount(() => {
         <div class="logo">
           <picture>
             <source srcset="../assets/logos/logo-prefectura.png" media="(max-width: 768px)">
-            <img :src="logoSrc" alt="fudmaster-logo" @click="onLogoClick">
+            <img :src="logoSrc" alt="logo-prefectura" @click="onLogoClick">
           </picture>
         </div>
       </div>
       <div class="public-header-wrapper-right">
         <!-- Desktop Buttons -->
         <div class="desktop-menu">
-          <button class="promo-button" @click="goToLanding">
-            <i class="fa-solid fa-fire"></i>
-            <span>Aprovechar Promoción</span>
-          </button>
           <button 
             class="verify-button" 
             :class="{ 'active': route.path === '/verify-certificate' }"
@@ -92,18 +80,13 @@ onBeforeUnmount(() => {
   <div class="mobile-menu-overlay" :class="{ 'active': isMobileMenuOpen }" @click="closeMobileMenu"></div>
   <aside class="mobile-sidebar" :class="{ 'active': isMobileMenuOpen }">
     <div class="mobile-sidebar-header">
-      <img :src="logoSrc" alt="Fudmaster" class="mobile-logo">
+      <img :src="logoSrc" alt="Logo Prefectura" class="mobile-logo">
       <button class="close-button" @click="closeMobileMenu">
         <i class="fa-solid fa-xmark"></i>
       </button>
     </div>
     
     <nav class="mobile-nav">
-      <button class="mobile-nav-item promo" @click="goToLanding(); closeMobileMenu()">
-        <i class="fa-solid fa-fire"></i>
-        <span>Aprovechar Promoción</span>
-      </button>
-      
       <button 
         class="mobile-nav-item" 
         :class="{ 'active': route.path === '/verify-certificate' }"
@@ -123,15 +106,6 @@ onBeforeUnmount(() => {
       </button>
     </nav>
   </aside>
-
-  <ExitIntentModal
-    v-if="route.path === '/checkout'"
-    :open="exitOpen"
-    message="Estás a un paso de asegurar tu acceso. Si sales de esta página ahora, el sistema liberará tu cupo y no podemos garantizarte el precio de $297 cuando regreses."
-    @close="stayOnCheckout"
-    @stay="stayOnCheckout"
-    @leave="goToLanding"
-  />
 </template>
 
 <style lang="scss" scoped>

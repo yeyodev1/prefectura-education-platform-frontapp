@@ -160,7 +160,7 @@ async function submit() {
       </div>
     </div>
     
-    <p class="copyright">© Prefectura Sambo. Sistema seguro.</p>
+    <p class="copyright">© Prefectura Del Guayas. Sistema seguro.</p>
   </div>
 </template>
 

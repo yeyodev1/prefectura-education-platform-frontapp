@@ -19,10 +19,6 @@ const loadingGoogle = ref(false) // Nuevo estado para Google
 const error = ref('')
 const info = ref(String(route.query.msg || ''))
 
-function goToCheckout() {
-  router.push('/checkout')
-}
-
 function togglePassword() {
   showPassword.value = !showPassword.value
 }
@@ -235,15 +231,9 @@ async function submit() {
         </button>
       </div>
 
-      <div class="card-footer">
-        <span class="hint">¿Aún no eres miembro Founder?</span>
-        <button class="buy-btn" type="button" @click="goToCheckout">
-          Obtener Acceso de por Vida
-        </button>
-      </div>
     </div>
     
-    <p class="copyright">© Prefectura Sambo. Sistema seguro.</p>
+    <p class="copyright">© Prefectura Del Guayas. Sistema seguro.</p>
   </div>
 </template>
 
@@ -485,39 +475,6 @@ async function submit() {
 
   .icon {
     font-size: 18px;
-  }
-}
-
-.card-footer {
-  background: rgba(0, 0, 0, 0.03);
-  padding: 20px 32px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  text-align: center;
-
-  .hint {
-    font-size: 14px;
-    color: var(--text-sec);
-  }
-
-  .buy-btn {
-    background: transparent;
-    border: 2px solid var(--accent);
-    color: var(--accent);
-    font-weight: 700;
-    padding: 10px 20px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 14px;
-
-    &:hover {
-      background: var(--accent);
-      color: #111613;
-    }
   }
 }
 
