@@ -154,14 +154,38 @@ async function addToMyCareers(career: any) {
   </template>
 
 <style lang="scss" scoped>
-.careers-view { width: 100%; padding: 24px 16px; background: var(--bg); color: var(--text); }
-.container { width: 100%; margin: 0 auto; display: grid; gap: 16px; }
-.head { display: flex; align-items: center; justify-content: space-between; }
-.title { font-size: 24px; margin: 0; color: var(--text); display: inline-flex; align-items: center; gap: 10px; }
+.careers-view {
+  width: 100%;
+  padding: 24px 16px;
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+.container {
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  gap: 16px;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 24px;
+  margin: 0;
+  color: var(--text-main);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
 
 .upgrade-banner {
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.1) 100%);
-  border: 1px solid rgba(255, 165, 0, 0.3);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 16px;
   display: flex;
@@ -170,23 +194,13 @@ async function addToMyCareers(career: any) {
   gap: 16px;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
-  
+
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(255, 165, 0, 0.15);
-    
+    box-shadow: var(--shadow);
+
     .upgrade-btn {
       transform: scale(1.05);
-    }
-  }
-  
-  @media (max-width: 640px) {
-    flex-direction: column;
-    align-items: flex-start;
-    
-    .upgrade-btn {
-      width: 100%;
-      justify-content: center;
     }
   }
 }
@@ -200,13 +214,13 @@ async function addToMyCareers(career: any) {
 .upgrade-icon {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  background: var(--accent);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 24px;
-  color: #000;
+  color: #111613;
   flex-shrink: 0;
 }
 
@@ -214,19 +228,19 @@ async function addToMyCareers(career: any) {
   h3 {
     margin: 0;
     font-size: 18px;
-    color: var(--text);
+    color: var(--text-main);
   }
-  
+
   p {
     margin: 4px 0 0;
     font-size: 14px;
-    color: color-mix(in oklab, var(--text), transparent 30%);
+    color: var(--text-sec);
   }
 }
 
 .upgrade-btn {
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-  color: #000;
+  background: var(--accent);
+  color: #111613;
   border: none;
   border-radius: 99px;
   padding: 10px 20px;
@@ -240,20 +254,106 @@ async function addToMyCareers(career: any) {
   white-space: nowrap;
 }
 
-.subtitle { color: var(--text); margin: 8px 0; font-size: 20px; }
-.hint { color: color-mix(in oklab, var(--text), transparent 40%); }
-.error { color: var(--accent); }
-.grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-@media (min-width: 768px) { .grid { grid-template-columns: repeat(3, 1fr); } }
-.card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06); display: grid; gap: 8px; }
-.cover { width: 100%; height: 130px; border-radius: 8px; object-fit: cover; }
-.cover.blur { filter: blur(6px); }
-.name { color: var(--text); font-weight: 700; margin: 0; }
-.desc { color: color-mix(in oklab, var(--text), transparent 30%); margin: 0; font-size: 14px; }
-.meta { display: inline-flex; align-items: center; gap: 8px; margin-top: 6px; }
-.badge { background: color-mix(in oklab, var(--accent), transparent 85%); color: var(--text); border-radius: 6px; padding: 6px 8px; font-size: 12px; }
-.badge.active { background: color-mix(in oklab, var(--accent), transparent 70%); font-weight: 700; }
-.add-button { background: var(--accent); color: $white; border: none; border-radius: 8px; padding: 6px 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
-.add-button[disabled] { background: color-mix(in oklab, var(--accent), transparent 40%); cursor: default; }
-.empty { color: color-mix(in oklab, var(--text), transparent 40%); }
+.subtitle {
+  color: var(--text-main);
+  margin: 8px 0;
+  font-size: 20px;
+}
+
+.hint {
+  color: var(--text-sec);
+}
+
+.error {
+  color: var(--accent);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 8px;
+}
+
+.cover {
+  width: 100%;
+  height: 130px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.cover.blur {
+  filter: blur(6px);
+}
+
+.name {
+  color: var(--text-main);
+  font-weight: 700;
+  margin: 0;
+}
+
+.desc {
+  color: var(--text-sec);
+  margin: 0;
+  font-size: 14px;
+}
+
+.meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.badge {
+  background: rgba(134, 239, 172, 0.1);
+  color: var(--text-main);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+}
+
+.badge.active {
+  background: rgba(134, 239, 172, 0.2);
+  font-weight: 700;
+  border-color: var(--accent);
+}
+
+.add-button {
+  background: var(--accent);
+  color: #111613;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.add-button[disabled] {
+  background: var(--bg-card);
+  color: var(--text-sec);
+  border: 1px solid var(--border);
+  cursor: default;
+}
+
+.empty {
+  color: var(--text-sec);
+}
 </style>
