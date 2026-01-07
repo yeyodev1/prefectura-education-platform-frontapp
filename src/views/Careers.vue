@@ -4,7 +4,6 @@ import { RouterLink, useRouter } from 'vue-router'
 import { useCareersStore } from '@/stores/careers'
 import { useUserStore } from '@/stores/user'
 import { useCoursesStore } from '@/stores/courses'
-import { makeCareerPlaceholders } from '@/mocks/careers.mock'
 
 const store = useCareersStore()
 const userStore = useUserStore()
@@ -16,6 +15,7 @@ onMounted(async () => {
   userStore.hydrate()
   const uid = userStore.id || localStorage.getItem('user_id')
   if (uid) await store.fetchUserCareers(String(uid))
+  if (coursesStore.courses.length === 0) await coursesStore.fetchAll()
 })
 
 const isFreeUser = computed(() => {
@@ -27,8 +27,44 @@ const careers = computed(() => store.careers)
 const loading = computed(() => store.loading)
 const error = computed(() => store.error)
 
-const mockCareers = computed(() => makeCareerPlaceholders(4))
-const upcomingCareers = computed(() => mockCareers.value)
+const upcomingCareers = computed(() => {
+  const courses = coursesStore.courses
+  // Prioritize using real course images if available
+  const getImg = (idx: number) => {
+    if (courses && courses[idx]) return courses[idx].imageUrl
+    // Different fallbacks to keep variety
+    const fallbacks = [
+      'https://images.unsplash.com/photo-1509228468518-180dd482180c',
+      'https://images.unsplash.com/photo-1636466484292-713cf81ea445',
+      'https://images.unsplash.com/photo-1532187875605-2fe358a77e82'
+    ]
+    return fallbacks[idx] || fallbacks[0]
+  }
+
+  return [
+    {
+      _id: 'up-math',
+      name: 'Ruta de Matemáticas Puras',
+      description: 'Domina desde el álgebra básica hasta el cálculo avanzado con nuestra ruta especializada.',
+      imageUrl: getImg(0),
+      courseIds: [1, 2, 3, 4, 5]
+    },
+    {
+      _id: 'up-physics',
+      name: 'Física Moderna y Clásica',
+      description: 'Explora las leyes que rigen el universo, desde la mecánica hasta la física cuántica.',
+      imageUrl: getImg(1),
+      courseIds: [1, 2, 3, 4]
+    },
+    {
+      _id: 'up-chemistry',
+      name: 'Química Aplicada',
+      description: 'Aprende los fundamentos de la materia, reacciones químicas y bioquímica de vanguardia.',
+      imageUrl: getImg(2),
+      courseIds: [1, 2, 3]
+    }
+  ]
+})
 
 const userCareerIds = computed(() => {
   const list = Array.isArray(store.userCareers) ? store.userCareers : []
@@ -298,7 +334,7 @@ async function addToMyCareers(career: any) {
 }
 
 .cover.blur {
-  filter: blur(6px);
+  filter: blur(10px);
 }
 
 .name {
