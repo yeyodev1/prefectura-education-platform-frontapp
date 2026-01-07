@@ -19,14 +19,19 @@ import PublicHeader from '../components/PublicHeader.vue'
   display: flex;
   flex-direction: column;
 }
-.header { width: 100%; }
+
+.header {
+  width: 100%;
+}
+
 .view {
   width: 100%;
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: $FUDMASTER-LIGHT;
+  background-color: var(--bg-main);
   padding: 16px;
+
 }
 </style>
