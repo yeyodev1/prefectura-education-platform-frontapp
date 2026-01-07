@@ -236,20 +236,11 @@ async function submit() {
 </template>
 
 <style lang="scss" scoped>
-// Variables locales (asumiendo que las globales están disponibles, pero por seguridad)
-$FUDMASTER-DARK: #010D27;
-$FUDMASTER-LIGHT: #f5f3ef;
-$FUDMASTER-GREEN: #2BBB92;
-$FUDMASTER-BLUE: #0a81d1;
-$white: #ffffff;
-$alert-error: #ef4444;
-$alert-info: #3b82f6;
-
 .login-page { 
   width: 100%; 
   min-height: 100vh;
   padding: 40px 16px;
-  background-color: $FUDMASTER-LIGHT; // Fondo de página claro
+  background-color: var(--bg-main);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -268,11 +259,11 @@ $alert-info: #3b82f6;
 .card {
   width: 100%;
   max-width: 480px;
-  background: $white;
+  background: var(--bg-card);
   border-radius: 20px;
-  box-shadow: 0 20px 40px -10px rgba($FUDMASTER-DARK, 0.1);
-  overflow: hidden; // Para que el footer no se salga
-  border: 1px solid rgba($FUDMASTER-DARK, 0.05);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  border: 1px solid var(--border);
   animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -281,7 +272,7 @@ $alert-info: #3b82f6;
 }
 
 .title {
-  color: $FUDMASTER-DARK;
+  color: var(--text-main);
   font-size: 26px;
   font-weight: 800;
   margin: 0;
@@ -289,7 +280,7 @@ $alert-info: #3b82f6;
 }
 
 .subtitle {
-  color: rgba($FUDMASTER-DARK, 0.6);
+  color: var(--text-sec);
   font-size: 15px;
   margin: 8px 0 24px 0;
   text-align: center;
@@ -305,15 +296,15 @@ $alert-info: #3b82f6;
   margin-bottom: 20px;
   
   &.error {
-    background: rgba($alert-error, 0.1);
-    color: $alert-error;
-    border: 1px solid rgba($alert-error, 0.2);
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
   }
   
   &.info {
-    background: rgba($alert-info, 0.1);
-    color: $alert-info;
-    border: 1px solid rgba($alert-info, 0.2);
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.2);
   }
 }
 
@@ -327,7 +318,7 @@ $alert-info: #3b82f6;
   label {
     font-size: 14px;
     font-weight: 600;
-    color: $FUDMASTER-DARK;
+    color: var(--text-main);
   }
 }
 
@@ -339,7 +330,7 @@ $alert-info: #3b82f6;
 
 .forgot-link {
   font-size: 12px;
-  color: $FUDMASTER-BLUE;
+  color: var(--accent);
   text-decoration: none;
   font-weight: 500;
   
@@ -350,20 +341,20 @@ $alert-info: #3b82f6;
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba($FUDMASTER-DARK, 0.03);
-  border: 1px solid rgba($FUDMASTER-DARK, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 12px 16px;
   transition: all 0.2s ease;
   
   &:focus-within {
-    background: $white;
-    border-color: $FUDMASTER-BLUE;
-    box-shadow: 0 0 0 4px rgba($FUDMASTER-BLUE, 0.1);
+    background: var(--bg-card);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(134, 239, 172, 0.15);
   }
   
   .icon {
-    color: rgba($FUDMASTER-DARK, 0.5);
+    color: var(--text-sec);
     font-size: 18px;
   }
   
@@ -373,9 +364,9 @@ $alert-info: #3b82f6;
     background: transparent;
     outline: none;
     font-size: 16px;
-    color: $FUDMASTER-DARK;
+    color: var(--text-main);
     
-    &::placeholder { color: rgba($FUDMASTER-DARK, 0.3); }
+    &::placeholder { color: var(--text-sec); opacity: 0.5; }
   }
   
   .eye-btn {
@@ -383,18 +374,18 @@ $alert-info: #3b82f6;
     border: none;
     padding: 4px;
     cursor: pointer;
-    color: rgba($FUDMASTER-DARK, 0.4);
+    color: var(--text-sec);
     transition: color 0.2s;
     
-    &:hover { color: $FUDMASTER-DARK; }
+    &:hover { color: var(--accent); }
   }
 }
 
 .submit-btn {
   margin-top: 10px;
   width: 100%;
-  background: $FUDMASTER-DARK; // Color solido oscuro para login
-  color: $white;
+  background: var(--accent);
+  color: #111613;
   border: none;
   border-radius: 12px;
   padding: 16px;
@@ -409,7 +400,7 @@ $alert-info: #3b82f6;
   
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px -5px rgba($FUDMASTER-DARK, 0.3);
+    box-shadow: 0 10px 20px -5px rgba(134, 239, 172, 0.3);
   }
   
   &:disabled { opacity: 0.7; cursor: not-allowed; }
@@ -426,12 +417,12 @@ $alert-info: #3b82f6;
     content: '';
     flex: 1;
     height: 1px;
-    background: rgba($FUDMASTER-DARK, 0.1);
+    background: var(--border);
   }
   
   span {
     padding: 0 10px;
-    color: rgba($FUDMASTER-DARK, 0.5);
+    color: var(--text-sec);
     font-size: 13px;
     font-weight: 500;
   }
@@ -439,9 +430,9 @@ $alert-info: #3b82f6;
 
 .google-btn {
   width: 100%;
-  background: $white;
-  color: $FUDMASTER-DARK;
-  border: 1px solid rgba($FUDMASTER-DARK, 0.2);
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 14px;
   font-size: 16px;
@@ -454,10 +445,10 @@ $alert-info: #3b82f6;
   transition: all 0.2s;
   
   &:hover:not(:disabled) {
-    background: #f8f9fa;
-    border-color: rgba($FUDMASTER-DARK, 0.4);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--accent);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    box-shadow: var(--shadow);
   }
   
   &:disabled {
@@ -467,16 +458,13 @@ $alert-info: #3b82f6;
   
   .icon {
     font-size: 18px;
-    // Color oficial de Google si se desea, o mantener minimalista
-    // color: #DB4437; 
   }
 }
 
-// Footer seccion (Upsell)
 .card-footer {
-  background: rgba($FUDMASTER-DARK, 0.03);
+  background: rgba(0, 0, 0, 0.03);
   padding: 20px 32px;
-  border-top: 1px solid rgba($FUDMASTER-DARK, 0.05);
+  border-top: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -485,13 +473,13 @@ $alert-info: #3b82f6;
   
   .hint {
     font-size: 14px;
-    color: rgba($FUDMASTER-DARK, 0.6);
+    color: var(--text-sec);
   }
   
   .buy-btn {
     background: transparent;
-    border: 2px solid $FUDMASTER-GREEN; // Borde verde para llamar atención sin ser agresivo
-    color: $FUDMASTER-GREEN;
+    border: 2px solid var(--accent);
+    color: var(--accent);
     font-weight: 700;
     padding: 10px 20px;
     border-radius: 10px;
@@ -500,15 +488,15 @@ $alert-info: #3b82f6;
     font-size: 14px;
     
     &:hover {
-      background: $FUDMASTER-GREEN;
-      color: $white;
+      background: var(--accent);
+      color: #111613;
     }
   }
 }
 
 .copyright {
   font-size: 12px;
-  color: rgba($FUDMASTER-DARK, 0.4);
+  color: var(--text-sec);
 }
 
 @keyframes slideUp {
