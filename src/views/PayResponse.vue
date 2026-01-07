@@ -56,41 +56,41 @@ onMounted(async () => {
 
     // Pass '0' if no user logged in (backend handles creation/lookup)
     const userId = userStore.id || '0'
-    
+
     // We pass the email/name from checkout to ensure the account is created/linked 
     // to the correct email, not necessarily the one from the payment provider.
     const checkoutEmail = user.value?.email || checkoutStore.email
     const checkoutName = user.value?.name || checkoutStore.name
 
     const { data } = await paymentService.confirmPayment(
-      userId, 
-      id, 
-      ctId, 
-      checkoutEmail, 
+      userId,
+      id,
+      ctId,
+      checkoutEmail,
       checkoutName
     )
 
     // Backend responds 200 OK on success, so we proceed directly
     status.value = 'Approved'
-    
+
     const u = data.user
     if (u) {
       localStorage.setItem('user', JSON.stringify(u))
-      
+
       userStore.setUser({
         id: u.id || u._id,
         name: u.name,
         email: u.email,
         accountType: (u.account_type || u.accountType || 'expert')
       })
-      
+
       user.value = { name: u.name, email: u.email }
     }
-    
+
     checkoutStore.clear()
-    
+
     // Tracking
-    const amountDollars = 1 
+    const amountDollars = 1
     track('Purchase', { value: amountDollars, currency: 'USD', contents: [{ id: 'FM-FOUNDER-LIFETIME', quantity: 1 }] })
     sendEvent('Purchase', { value: amountDollars, currency: 'USD', contents: [{ id: 'FM-FOUNDER-LIFETIME', quantity: 1 }] })
 
@@ -173,13 +173,14 @@ onMounted(async () => {
   width: 100%;
   max-width: 640px;
   margin: 0 auto;
-  background: $white;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow);
   display: grid;
   gap: 16px;
   text-align: center;
+  border: 1px solid var(--border);
 }
 
 .brand img {
@@ -188,7 +189,7 @@ onMounted(async () => {
 }
 
 .title {
-  color: $FUDMASTER-DARK;
+  color: var(--text-main);
   font-size: 22px;
   margin: 0;
 }
@@ -207,15 +208,15 @@ onMounted(async () => {
 }
 
 .success {
-  color: $FUDMASTER-GREEN;
+  color: var(--accent);
 }
 
 .error {
-  color: $alert-error;
+  color: #ef4444;
 }
 
 .loading {
-  color: $FUDMASTER-BLUE;
+  color: var(--accent);
 }
 
 .error-msg {
@@ -233,24 +234,26 @@ onMounted(async () => {
 .details {
   display: grid;
   gap: 10px;
-  background: #f8f9fa;
+  background: var(--bg-main);
   padding: 15px;
   border-radius: 8px;
   margin: 10px 0;
   text-align: left;
+  border: 1px solid var(--border);
 }
 
 .row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: rgba($FUDMASTER-DARK, 0.7);
+  color: var(--text-sec);
   font-size: 0.9rem;
 }
 
 .mono {
   font-family: ui-monospace, monospace;
   font-weight: 600;
+  color: var(--text-main);
 }
 
 .actions {
@@ -269,7 +272,7 @@ onMounted(async () => {
   padding: 14px;
   cursor: pointer;
   font-weight: 700;
-  color: $white;
+  color: #111613;
   font-size: 1rem;
   transition: opacity 0.2s;
 
@@ -279,12 +282,15 @@ onMounted(async () => {
 }
 
 .cta.green {
-  background: $FUDMASTER-GREEN;
+  background: var(--accent);
 }
 
 .cta.blue {
-  background: $FUDMASTER-BLUE;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-main);
 }
+
 
 @media (min-width: 960px) {
   .card {
