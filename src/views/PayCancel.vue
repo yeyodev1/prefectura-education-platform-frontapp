@@ -22,7 +22,7 @@ onMounted(() => {
   <div class="pay-cancel-wrapper">
     <div class="card">
       <div class="brand">
-        <img src="/src/assets/fudmaster-color.png" alt="fudmaster-logo" />
+        <img src="/src/assets/logos/logo-prefectura.png" alt="prefectura-logo" />
       </div>
 
       <div class="icon-box">
