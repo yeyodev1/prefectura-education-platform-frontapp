@@ -160,7 +160,7 @@ async function submit() {
   padding: 16px;
   border: 1px solid var(--border);
   border-radius: 12px;
-  background: color-mix(in oklab, var(--bg), var(--text) 6%);
+  background: var(--bg-card);
 }
 
 .head {
@@ -171,12 +171,12 @@ async function submit() {
 .head h3 {
   margin: 0;
   font-size: 20px;
-  color: var(--text);
+  color: var(--text-main);
 }
 
 .desc {
   margin: 0;
-  color: color-mix(in oklab, var(--text), transparent 40%);
+  color: var(--text-sec);
   font-size: 14px;
 }
 
@@ -188,12 +188,13 @@ async function submit() {
 
 .steps {
   font-size: 12px;
-  color: color-mix(in oklab, var(--text), transparent 50%);
+  color: var(--text-sec);
+  opacity: 0.7;
 }
 
 .prompt {
   font-size: 16px;
-  color: var(--text);
+  color: var(--text-main);
 }
 
 .options {
@@ -206,12 +207,22 @@ async function submit() {
   padding: 10px 12px;
   border-radius: 10px;
   border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text);
+  background: var(--bg-main);
+  color: var(--text-main);
   cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: var(--accent);
+  }
 }
 
-.option.selected { border-color: var(--accent); background: color-mix(in oklab, var(--accent), white 86%); color: $FUDMASTER-DARK; }
+.option.selected {
+  border-color: var(--accent);
+  background: rgba(134, 239, 172, 0.1);
+  color: var(--text-main);
+  font-weight: 700;
+}
 
 .nav {
   display: flex;
@@ -232,27 +243,37 @@ async function submit() {
   padding: 10px 14px;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 600;
+  transition: transform 0.2s;
+
+  &:active {
+    transform: scale(0.98);
+  }
 }
 
 .btn.primary {
   background: var(--accent);
-  color: var(--bg);
+  color: #111613;
 }
 
 .btn.secondary {
-  background: color-mix(in oklab, var(--bg), var(--text) 6%);
-  color: var(--text);
+  background: var(--bg-card);
+  color: var(--text-main);
   border: 1px solid var(--border);
+
+  &:hover {
+    background: var(--bg-main);
+  }
 }
 
 .btn.accent {
-  background: $FUDMASTER-PINK;
-  color: $white;
+  background: #da4167;
+  color: #ffffff;
 }
 
 .btn.success {
-  background: $alert-success;
-  color: $white;
+  background: var(--accent);
+  color: #111613;
 }
 
 .review {
@@ -276,7 +297,7 @@ async function submit() {
   padding: 8px 10px;
   border: 1px solid var(--border);
   border-radius: 10px;
-  background: var(--bg);
+  background: var(--bg-main);
 }
 
 .qlink {
@@ -286,7 +307,7 @@ async function submit() {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--text);
+  color: var(--text-main);
   cursor: pointer;
   text-align: left;
 }
@@ -305,11 +326,12 @@ async function submit() {
 }
 
 .answer-text {
-  color: var(--text);
+  color: var(--text-main);
+  font-weight: 600;
 }
 
 .answer-missing {
-  color: $alert-error;
+  color: #ef4444;
 }
 
 .final-actions {
