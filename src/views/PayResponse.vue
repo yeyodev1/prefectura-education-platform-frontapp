@@ -109,7 +109,7 @@ onMounted(async () => {
   <div class="pay-response">
     <div class="card">
       <div class="brand">
-        <img src="/src/assets/fudmaster-color.png" alt="fudmaster-logo" />
+        <img src="/src/assets/logos/logo-prefectura.png" alt="prefectura-logo" />
       </div>
 
       <h2 class="title">Resultado del pago</h2>
