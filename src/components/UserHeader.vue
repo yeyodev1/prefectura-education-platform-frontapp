@@ -162,8 +162,8 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else gamificationStore.rese
 <style lang="scss" scoped>
 .user {
   &-header {
-    background-color: var(--bg);
-    color: var(--text);
+    background-color: var(--bg-card);
+    color: var(--text-main);
     padding: 16px;
     border-bottom: 1px solid var(--border);
 
@@ -181,7 +181,7 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else gamificationStore.rese
         .menu-button {
           background: none;
           border: none;
-          color: var(--text);
+          color: var(--text-main);
           font-size: 24px;
           cursor: pointer;
 
@@ -206,8 +206,8 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else gamificationStore.rese
         gap: 12px;
 
         .login-button {
-          background: $FUDMASTER-GREEN;
-          color: $white;
+          background: var(--accent);
+          color: var(--bg-main);
           border: none;
           border-radius: 8px;
           padding: 8px 12px;
@@ -251,8 +251,8 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else gamificationStore.rese
           display: inline-flex;
           align-items: center;
           gap: 8px;
-          background: var(--bg);
-          color: var(--text);
+          background: var(--bg-card);
+          color: var(--text-main);
           border: 1px solid var(--border);
           border-radius: 999px;
           padding: 8px 12px;
@@ -265,7 +265,7 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else gamificationStore.rese
           align-items: center;
           gap: 6px;
           background: var(--accent);
-          color: $white;
+          color: var(--bg-main);
           border-radius: 999px;
           padding: 4px 8px;
           font-size: 12px;
@@ -274,7 +274,7 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else gamificationStore.rese
 
         .points-chip.loading {
           background: transparent;
-          color: var(--text);
+          color: var(--text-main);
           border: 1px dashed var(--border);
         }
 
@@ -284,13 +284,13 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else gamificationStore.rese
 
         @keyframes points-gain {
           0% { transform: scale(1); }
-          50% { transform: scale(1.2); background: $FUDMASTER-GREEN; }
+          50% { transform: scale(1.2); background: var(--accent); }
           100% { transform: scale(1); }
         }
 
         .logout-button {
-          background: $FUDMASTER-DARK;
-          color: $white;
+          background: var(--text-main);
+          color: var(--bg-main);
           border: none;
           border-radius: 8px;
           padding: 8px 12px;
@@ -309,6 +309,7 @@ watch(isLoggedIn, (val) => { if (val) fetchPoints(); else gamificationStore.rese
     }
   }
 }
+
 
 @media (max-width: 1024px) {
   .user-header-wrapper-left .menu-button {
