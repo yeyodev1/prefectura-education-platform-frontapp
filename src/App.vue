@@ -87,7 +87,8 @@ onMounted(() => {
 @use '@/styles/global.scss' as *;
 
 .app-container {
-  background-color: $white;
+  background-color: var(--bg-main);
+  color: var(--text-main);
   font-family: $font-principal;
   min-height: 100vh;
   width: 100%;
@@ -100,7 +101,8 @@ onMounted(() => {
 .global-modal {
   position: fixed;
   inset: 0;
-  background: rgba($FUDMASTER-DARK, 0.4);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
   z-index: 2000;
   display: grid;
   place-items: center;
@@ -108,52 +110,75 @@ onMounted(() => {
 }
 
 .global-modal-panel {
-  background: $white;
-  border: 1px solid rgba($FUDMASTER-DARK, 0.08);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
   border-radius: 12px;
   width: 100%;
   max-width: 440px;
-  padding: 16px;
+  padding: 24px;
   display: grid;
-  gap: 12px;
+  gap: 16px;
 }
 
 .global-modal-title {
   margin: 0;
-  color: $FUDMASTER-DARK;
-  font-size: 18px;
+  color: var(--text-main);
+  font-size: 20px;
+  font-weight: 600;
 }
 
 .global-modal-message {
   margin: 0;
-  color: rgba($FUDMASTER-DARK, 0.8);
-  font-size: 14px;
+  color: var(--text-sec);
+  font-size: 15px;
+  line-height: 1.5;
 }
 
 .global-modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 12px;
+  margin-top: 8px;
 }
 
 .btn {
   border: none;
   border-radius: 8px;
-  padding: 8px 12px;
+  padding: 10px 16px;
   font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:active {
+    transform: scale(0.98);
+  }
 }
 
 .btn.cancel {
-  background: $FUDMASTER-LIGHT;
-  color: $FUDMASTER-DARK;
-  border: 1px solid rgba($FUDMASTER-DARK, 0.12);
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border);
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
 }
 
 .btn.confirm {
-  background: $FUDMASTER-DARK;
-  color: $white;
+  background: var(--accent);
+  color: #111613; // Dark text on light accent
+
+  &:hover {
+    filter: brightness(1.1);
+  }
 }
+
+[data-theme='dark'] .btn.confirm {
+  color: #111613;
+}
+
 
 .modal-fade-enter-active,
 .modal-fade-leave-active {
