@@ -123,16 +123,17 @@
   </template>
   
   <style lang="scss" scoped>
-  // Variables de Color (Puedes mover esto a un archivo _variables.scss global)
-  $color-bg-dark: #0f172a;       // Slate 900
-  $color-card-bg: #1e293b;       // Slate 800
-  $color-border: #334155;        // Slate 700
-  $color-text-main: #ffffff;
-  $color-text-muted: #94a3b8;    // Slate 400
-  $color-accent: #facc15;        // Yellow 400
-  $color-success: #4ade80;       // Green 400
-  $color-danger: #ef4444;        // Red 500
+  // Variables de Color (Usando globales)
+  $color-bg-dark: var(--bg-main);
+  $color-card-bg: var(--bg-card);
+  $color-border: var(--border);
+  $color-text-main: var(--text-main);
+  $color-text-muted: var(--text-sec);
+  $color-accent: var(--accent);
+  $color-success: #4ade80;       // Keep for functional success
+  $color-danger: #ef4444;       // Keep for functional danger
   $transition-speed: 0.5s;
+
   
   .transformation-section {
     background-color: #020617; // Slate 950
@@ -174,8 +175,9 @@
       }
   
       .highlight {
-        color: $FUDMASTER-ORANGE;
+        color: var(--accent);
       }
+
     }
   
     .subtitle {
@@ -194,8 +196,8 @@
     }
     /* --- BOTÓN --- */
     .cta-button {
-      background: $FUDMASTER-GREEN ;
-      color: $FUDMASTER-LIGHT;
+      background: var(--accent);
+      color: #111613;
       border: none;
       padding: 18px 40px;
       font-size: 1.1rem;
@@ -203,15 +205,16 @@
       border-radius: 50px;
       cursor: pointer;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
+      box-shadow: 0 4px 15px rgba(134, 239, 172, 0.4);
       white-space: nowrap;
 
       span {
-        color: $FUDMASTER-DARK;
+        color: var(--text-main);
         font-weight: 600;
         font-size: 1rem;
         margin: 0;
       }
+
 
       &:hover {
         transform: translateY(-3px);
