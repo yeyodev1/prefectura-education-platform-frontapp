@@ -102,12 +102,55 @@ onUnmounted(() => { resetBlob() })
 </template>
 
 <style lang="scss" scoped>
-.player { background: #000; border-radius: 12px; overflow: hidden; }
-.player-box { position: relative; }
-.video { width: 100%; height: auto; display: block; aspect-ratio: 16 / 9; }
-.loading-player { display: inline-flex; align-items: center; gap: 10px; color: #fff; padding: 16px; }
-.loading-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #fff; background: rgba(0,0,0,0.25); }
-.fallback { display: grid; gap: 8px; color: #fff; padding: 16px; }
-.fallback .open { color: $FUDMASTER-GREEN; text-decoration: none; }
-.empty-video { color: #fff; padding: 16px; }
+.player {
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.player-box {
+  position: relative;
+}
+
+.video {
+  width: 100%;
+  height: auto;
+  display: block;
+  aspect-ratio: 16 / 9;
+}
+
+.loading-player {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  padding: 16px;
+}
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.fallback {
+  display: grid;
+  gap: 8px;
+  color: #fff;
+  padding: 16px;
+}
+
+.fallback .open {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.empty-video {
+  color: #fff;
+  padding: 16px;
+}
 </style>
