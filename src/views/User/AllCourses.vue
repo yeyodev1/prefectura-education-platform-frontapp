@@ -2,31 +2,13 @@
 import { onMounted, ref, watch, computed } from 'vue'
 import { useCoursesStore } from '@/stores/courses'
 import UpgradeBanner from '@/components/UpgradeBanner.vue'
+import CourseCard from '@/components/CourseCard.vue'
 import { makePlaceholders } from '@/mocks/courses.mock'
 
 const store = useCoursesStore()
 
-function sanitizeUrl(url?: string) {
-  return (url || '').toString().replace(/`/g, '').trim()
-}
-
-function coverOf(course: any) {
-  return sanitizeUrl(course.image_url) || sanitizeUrl(course.coverUrl) || '/src/assets/fudmaster-color.png'
-}
-
 function isActive(course: any) {
   return !!course?.is_published
-}
-
-function isMockup(course: any) {
-  return String(course?.id || '').startsWith('mock-')
-}
-
-function truncated(text: string, limit = 140) {
-  const t = (text || '').trim()
-  if (t.length <= limit) return { short: t, needs: false }
-  const short = t.slice(0, limit).replace(/\s+\S*$/, '') + '…'
-  return { short, needs: true }
 }
 
 const tick = ref<number>(Date.now())
@@ -56,16 +38,6 @@ function initDeadlines(count: number) {
 function resetAllToOneWeek() {
   const t = cycleDeadline(1)
   deadlines.value = deadlines.value.map(() => t)
-}
-
-function pixelStyle(i: number) {
-  const hues = [120, 200, 20, 280]
-  const h = hues[i % hues.length]
-  return {
-    '--c1': `hsla(${h}, 60%, 60%, 0.18)`,
-    '--c2': `hsla(${h}, 40%, 40%, 0.14)`,
-    '--c3': `hsla(${h}, 30%, 30%, 0.10)`,
-  } as Record<string, string>
 }
 
 onMounted(() => {
@@ -122,38 +94,16 @@ window.setInterval(() => {
           <span>No hay cursos disponibles por ahora.</span>
         </div>
         <div v-else class="cards">
-          <RouterLink v-for="(c, i) in displayCourses" :key="c._id || c.id" class="card" :to="`/courses/${c.id}`" :class="{ disabled: !isActive(c) }" @click.prevent="!isActive(c) && openUpcoming(c)">
-            <div class="cover" v-if="isActive(c)">
-              <img :src="coverOf(c)" alt="cover" />
-            </div>
-            <div v-else>
-              <img v-if="coverOf(c)" :src="coverOf(c)" alt="cover" class="blur-cover" />
-              <div v-else class="cover pixelated" :style="pixelStyle(i)"></div>
-            </div>
-            <div class="info">
-              <h3 class="name">{{ c.name || c.title || 'Curso sin título' }}</h3>
-              <p class="desc">
-                <span>{{ truncated(c.heading || c.description || c.shortDescription || 'Detalles próximamente.', 140).short }}</span>
-              </p>
-            </div>
-            <div class="meta">
-              <span class="status" :class="isActive(c) ? 'published' : 'upcoming'">{{ isActive(c) ? 'Publicado' : 'Próximamente' }}</span>
-              <span class="cta" :class="{ disabled: !isActive(c) }">
-                {{ isActive(c) ? 'Ver curso' : 'Muy pronto' }}
-                <i v-if="isActive(c)" class="fa-solid fa-arrow-right" />
-              </span>
-            </div>
-            <div v-if="!isActive(c) && isMockup(c)" class="countdown">
-              <span class="label">Disponible en:</span>
-              <span class="unit">{{ String(Math.floor(((deadlines[i] ?? tick) - tick) / (1000 * 60 * 60 * 24))).padStart(2, '0') }}d</span>
-              <span class="sep">:</span>
-              <span class="unit">{{ String(Math.floor((((deadlines[i] ?? tick) - tick) / (1000 * 60 * 60)) % 24)).padStart(2, '0') }}h</span>
-              <span class="sep">:</span>
-              <span class="unit">{{ String(Math.floor((((deadlines[i] ?? tick) - tick) / (1000 * 60)) % 60)).padStart(2, '0') }}m</span>
-              <span class="sep">:</span>
-              <span class="unit">{{ String(Math.floor((((deadlines[i] ?? tick) - tick) / 1000) % 60)).padStart(2, '0') }}s</span>
-            </div>
-          </RouterLink>
+          <CourseCard 
+            v-for="(c, i) in displayCourses" 
+            :key="c._id || c.id" 
+            :course="c" 
+            :disabled="!isActive(c)" 
+            :isUpcoming="!isActive(c)" 
+            :index="i" 
+            :countdownTo="deadlines[i]" 
+            @placeholder-click="openUpcoming(c)"
+          />
         </div>
         <div v-if="modalOpen" class="modal-overlay" @click.self="closeModal">
           <div class="modal">
@@ -249,82 +199,64 @@ window.setInterval(() => {
   }
 }
 
-.card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: grid; text-decoration: none; transition: border-color 0.2s ease, transform 0.2s ease; }
+// Grid and Card Styles are now handled by CourseCard component
 
-.card.disabled { opacity: 0.7; }
-
-.cover img {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-  display: block;
+.cta.disabled {
+  background: var(--bg-card);
+  color: var(--text-sec);
+  border: 1px solid var(--border);
 }
 
-.blur-cover {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-  filter: blur(6px);
-  display: block;
-}
-
-.cover.pixelated {
-  --c1: rgba(134, 239, 172, 0.15);
-  --c2: rgba(26, 36, 33, 0.12);
-  --c3: rgba(26, 36, 33, 0.06);
-  background-image:
-    repeating-linear-gradient(0deg, var(--c1) 0 12px, var(--c2) 12px 24px),
-    repeating-linear-gradient(90deg, var(--c3) 0 12px, transparent 12px 24px);
-  background-size: 24px 24px;
-  width: 100%;
-  height: 160px;
+.card:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
 }
 
 
-.info {
-  display: grid;
-  gap: 6px;
-  padding: 12px;
-}
-
-.name {
-  color: var(--text);
-  margin: 0;
-  font-size: 18px;
-}
-
-.desc {
-  color: color-mix(in oklab, var(--text), transparent 40%);
-  margin: 0;
-  font-size: 14px;
-}
-
-.countdown { padding: 12px; border-top: 1px dashed var(--border); display: inline-flex; align-items: center; gap: 6px; font-family: monospace; font-weight: 700; color: var(--text); }
-.countdown .label { font-size: 12px; color: color-mix(in oklab, var(--text), transparent 60%); margin-right: 4px; }
-.countdown .unit { background: color-mix(in oklab, var(--accent), transparent 88%); color: var(--accent); padding: 4px 6px; border-radius: 6px; min-width: 36px; text-align: center; }
-.countdown .sep { color: color-mix(in oklab, var(--text), transparent 60%); }
-
-.meta {
-  padding: 12px;
-  border-top: 1px solid var(--border);
-  font-size: 13px;
-  color: color-mix(in oklab, var(--text), transparent 40%);
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  z-index: 1000;
 }
-.status { border-radius: 999px; padding: 4px 8px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; }
-.status.published { background: rgba(134, 239, 172, 0.1); border: 1px solid var(--border); color: var(--accent); }
-.status.upcoming { background: rgba(134, 239, 172, 0.05); color: var(--text-sec); border: 1px solid var(--border); }
-.cta { background: var(--accent); color: #111613; border-radius: 999px; padding: 6px 10px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
-.cta.disabled { background: var(--bg-card); color: var(--text-sec); border: 1px solid var(--border); }
-.card:hover { border-color: var(--accent); transform: translateY(-1px); }
 
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  width: min(480px, 92vw);
+  display: grid;
+  gap: 12px;
+  color: var(--text-main);
+  box-shadow: var(--shadow);
+}
 
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-.modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; width: min(480px, 92vw); display: grid; gap: 12px; color: var(--text-main); box-shadow: var(--shadow); }
-.modal-title { margin: 0; font-size: 18px; display: inline-flex; align-items: center; gap: 8px; color: var(--text-main); }
-.modal-desc { margin: 0; color: var(--text-sec); }
-.modal-btn { background: var(--accent); color: #111613; border: none; border-radius: 999px; padding: 10px 14px; font-weight: 700; cursor: pointer; justify-self: end; }
+.modal-title {
+  margin: 0;
+  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-main);
+}
 
+.modal-desc {
+  margin: 0;
+  color: var(--text-sec);
+}
+
+.modal-btn {
+  background: var(--accent);
+  color: #111613;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  justify-self: end;
+}
 </style>
