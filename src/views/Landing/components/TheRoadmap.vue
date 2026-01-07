@@ -65,10 +65,10 @@ const features = [
 </template>
 
 <style lang="scss" scoped>
-$bg-dark: #020617;
-$card-bg: #0f172a;
-$accent: #facc15;
-$text-white: #ffffff;
+$bg-dark: var(--bg-main);
+$card-bg: var(--bg-card);
+$accent: var(--accent);
+$text-white: var(--text-main);
 $danger: #ef4444;
 
 .opportunity-section {
@@ -77,12 +77,15 @@ $danger: #ef4444;
   color: $text-white;
 }
 
-.container { max-width: 1000px; margin: 0 auto; }
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
 
 .header-text {
   text-align: center;
   margin-bottom: 3rem;
-  
+
   .badge-alert {
     background: $danger;
     color: white;
@@ -97,7 +100,10 @@ $danger: #ef4444;
   h2 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
-    .highlight { color: $accent; }
+
+    .highlight {
+      color: $accent;
+    }
   }
 }
 
@@ -105,7 +111,7 @@ $danger: #ef4444;
   display: grid;
   grid-template-columns: 1fr;
   gap: 2rem;
-  
+
   @media(min-width: 768px) {
     grid-template-columns: 1fr 1.2fr; // La columna founder más grande
     align-items: center;
@@ -114,24 +120,26 @@ $danger: #ef4444;
 
 .col {
   background: $card-bg;
-  border: 1px solid #334155;
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 2rem;
   position: relative;
 
   &.founder {
     border: 3px solid $accent;
-    background: linear-gradient(145deg, #1e293b, #0f172a);
-    box-shadow: 0 0 40px rgba(250, 204, 21, 0.15);
+    background: var(--bg-card);
+    box-shadow: 0 0 40px rgba(134, 239, 172, 0.15);
     transform: scale(1.05);
     z-index: 10;
   }
 
   .best-value-tag {
     position: absolute;
-    top: -15px; left: 50%; transform: translateX(-50%);
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
     background: $accent;
-    color: black;
+    color: #111613;
     font-weight: 900;
     padding: 0.5rem 1.5rem;
     border-radius: 99px;
@@ -142,12 +150,28 @@ $danger: #ef4444;
 .price-box {
   text-align: center;
   padding: 1.5rem 0;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   margin-bottom: 1.5rem;
 
-  .amount { font-size: 3rem; font-weight: 900; display: block; line-height: 1; }
-  .period { color: #94a3b8; font-size: 1.2rem; }
-  .detail { color: $accent; font-size: 0.9rem; margin-top: 0.5rem; font-weight: bold; }
+  .amount {
+    font-size: 3rem;
+    font-weight: 900;
+    display: block;
+    line-height: 1;
+    color: var(--text-main);
+  }
+
+  .period {
+    color: var(--text-sec);
+    font-size: 1.2rem;
+  }
+
+  .detail {
+    color: $accent;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    font-weight: bold;
+  }
 }
 
 .features-list {
@@ -160,23 +184,27 @@ $danger: #ef4444;
     align-items: center;
     gap: 0.8rem;
     font-size: 1rem;
+    color: var(--text-main);
 
     &.missing {
-      color: #64748b;
+      color: var(--text-sec);
       text-decoration: line-through;
-      .icon { filter: grayscale(100%); }
+
+      .icon {
+        filter: grayscale(100%);
+      }
     }
   }
 }
 
 .savings-alert {
-  background: rgba(74, 222, 128, 0.2);
-  color: #4ade80;
+  background: rgba(134, 239, 172, 0.2);
+  color: var(--accent);
   text-align: center;
   padding: 1rem;
   border-radius: 8px;
   margin-top: 2rem;
   font-weight: 800;
-  border: 1px solid #4ade80;
+  border: 1px solid var(--accent);
 }
 </style>
