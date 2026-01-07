@@ -4,20 +4,20 @@ import { useHead } from '@unhead/vue'
 import { useUserStore } from '@/stores/user'
 
 useHead({
-  title: 'Fudmaster | lleva tu cocina al siguiente nivel',
-  titleTemplate: (title) => title ? `${title} | Fudmaster` : 'Fudmaster',
+  title: 'Prefectura del Guayas | Educación Online',
+  titleTemplate: (title) => title ? `${title} | Prefectura del Guayas` : 'Prefectura del Guayas',
   meta: [
-    { name: 'description', content: 'Fudmaster es la plataforma líder para llevar tu cocina al siguiente nivel con cursos exclusivos y expertos.' },
-    { property: 'og:title', content: 'Fudmaster | lleva tu cocina al siguiente nivel' },
-    { property: 'og:description', content: 'Aprende cocina profesional con los mejores. Cursos online, técnicas avanzadas y comunidad gastronómica.' },
+    { name: 'description', content: 'Plataforma oficial de capacitación y formación de la Prefectura del Guayas.' },
+    { property: 'og:title', content: 'Prefectura del Guayas | Educación Online' },
+    { property: 'og:description', content: 'Accede a cursos y rutas de aprendizaje oficiales para potenciar tu futuro.' },
     { property: 'og:type', content: 'website' },
-    { property: 'og:image', content: '/favicon.png' }, // Should be a full URL in production
+    { property: 'og:image', content: '/favicon.png' },
     { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: 'Fudmaster | Aprende cocina profesional' },
-    { name: 'twitter:description', content: 'Plataforma de formación gastronómica para todos los niveles.' },
+    { name: 'twitter:title', content: 'Prefectura del Guayas | Educación Online' },
+    { name: 'twitter:description', content: 'Plataforma de formación ciudadana.' },
   ],
   link: [
-    { rel: 'canonical', href: 'https://fudmaster.com' } // Adjust to real domain
+    { rel: 'canonical', href: 'https://educacion.guayas.gob.ec' }
   ]
 })
 

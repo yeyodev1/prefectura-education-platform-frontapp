@@ -29,7 +29,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     component: UserLayout,
     meta: {
-      title: 'Fudmaster | lleva tu cocina al siguiente nivel',
+      title: 'Prefectura | Educación Online',
       requiresAuth: true
     },
     children: [
@@ -208,6 +208,12 @@ router.beforeEach(async (to) => {
     if (userStore.role === 'admin') return { path: '/admin', replace: true }
     return { path: '/', replace: true }
   }
+})
+
+router.afterEach((to) => {
+  const baseTitle = 'Prefectura del Guayas'
+  const pageTitle = to.meta.title ? `${to.meta.title} | ${baseTitle}` : baseTitle
+  document.title = pageTitle
 })
 
 export default router
