@@ -98,7 +98,7 @@ const toggleFaq = (index: number) => {
         </div>
   
       </div>
-    <img src="../../../assets/iso-verde.png" alt="fudmaster logo" class="fudmaster-logo" />
+    <img src="../../../assets/logos/logo-prefectura.png" alt="prefectura logo" class="fudmaster-logo" />
     </section>
   </template>
   
