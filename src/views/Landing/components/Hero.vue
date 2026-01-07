@@ -65,16 +65,13 @@ onMounted(() => {
 <style lang="scss" scoped>
 /* Asegúrate de que estas variables estén definidas en tu proyecto global
    o descoméntalas aquí para probar */
-// $FUDMASTER-PRIMARY: #030b1c; /* Color oscuro de fondo aproximado */
-// $FUDMASTER-LIGHT: #ffffff;
-// $FUDMASTER-PINK: #e91e63;
+
 
 .vsl {
   &-hero {
-    background-color: $FUDMASTER-PRIMARY;
-    // min-height: 100vh; /* Ocupa toda la pantalla */
+    background-color: var(--bg-main);
     display: flex;
-    align-items: center; /* Centra verticalmente todo el bloque */
+    align-items: center;
     justify-content: center;
     padding: 48px 20px;
     position: relative;
@@ -92,25 +89,24 @@ onMounted(() => {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    gap: 40px; /* Espacio entre video y texto */
+    gap: 40px;
   }
 
   /* --- COLUMNA VIDEO --- */
   &-video-column {
-    flex: 1.2; /* El video ocupa un poco más de espacio (60% aprox) */
+    flex: 1.2;
     width: 100%;
   }
 
   .video-frame {
     position: relative;
-    /* padding-bottom: 56.25%; Aspect Ratio 16:9 - Removed as Wistia Player handles it */
     height: auto;
     overflow: hidden;
     border-radius: 12px;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     background: #000;
   }
-  
+
   wistia-player[media-id='2f09oyiyxq']:not(:defined) {
     background: center / contain no-repeat url('https://fast.wistia.com/embed/medias/2f09oyiyxq/swatch');
     display: block;
@@ -120,20 +116,20 @@ onMounted(() => {
 
   /* --- COLUMNA TEXTO --- */
   &-content-column {
-    flex: 0.8; /* El texto ocupa un poco menos (40% aprox) */
-    color: $FUDMASTER-LIGHT;
-    text-align: right; /* Alineado a la derecha como en la referencia */
+    flex: 0.8;
+    color: var(--text-main);
+    text-align: right;
     display: flex;
     flex-direction: column;
-    align-items: flex-end; /* Fuerza los elementos a la derecha */
+    align-items: flex-end;
   }
 
   &-title {
-    font-size: 2.5rem; /* Tamaño grande */
+    font-size: 2.5rem;
     font-weight: 800;
     line-height: 1.1;
     margin-bottom: 25px;
-    color: $FUDMASTER-LIGHT;
+    color: var(--text-main);
   }
 
   &-description {
@@ -141,20 +137,21 @@ onMounted(() => {
     line-height: 1.5;
     margin-bottom: 40px;
     opacity: 0.9;
-    max-width: 400px; /* Evita que el texto sea muy ancho */
+    max-width: 400px;
+    color: var(--text-sec);
   }
 
   .cta-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: flex-end; /* Alinea botón y subtitulo a la derecha */
+    align-items: flex-end;
   }
 }
 
 /* --- BOTÓN --- */
 .cta-button {
-  background: $FUDMASTER-ORANGE;
-  color: $FUDMASTER-LIGHT;
+  background: var(--accent);
+  color: #111613;
   border: none;
   padding: 18px 40px;
   font-size: 1.1rem;
@@ -162,7 +159,7 @@ onMounted(() => {
   border-radius: 50px;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
+  box-shadow: 0 4px 15px rgba(134, 239, 172, 0.4);
   white-space: nowrap;
 
   @media screen and (max-width: 320px) {
@@ -172,8 +169,8 @@ onMounted(() => {
 
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(233, 30, 99, 0.6);
-    // filter: brightness(1.1); // Opcional para brillo
+    box-shadow: 0 8px 25px rgba(134, 239, 172, 0.6);
+    filter: brightness(1.1);
   }
 
   &:active {
@@ -186,17 +183,21 @@ onMounted(() => {
   margin-top: 10px;
   opacity: 0.7;
   font-weight: 300;
+  color: var(--text-sec);
 }
+
 
 /* --- RESPONSIVE MOBILE --- */
 @media (max-width: 960px) {
   .vsl-split-layout {
-    flex-direction: column; /* Apila Video arriba, Texto abajo */
+    flex-direction: column;
+    /* Apila Video arriba, Texto abajo */
     gap: 40px;
   }
 
   .vsl-content-column {
-    text-align: center; /* Centrar texto en móvil */
+    text-align: center;
+    /* Centrar texto en móvil */
     align-items: center;
     padding: 0 10px;
   }
