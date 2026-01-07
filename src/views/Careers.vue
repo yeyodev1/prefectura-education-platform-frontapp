@@ -46,7 +46,7 @@ function sanitizeUrl(url?: string) {
 }
 
 function coverOf(career: any) {
-  return sanitizeUrl(career?.imageUrl) || '/src/assets/fudmaster-color.png'
+  return sanitizeUrl(career?.imageUrl) || '/src/assets/logos/logo-prefectura.png'
 }
 
 
