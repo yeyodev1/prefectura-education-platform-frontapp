@@ -79,7 +79,7 @@ onMounted(async () => {
 <style lang="scss" scoped>
 .user {
   &-sidebar {
-    background-color: var(--bg);
+    background-color: var(--bg-card);
     height: 100%;
     border-right: 1px solid var(--border);
     width: 200px;
@@ -116,7 +116,7 @@ onMounted(async () => {
       border-radius: 8px;
       padding: 10px;
       cursor: pointer;
-      color: var(--text);
+      color: var(--text-main);
       font-size: 18px;
       transition: all 0.2s;
       width: 100%;
@@ -125,7 +125,7 @@ onMounted(async () => {
       align-items: center;
 
       &:hover {
-        background-color: color-mix(in oklab, var(--text), transparent 94%);
+        background-color: color-mix(in oklab, var(--text-main), transparent 94%);
       }
     }
   }
@@ -161,7 +161,7 @@ onMounted(async () => {
       .router-link-active,
       .router-link-exact-active {
         text-decoration: none;
-        color: var(--text);
+        color: var(--text-main);
         font-weight: 500;
 
         &:hover {
@@ -183,7 +183,7 @@ onMounted(async () => {
         align-items: center;
         justify-content: center;
         background: var(--accent);
-        color: $white;
+        color: var(--bg-main);
         border-radius: 999px;
         padding: 2px 8px;
         font-size: 11px;
@@ -192,4 +192,5 @@ onMounted(async () => {
     }
   }
 }
+
 </style>
