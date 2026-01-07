@@ -66,8 +66,14 @@ async function loginWithGoogle() {
             id: freshUser._id || (freshUser as any).id,
             name: freshUser.name,
             email: freshUser.email,
-            accountType: freshUser.accountType || (freshUser as any).account_type
+            accountType: freshUser.accountType || (freshUser as any).account_type,
+            role: freshUser.role
           })
+
+          if (freshUser.role === 'admin') {
+            router.push('/admin')
+            return
+          }
         } catch (fetchErr) {
           console.warn('Error refrescando perfil post-login:', fetchErr)
           // Fallback al usuario que vino en login
@@ -127,8 +133,14 @@ async function submit() {
             id: freshUser._id || (freshUser as any).id,
             name: freshUser.name,
             email: freshUser.email,
-            accountType: freshUser.accountType || (freshUser as any).account_type
+            accountType: freshUser.accountType || (freshUser as any).account_type,
+            role: freshUser.role
           })
+
+          if (freshUser.role === 'admin') {
+            router.push('/admin')
+            return
+          }
         } catch (fetchErr) {
           console.warn('Error refrescando perfil submit:', fetchErr)
           userStore.setUser({

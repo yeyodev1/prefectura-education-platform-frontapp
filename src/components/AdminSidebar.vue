@@ -1,0 +1,168 @@
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+const router = useRouter()
+
+const isDark = ref(false)
+const props = defineProps({
+  menuIsOpen: { type: Boolean, default: false }
+})
+
+const menu = [
+  { name: 'Admin Dashboard', link: '/admin', icon: 'fa-solid fa-chart-line' },
+  { name: 'Ir a la App', link: '/', icon: 'fa-solid fa-house' },
+  { name: 'Mi Perfil', link: '/profile/edit', icon: 'fa-solid fa-user-gear' },
+]
+
+function isSelected(link: string) {
+  return router.currentRoute.value.path === link || (link !== '/' && router.currentRoute.value.path.startsWith(link))
+}
+
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', isDark.value ? 'dark' : 'light')
+}
+
+function toggleTheme() {
+  isDark.value = !isDark.value
+  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+  applyTheme()
+}
+
+onMounted(async () => {
+  const t = localStorage.getItem('theme')
+  isDark.value = t === 'dark'
+  applyTheme()
+  userStore.hydrate()
+})
+</script>
+
+<template>
+  <div class="user-sidebar" :class="{ 'active': menuIsOpen }">
+    <div class="user-sidebar-wrapper">
+      <ul class="user-menu">
+        <li
+          v-for="item in menu"
+          :key="item.name"
+          :class="{ 'active': !menuIsOpen, 'selected': isSelected(item.link) }">
+          <i :class="item.icon" class="icon" />
+          <RouterLink :to="item.link" :class="{ 'active': menuIsOpen, 'selected': isSelected(item.link) }">{{ item.name }}</RouterLink>
+        </li>
+      </ul>
+    </div>
+
+    <div class="user-sidebar-footer">
+      <button class="setting-button" type="button" @click="toggleTheme">
+        <i :class="isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon'" />
+      </button>
+    </div>
+  </div>
+</template>
+
+<style lang="scss" scoped>
+.user {
+  &-sidebar {
+    background-color: var(--bg-card);
+    height: 100%;
+    border-right: 1px solid var(--border);
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    &.active {
+      width: 64px;
+
+      .user-sidebar-footer {
+        padding: 8px;
+        align-items: center;
+      }
+    }
+
+    &-wrapper {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    &-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px;
+      border-top: 1px solid transparent;
+    }
+
+    .setting-button {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      color: var(--text-main);
+      font-size: 18px;
+      transition: all 0.2s;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      &:hover {
+        background-color: color-mix(in oklab, var(--text-main), transparent 94%);
+      }
+    }
+  }
+
+  &-menu {
+    list-style: none;
+    padding: 0;
+    margin-top: 42px;
+
+    .icon {
+      margin-right: 8px;
+    }
+
+    li {
+      padding: 0 12px;
+      margin: 36px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      border-left: 3px solid transparent;
+
+      &.active {
+        display: flex;
+        justify-content: flex-start;
+      }
+
+      &.selected {
+        border-left-color: var(--accent);
+      }
+
+      a,
+      .router-link-active,
+      .router-link-exact-active {
+        text-decoration: none;
+        color: var(--text-main);
+        font-weight: 500;
+
+        &:hover {
+          color: var(--accent);
+        }
+
+        &.active {
+          display: none;
+        }
+
+        &.selected {
+          color: var(--accent);
+          font-weight: 700;
+        }
+      }
+    }
+  }
+}
+</style>

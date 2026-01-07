@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
+import { useUserStore } from "@/stores/user";
 
 // Layout
 import UserLayout from "../layout/UserLayout.vue";
@@ -21,6 +22,7 @@ import PayResponse from "../views/PayResponse.vue";
 import Careers from "../views/Careers.vue";
 import CareerDetail from "../views/CareerDetail.vue";
 import ProfileEdit from "../views/User/ProfileEdit.vue";
+import AdminDashboard from "../views/Admin/Dashboard.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -103,6 +105,11 @@ const routes: Array<RouteRecordRaw> = [
         path: 'certificates',
         component: CertificatesView,
         meta: { title: 'Mis Certificados', requiresAuth: true }
+      },
+      {
+        path: 'admin',
+        component: AdminDashboard,
+        meta: { title: 'Admin Dashboard', requiresAuth: true, requiresAdmin: true }
       }
     ]
   },
@@ -181,15 +188,24 @@ const router = createRouter({
   }
 })
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
+  const userStore = useUserStore()
+  if (!userStore.id) userStore.hydrate()
+
   const hasToken = !!localStorage.getItem('access_token')
   const requiresAuth = to.matched.some((record) => record.meta?.requiresAuth)
+  const requiresAdmin = to.matched.some((record) => record.meta?.requiresAdmin)
 
   if (requiresAuth && !hasToken) {
     return { path: '/landing-page', replace: true }
   }
 
+  if (requiresAdmin && userStore.role !== 'admin') {
+    return { path: '/', replace: true }
+  }
+
   if (to.path === '/login' && hasToken) {
+    if (userStore.role === 'admin') return { path: '/admin', replace: true }
     return { path: '/', replace: true }
   }
 })

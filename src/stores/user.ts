@@ -25,6 +25,8 @@ export interface UserState {
 	heardAboutUsOther?: string | null;
 	points?: number | null;
 	accountType: AccountType | null;
+	role: 'user' | 'admin' | null;
+	city: string | null;
 	welcomeModalShown: boolean;
 }
 
@@ -42,6 +44,8 @@ export const useUserStore = defineStore("user", {
 		heardAboutUsOther: null,
 		points: null,
 		accountType: null,
+		role: null,
+		city: null,
 		welcomeModalShown: false,
 	}),
 	actions: {
@@ -49,11 +53,13 @@ export const useUserStore = defineStore("user", {
 			const token = localStorage.getItem("access_token");
 			const id = localStorage.getItem("user_id");
 			const t = localStorage.getItem("teachable_user_id");
-			const at = localStorage.getItem("user_account_type"); // Recuperar accountType
+			const at = localStorage.getItem("user_account_type");
+			const role = localStorage.getItem("user_role");
 			this.isAuthenticated = !!token;
 			this.id = id || null;
 			this.teachableUserId = t || null;
 			this.accountType = (at as AccountType) || null;
+			this.role = (role as 'user' | 'admin') || null;
 		},
 		setUser(payload: {
 			id?: string | number;
@@ -61,6 +67,8 @@ export const useUserStore = defineStore("user", {
 			email?: string;
 			teachableUserId?: string | number;
 			accountType?: AccountType;
+			role?: 'user' | 'admin';
+			city?: string | null;
 		}) {
 			if (payload?.id !== undefined && payload?.id !== null) {
 				this.id = payload.id;
@@ -88,6 +96,13 @@ export const useUserStore = defineStore("user", {
 					localStorage.setItem("user_account_type", payload.accountType);
 				} catch { }
 			}
+			if (payload?.role) {
+				this.role = payload.role;
+				try {
+					localStorage.setItem("user_role", payload.role);
+				} catch { }
+			}
+			if (payload?.city !== undefined) this.city = payload.city;
 			this.isAuthenticated = true;
 		},
 		clear() {
@@ -103,18 +118,15 @@ export const useUserStore = defineStore("user", {
 			this.heardAboutUsOther = null;
 			this.points = null;
 			this.accountType = null;
+			this.role = null;
+			this.city = null;
 			this.welcomeModalShown = false;
 			try {
 				localStorage.removeItem("user_id");
-			} catch { }
-			try {
 				localStorage.removeItem("teachable_user_id");
-			} catch { }
-			try {
 				localStorage.removeItem("user_account_type");
-			} catch { }
-			try {
-				localStorage.removeItem("user_plan"); // Limpiar legacy
+				localStorage.removeItem("user_role");
+				localStorage.removeItem("user_plan");
 			} catch { }
 		},
 		async updateById(
@@ -144,6 +156,13 @@ export const useUserStore = defineStore("user", {
 					localStorage.setItem("user_account_type", u.accountType);
 				} catch { }
 			}
+			if (u.role) {
+				this.role = u.role;
+				try {
+					localStorage.setItem("user_role", u.role);
+				} catch { }
+			}
+			this.city = u.city;
 			this.gender = u.gender;
 			this.genderOther = u.genderOther;
 			this.dateOfBirth = u.dateOfBirth;
@@ -192,6 +211,8 @@ export const useUserStore = defineStore("user", {
 					email: u.email,
 					teachableUserId: u.teachableUserId,
 					accountType: u.accountType,
+					role: u.role,
+					city: u.city,
 				});
 				// Actualizar campos adicionales que no están en setUser
 				this.gender = u.gender;

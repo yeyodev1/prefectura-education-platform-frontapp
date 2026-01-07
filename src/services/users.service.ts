@@ -58,6 +58,7 @@ export interface CourseAccess {
   status: 'active' | 'revoked'
   enrolledAt: string
   expiresAt: string | null
+  completedAt?: string | null
   courseRef?: string | null
 }
 
@@ -67,6 +68,7 @@ export interface CareerAccess {
   courseIds: number[]
   status: 'active' | 'revoked'
   enrolledAt: string
+  completedAt?: string | null
   careerRef?: string | null
 }
 
@@ -81,6 +83,11 @@ export interface PaymentItem {
   careerId?: string
 }
 
+export interface CompletedLecture {
+  courseId: number
+  lectureId: number
+}
+
 export interface SafeUser {
   _id: string
   name: string
@@ -93,10 +100,13 @@ export interface SafeUser {
   heardAboutUsOther: string | null
   points: number
   accountType: AccountType
+  role: 'user' | 'admin'
+  city: string | null
   courses: CourseAccess[]
   careers: CareerAccess[]
   payments: PaymentItem[]
   transactions: string[]
+  completedLectures: CompletedLecture[]
   createdAt: string
   updatedAt: string
 }
@@ -165,7 +175,7 @@ class UsersService extends APIBase {
     localStorage.removeItem('access_token')
     try {
       window.dispatchEvent(new Event('auth:token-expired'))
-    } catch {}
+    } catch { }
   }
 
   async registerFromPayment<T = RegisterFromPaymentResponse>(body: RegisterFromPaymentBody, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {

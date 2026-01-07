@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import UserSidebar from '../components/UserSidebar.vue';
+import AdminSidebar from '../components/AdminSidebar.vue';
 import UserHeader from '../components/UserHeader.vue';
 import WelcomeModal from '../components/WelcomeModal.vue';
 import { useUserStore } from '../stores/user';
@@ -39,14 +40,16 @@ watch(() => route.fullPath, () => {
             <div class="overlay-head">
               <img src="../assets/logos/logo-prefectura.png" alt="logo" class="overlay-logo" />
             </div>
-            <UserSidebar :menuIsOpen="false" @navigate="openCloseMenu" />
+            <AdminSidebar v-if="userStore.role === 'admin'" :menuIsOpen="false" @navigate="openCloseMenu" />
+            <UserSidebar v-else :menuIsOpen="false" @navigate="openCloseMenu" />
           </div>
         </Transition>
       </div>
     </Transition>
     <div class="layout">
       <div class="layout-menu-wrapper">
-        <UserSidebar :menuIsOpen="menuIsOpen" />
+        <AdminSidebar v-if="userStore.role === 'admin'" :menuIsOpen="menuIsOpen" />
+        <UserSidebar v-else :menuIsOpen="menuIsOpen" />
       </div>
       <div class="layout-view-wrapper">
         <RouterView />
