@@ -171,9 +171,10 @@ window.setInterval(() => {
 .all-courses {
   width: 100%;
   padding: 24px 16px;
-  background: var(--bg);
-  color: var(--text);
+  background: var(--bg-main);
+  color: var(--text-main);
 }
+
 
 .container {
   margin: 0 auto;
@@ -212,18 +213,19 @@ window.setInterval(() => {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: color-mix(in oklab, var(--text), transparent 40%);
-  background: color-mix(in oklab, var(--bg), var(--text) 6%);
+  color: var(--text-sec);
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 12px 14px;
 }
 
 .error {
-  color: $alert-error;
-  background: $alert-error-bg;
-  border-color: rgba($alert-error, 0.3);
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
 }
+
 
 .grid {
   width: 100%;
@@ -247,7 +249,8 @@ window.setInterval(() => {
   }
 }
 
-.card { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: grid; text-decoration: none; transition: border-color 0.2s ease, transform 0.2s ease; }
+.card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: grid; text-decoration: none; transition: border-color 0.2s ease, transform 0.2s ease; }
+
 .card.disabled { opacity: 0.7; }
 
 .cover img {
@@ -266,9 +269,9 @@ window.setInterval(() => {
 }
 
 .cover.pixelated {
-  --c1: rgba($FUDMASTER-GREEN, 0.15);
-  --c2: rgba($FUDMASTER-DARK, 0.12);
-  --c3: rgba($FUDMASTER-DARK, 0.06);
+  --c1: rgba(134, 239, 172, 0.15);
+  --c2: rgba(26, 36, 33, 0.12);
+  --c3: rgba(26, 36, 33, 0.06);
   background-image:
     repeating-linear-gradient(0deg, var(--c1) 0 12px, var(--c2) 12px 24px),
     repeating-linear-gradient(90deg, var(--c3) 0 12px, transparent 12px 24px);
@@ -276,6 +279,7 @@ window.setInterval(() => {
   width: 100%;
   height: 160px;
 }
+
 
 .info {
   display: grid;
@@ -310,15 +314,17 @@ window.setInterval(() => {
   gap: 12px;
 }
 .status { border-radius: 999px; padding: 4px 8px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; }
-.status.published { background: color-mix(in oklab, var(--accent), transparent 88%); border: 1px solid var(--border); color: var(--accent); }
-.status.upcoming { background: $overlay-purple; color: $FUDMASTER-BLUE; border: 1px solid var(--border); }
-.cta { background: var(--accent); color: $white; border-radius: 999px; padding: 6px 10px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
-.cta.disabled { background: color-mix(in oklab, var(--bg), var(--text) 6%); color: color-mix(in oklab, var(--text), transparent 50%); border: 1px solid var(--border); }
+.status.published { background: rgba(134, 239, 172, 0.1); border: 1px solid var(--border); color: var(--accent); }
+.status.upcoming { background: rgba(134, 239, 172, 0.05); color: var(--text-sec); border: 1px solid var(--border); }
+.cta { background: var(--accent); color: #111613; border-radius: 999px; padding: 6px 10px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
+.cta.disabled { background: var(--bg-card); color: var(--text-sec); border: 1px solid var(--border); }
 .card:hover { border-color: var(--accent); transform: translateY(-1px); }
 
+
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-.modal { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; width: min(480px, 92vw); display: grid; gap: 12px; color: var(--text); box-shadow: 0 12px 40px rgba(0,0,0,0.25); }
-.modal-title { margin: 0; font-size: 18px; display: inline-flex; align-items: center; gap: 8px; color: var(--text); }
-.modal-desc { margin: 0; color: color-mix(in oklab, var(--text), transparent 40%); }
-.modal-btn { background: var(--accent); color: $white; border: none; border-radius: 999px; padding: 10px 14px; font-weight: 700; cursor: pointer; justify-self: end; }
+.modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; width: min(480px, 92vw); display: grid; gap: 12px; color: var(--text-main); box-shadow: var(--shadow); }
+.modal-title { margin: 0; font-size: 18px; display: inline-flex; align-items: center; gap: 8px; color: var(--text-main); }
+.modal-desc { margin: 0; color: var(--text-sec); }
+.modal-btn { background: var(--accent); color: #111613; border: none; border-radius: 999px; padding: 10px 14px; font-weight: 700; cursor: pointer; justify-self: end; }
+
 </style>
