@@ -319,37 +319,24 @@ function leaveCheckout() {
   width: 100%;
   min-height: 100vh;
   padding: 40px 20px;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-principal, sans-serif);
 
-  // Variables CSS locales para manejo de temas (Dark/Light)
-  --bg-page: #{$FUDMASTER-LIGHT};
-  --bg-card: #{$white};
-  --text-main: #{$FUDMASTER-DARK};
-  --text-muted: rgba(1, 13, 39, 0.7);
-  --input-bg: #{$FUDMASTER-LIGHT};
-  --input-border: transparent;
-  --input-text: #{$FUDMASTER-DARK};
-  --border-color: rgba(1, 13, 39, 0.08);
-  --shadow-color: rgba(1, 13, 39, 0.1);
-  --highlight-bg: rgba(218, 65, 103, 0.1); // Pink bg
-
-  // Soporte Dark Mode
-  :global([data-theme='dark']) & {
-    --bg-page: #01040a; // Muy oscuro
-    --bg-card: #0b1629; // Un poco más claro
-    --text-main: #ffffff;
-    --text-muted: rgba(255, 255, 255, 0.6);
-    --input-bg: rgba(255, 255, 255, 0.05);
-    --input-border: rgba(255, 255, 255, 0.1);
-    --input-text: #ffffff;
-    --border-color: rgba(255, 255, 255, 0.1);
-    --shadow-color: rgba(0, 0, 0, 0.5);
-    --highlight-bg: rgba(218, 65, 103, 0.2);
-  }
+  // Use global CSS variables
+  --bg-page: var(--bg-main);
+  --bg-card: var(--bg-card);
+  --text-main: var(--text-main);
+  --text-muted: var(--text-sec);
+  --input-bg: var(--bg-main);
+  --input-border: var(--border);
+  --input-text: var(--text-main);
+  --border-color: var(--border);
+  --shadow-color: var(--shadow);
+  --highlight-bg: rgba(134, 239, 172, 0.1);
 
   background-color: var(--bg-page);
   color: var(--text-main);
 }
+
 
 .container {
   width: 100%;
@@ -425,13 +412,14 @@ function leaveCheckout() {
   margin: 0;
 
   .highlight {
-    color: $FUDMASTER-ORANGE;
+    color: var(--accent);
     display: block;
 
     @media(min-width: 768px) {
       display: inline;
     }
   }
+
 }
 
 .subtitle {
@@ -478,9 +466,10 @@ function leaveCheckout() {
 
   &:focus-within {
     background: var(--bg-card);
-    border-color: $FUDMASTER-BLUE;
-    box-shadow: 0 0 0 4px rgba($FUDMASTER-BLUE, 0.1);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(134, 239, 172, 0.15);
   }
+
 
   .icon {
     color: var(--text-muted);
@@ -503,11 +492,12 @@ function leaveCheckout() {
   }
 
   .input-locked {
-    background-color: rgba($FUDMASTER-GREEN, 0.1);
+    background-color: rgba(134, 239, 172, 0.1);
     color: var(--text-muted);
     cursor: not-allowed;
-    border-color: rgba($FUDMASTER-GREEN, 0.3);
+    border-color: rgba(134, 239, 172, 0.3);
   }
+
 
 }
 
@@ -529,14 +519,15 @@ function leaveCheckout() {
   }
 
   i {
-    color: $FUDMASTER-GREEN;
+    color: var(--accent);
     margin-right: 6px;
   }
 
+
   .text-btn {
     background: transparent;
-    border: 1px solid rgba($FUDMASTER-ORANGE, 0.3);
-    color: $FUDMASTER-ORANGE;
+    border: 1px solid rgba(134, 239, 172, 0.3);
+    color: var(--accent);
     cursor: pointer;
     font-size: 0.75rem;
     padding: 6px 12px;
@@ -547,24 +538,25 @@ function leaveCheckout() {
     letter-spacing: 0.5px;
 
     &:hover:not(:disabled) {
-      background: $FUDMASTER-ORANGE;
-      color: $white;
-      border-color: $FUDMASTER-ORANGE;
-      box-shadow: 0 2px 8px rgba($FUDMASTER-ORANGE, 0.3);
+      background: var(--accent);
+      color: #111613;
+      border-color: var(--accent);
+      box-shadow: 0 2px 8px rgba(134, 239, 172, 0.3);
     }
 
     &:disabled {
       opacity: 0.7;
       cursor: not-allowed;
-      border-color: rgba($FUDMASTER-ORANGE, 0.1);
-      color: rgba($FUDMASTER-ORANGE, 0.7);
+      border-color: rgba(134, 239, 172, 0.1);
+      color: var(--text-sec);
     }
   }
+
 }
 
 .error-box {
-  background: $alert-error-bg;
-  color: $alert-error;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
   padding: 12px;
   border-radius: 8px;
   font-size: 14px;
@@ -572,6 +564,7 @@ function leaveCheckout() {
   align-items: center;
   gap: 8px;
 }
+
 
 .login-row {
   display: flex;
@@ -584,11 +577,12 @@ function leaveCheckout() {
     background: none;
     border: none;
     padding: 0;
-    color: $FUDMASTER-BLUE;
+    color: var(--accent);
     font-weight: 700;
     cursor: pointer;
     text-decoration: underline;
   }
+
 }
 
 // CTA SECTION
@@ -600,8 +594,8 @@ function leaveCheckout() {
 
 .cta-button {
   width: 100%;
-  background: $FUDMASTER-GREEN;
-  color: $white;
+  background: var(--accent);
+  color: #111613;
   border: none;
   padding: 18px;
   border-radius: 12px;
@@ -609,7 +603,8 @@ function leaveCheckout() {
   font-weight: 700;
   cursor: pointer;
   transition: transform 0.2s, filter 0.2s;
-  box-shadow: 0 10px 20px -5px rgba($FUDMASTER-GREEN, 0.4);
+  box-shadow: 0 10px 20px -5px rgba(134, 239, 172, 0.4);
+
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
@@ -692,8 +687,8 @@ function leaveCheckout() {
 }
 
 .timer-box {
-  background: $FUDMASTER-ORANGE;
-  color: $white;
+  background: var(--accent);
+  color: #111613;
   padding: 12px 16px;
   border-radius: 12px;
   display: flex;
@@ -703,8 +698,9 @@ function leaveCheckout() {
   font-weight: 700;
   margin-bottom: 20px;
   font-size: 14px;
-  box-shadow: 0 4px 10px rgba($FUDMASTER-ORANGE, 0.3);
+  box-shadow: 0 4px 10px rgba(134, 239, 172, 0.3);
   text-align: center;
+
 
   .timer-label {
     text-transform: uppercase;
@@ -785,22 +781,24 @@ function leaveCheckout() {
       }
 
       .saved-amount {
-        color: $FUDMASTER-PINK;
+        color: #da4167;
         font-weight: 800;
         background: var(--highlight-bg);
         padding: 2px 6px;
         border-radius: 4px;
       }
+
     }
 
     &.note {
       font-size: 13px;
-      color: $FUDMASTER-GREEN;
+      color: var(--accent);
       justify-content: flex-start;
       gap: 6px;
       font-weight: 600;
       margin-top: 4px;
     }
+
   }
 }
 
@@ -837,9 +835,10 @@ function leaveCheckout() {
     line-height: 1.4;
 
     i {
-      color: $FUDMASTER-GREEN;
+      color: var(--accent);
       margin-top: 2px;
     }
+
 
     strong {
       color: var(--text-main);
