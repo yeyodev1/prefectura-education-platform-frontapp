@@ -33,7 +33,7 @@ watch(() => route.fullPath, () => {
         <Transition name="panel-slide">
           <div class="overlay-panel">
             <div class="overlay-head">
-              <img src="../assets/iso-verde.png" alt="logo" class="overlay-logo" />
+              <img src="../assets/logos/logo-prefectura.png" alt="logo" class="overlay-logo" />
             </div>
             <UserSidebar :menuIsOpen="false" @navigate="openCloseMenu" />
           </div>
