@@ -198,7 +198,7 @@ function onCardClick(e: Event) {
 
 .cta {
   background: var(--accent);
-  color: #111613; // Dark text on light accent
+  color: #FFFFFF; // High contrast for blue accent
   border-radius: 999px;
   padding: 8px 12px;
   font-size: 13px;
@@ -275,8 +275,9 @@ function onCardClick(e: Event) {
 }
 
 .countdown .unit {
-  background: rgba(134, 239, 172, 0.1);
-  color: var(--accent);
+  background: var(--bg-main);
+  color: var(--text-main);
+  border: 1px solid var(--border);
   padding: 4px 6px;
   border-radius: 6px;
   min-width: 36px;

@@ -2,9 +2,8 @@
 import { onMounted, computed, ref } from 'vue'
 import { useCoursesStore } from '@/stores/courses'
 import { useUserStore } from '@/stores/user'
-import UpgradeBanner from '@/components/UpgradeBanner.vue'
+import { RouterLink } from 'vue-router'
 import CourseCard from '@/components/CourseCard.vue'
-import { makePlaceholders } from '@/mocks/courses.mock'
 
 const store = useCoursesStore()
 const userStore = useUserStore()
@@ -19,44 +18,23 @@ const userId = computed(() => {
 })
 
 const query = ref('')
-const modalOpen = ref(false)
-const modalTitle = ref('')
 
-const sourceCourses = computed(() => (store.enrolledCourses.length ? store.enrolledCourses : store.courses))
+const sourceCourses = computed(() => {
+  const base = store.enrolledCourses.length ? store.enrolledCourses : store.courses
+  return base.filter((c: any) => !c?.is_published)
+})
 
 const filtered = computed(() => {
   const q = query.value.trim().toLowerCase()
-  if (!q) return sourceCourses.value
-  return sourceCourses.value.filter((c: any) => {
+  const list = sourceCourses.value
+  if (!q) return list
+  return list.filter((c: any) => {
     const text = [c?.name, c?.title, c?.heading, c?.description, c?.shortDescription].join(' ').toLowerCase()
     return text.includes(q)
   })
 })
 
 const liveList = computed(() => Array.isArray(filtered.value) ? filtered.value : [])
-const upcoming = computed(() => makePlaceholders(6))
-
-
-function openModal(c: any) {
-  modalTitle.value = String(c?.name || 'Próximamente')
-  modalOpen.value = true
-}
-function closeModal() { modalOpen.value = false }
-
-function cycleDeadline(weeks: number): number {
-  const now = new Date()
-  const day = now.getDay()
-  const daysUntilSunday = (7 - day)
-  const base = new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysUntilSunday, 23, 59, 59)
-  base.setDate(base.getDate() + 7 * (weeks - 1))
-  return base.getTime()
-}
-
-function countdownForIndex(i: number): number {
-  const pattern = [1, 2, 4] as const
-  const idx = (i % pattern.length) as 0 | 1 | 2
-  return cycleDeadline(pattern[idx])
-}
 
 onMounted(() => {
   if (userId.value) {
@@ -77,11 +55,6 @@ onMounted(() => {
       </div>
       </div>
       <p class="subtitle">Explora y continúa tu aprendizaje. Usa el buscador para encontrar cursos.</p>
-      <div class="upcoming-notice">
-        <i class="fa-regular fa-bell" /> Pronto estarán disponibles más cursos durante este mes.
-      </div>
-
-      <UpgradeBanner />
 
       <div v-if="store.loading" class="loading">
         <i class="fa-solid fa-spinner fa-spin" /> Cargando cursos...
@@ -92,39 +65,27 @@ onMounted(() => {
       </div>
 
       <div v-else>
-        <div v-if="(store.enrolledCourses.length || store.courses.length) === 0" class="empty">
-          <i class="fa-regular fa-face-smile" />
-          <span>Aún no tienes cursos asignados.</span>
+        <div v-if="liveList.length === 0" class="empty-state">
+          <div class="empty-content">
+            <i class="fa-regular fa-face-smile" />
+            <h3>No tienes cursos asignados</h3>
+            <p>Explora nuestro catálogo y comienza a aprender hoy mismo.</p>
+            <RouterLink to="/courses/all" class="explore-btn">
+              Explorar cursos
+            </RouterLink>
+          </div>
         </div>
         <div v-else class="cards">
           <CourseCard
             v-for="c in liveList"
-            :key="c.id"
+            :key="c._id || c.id"
             :course="c"
-            :to="`/courses/${c.id}`"
+            :to="`/courses/${c._id || c.id}`"
             :show-published-badge="true"
             :show-classes-count="true"
+            :disabled="false"
+            :isUpcoming="false"
           />
-        </div>
-        <h3 class="subtitle">Próximamente</h3>
-        <div class="cards">
-          <CourseCard
-            v-for="(c, i) in upcoming"
-            :key="c.id"
-            :course="c"
-            :disabled="true"
-            :countdown-to="countdownForIndex(i)"
-            :show-published-badge="true"
-            :show-classes-count="true"
-            @placeholder-click="openModal(c)"
-          />
-        </div>
-        <div v-if="modalOpen" class="modal-overlay" @click.self="closeModal">
-          <div class="modal">
-            <h3 class="modal-title"><i class="fa-solid fa-hourglass-half" /> {{ modalTitle }}</h3>
-            <p class="modal-desc">Este curso estará disponible pronto. Gracias por tu interés.</p>
-            <button class="modal-btn" type="button" @click="closeModal">Entendido</button>
-          </div>
         </div>
       </div>
     </div>
@@ -132,7 +93,12 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.my-courses { width: 100%; padding: 24px 16px; background: var(--bg-main); color: var(--text-main); }
+.my-courses {
+  width: 100%;
+  padding: 24px 16px;
+  background: var(--bg-main);
+  color: var(--text-main);
+}
 
 
 .container {
@@ -141,7 +107,13 @@ onMounted(() => {
   gap: 12px;
 }
 
-.header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .title {
   color: var(--text-main);
   padding: 24px 0;
@@ -169,14 +141,85 @@ onMounted(() => {
   gap: 8px;
 }
 
-.actions { display: flex; align-items: center; gap: 10px; }
-.search { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); border-radius: 10px; padding: 10px 12px; font-size: 14px; width: 220px; }
-.search::placeholder { color: var(--text-sec); opacity: 0.5; }
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
+.search {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  width: 220px;
+}
+
+.search::placeholder {
+  color: var(--text-sec);
+  opacity: 0.5;
+}
+
+
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-align: center;
+  min-height: 380px;
+}
+
+.empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-width: 400px;
+
+  i {
+    font-size: 64px;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 22px;
+    color: var(--text-main);
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-sec);
+    line-height: 1.5;
+  }
+}
+
+.explore-btn {
+  margin-top: 12px;
+  background: var(--accent);
+  color: #FFFFFF;
+  padding: 12px 32px;
+  border-radius: 99px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px color-mix(in oklab, var(--accent), transparent 70%);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px color-mix(in oklab, var(--accent), transparent 60%);
+  }
+}
 
 .loading,
-.error,
-.empty {
+.error {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -200,11 +243,52 @@ onMounted(() => {
   grid-template-columns: 1fr;
 }
 
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-.modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; width: min(480px, 92vw); display: grid; gap: 12px; color: var(--text-main); box-shadow: var(--shadow); }
-.modal-title { margin: 0; font-size: 18px; display: inline-flex; align-items: center; gap: 8px; color: var(--text-main); }
-.modal-desc { margin: 0; color: var(--text-sec); }
-.modal-btn { background: var(--accent); color: #111613; border: none; border-radius: 999px; padding: 10px 14px; font-weight: 700; cursor: pointer; justify-self: end; }
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  width: min(480px, 92vw);
+  display: grid;
+  gap: 12px;
+  color: var(--text-main);
+  box-shadow: var(--shadow);
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-main);
+}
+
+.modal-desc {
+  margin: 0;
+  color: var(--text-sec);
+}
+
+.modal-btn {
+  background: var(--accent);
+  color: #111613;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  justify-self: end;
+}
 
 
 @media (min-width: 720px) {

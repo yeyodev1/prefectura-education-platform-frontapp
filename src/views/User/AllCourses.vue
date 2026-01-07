@@ -1,44 +1,9 @@
 <script setup lang="ts">
-import { onMounted, ref, watch, computed } from 'vue'
+import { onMounted, computed } from 'vue'
 import { useCoursesStore } from '@/stores/courses'
-import UpgradeBanner from '@/components/UpgradeBanner.vue'
 import CourseCard from '@/components/CourseCard.vue'
-import { makePlaceholders } from '@/mocks/courses.mock'
 
 const store = useCoursesStore()
-
-function isActive(course: any) {
-  return !!course?.is_published
-}
-
-const tick = ref<number>(Date.now())
-const deadlines = ref<number[]>([])
-
-function endOfNextSunday(): Date {
-  const now = new Date()
-  const day = now.getDay()
-  const daysUntilSunday = (7 - day)
-  return new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysUntilSunday, 23, 59, 59)
-}
-
-function cycleDeadline(weeks: number): number {
-  const base = endOfNextSunday()
-  base.setDate(base.getDate() + 7 * (weeks - 1))
-  return base.getTime()
-}
-
-function initDeadlines(count: number) {
-  const pattern = [1, 2, 4] as const
-  deadlines.value = Array.from({ length: count }, (_, i) => {
-    const idx = (i % pattern.length) as 0 | 1 | 2
-    return cycleDeadline(pattern[idx])
-  })
-}
-
-function resetAllToOneWeek() {
-  const t = cycleDeadline(1)
-  deadlines.value = deadlines.value.map(() => t)
-}
 
 onMounted(() => {
   store.fetchAll()
@@ -46,26 +11,8 @@ onMounted(() => {
 
 const displayCourses = computed(() => {
   const list = Array.isArray(store.courses) ? store.courses : []
-  const need = Math.max(0, 12 - list.length)
-  const placeholders = makePlaceholders(need)
-  return [...list, ...placeholders]
+  return list.filter(c => !c?.is_published)
 })
-
-const modalOpen = ref(false)
-const modalTitle = ref('')
-function openUpcoming(c: any) { modalTitle.value = String(c?.name || c?.title || 'Próximamente'); modalOpen.value = true }
-function closeModal() { modalOpen.value = false }
-
-watch(displayCourses, (list) => {
-  initDeadlines(Array.isArray(list) ? list.length : 0)
-}, { immediate: true })
-
-window.setInterval(() => {
-  tick.value = Date.now()
-  if (deadlines.value.some(ms => ms - tick.value <= 0)) {
-    resetAllToOneWeek()
-  }
-}, 1000)
 </script>
 
 <template>
@@ -73,13 +20,7 @@ window.setInterval(() => {
     <div class="container">
       <h2 class="title"><i class="fa-solid fa-list" /> Todos los cursos</h2>
       <p class="subtitle">Explora y descubre todos nuestros cursos disponibles.</p>
-      <div class="upcoming-notice">
-        <i class="fa-regular fa-bell" /> Pronto estarán disponibles más cursos durante este mes.
-      </div>
       
-      <!-- CTA para usuarios Free -->
-      <UpgradeBanner />
-
       <div v-if="store.loading" class="loading">
         <i class="fa-solid fa-spinner fa-spin" /> Cargando cursos...
       </div>
@@ -89,7 +30,7 @@ window.setInterval(() => {
       </div>
 
       <div v-else class="grid">
-        <div v-if="store.courses.length === 0" class="empty">
+        <div v-if="displayCourses.length === 0" class="empty">
           <i class="fa-regular fa-face-smile" />
           <span>No hay cursos disponibles por ahora.</span>
         </div>
@@ -98,19 +39,11 @@ window.setInterval(() => {
             v-for="(c, i) in displayCourses" 
             :key="c._id || c.id" 
             :course="c" 
-            :disabled="!isActive(c)" 
-            :isUpcoming="!isActive(c)" 
+            :disabled="false" 
+            :isUpcoming="false" 
             :index="i" 
-            :countdownTo="deadlines[i]" 
-            @placeholder-click="openUpcoming(c)"
+            :to="`/courses/${c._id || c.id}`"
           />
-        </div>
-        <div v-if="modalOpen" class="modal-overlay" @click.self="closeModal">
-          <div class="modal">
-            <h3 class="modal-title"><i class="fa-solid fa-hourglass-half" /> {{ modalTitle }}</h3>
-            <p class="modal-desc">Este curso estará disponible pronto. Gracias por tu interés.</p>
-            <button class="modal-btn" type="button" @click="closeModal">Entendido</button>
-          </div>
         </div>
       </div>
     </div>
