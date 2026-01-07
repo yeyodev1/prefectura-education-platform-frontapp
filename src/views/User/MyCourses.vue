@@ -132,7 +132,8 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.my-courses { width: 100%; padding: 24px 16px; background: var(--bg); color: var(--text); }
+.my-courses { width: 100%; padding: 24px 16px; background: var(--bg-main); color: var(--text-main); }
+
 
 .container {
   margin: 0 auto;
@@ -142,7 +143,7 @@ onMounted(() => {
 
 .header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .title {
-  color: var(--text);
+  color: var(--text-main);
   padding: 24px 0;
   font-size: 24px;
   margin: 0;
@@ -150,6 +151,7 @@ onMounted(() => {
   align-items: center;
   gap: 10px;
 }
+
 
 .subtitle {
   color: color-mix(in oklab, var(--text), transparent 40%);
@@ -168,8 +170,9 @@ onMounted(() => {
 }
 
 .actions { display: flex; align-items: center; gap: 10px; }
-.search { background: color-mix(in oklab, var(--text), transparent 94%); border: 1px solid var(--border); color: var(--text); border-radius: 10px; padding: 10px 12px; font-size: 14px; width: 220px; }
-.search::placeholder { color: color-mix(in oklab, var(--text), transparent 50%); }
+.search { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); border-radius: 10px; padding: 10px 12px; font-size: 14px; width: 220px; }
+.search::placeholder { color: var(--text-sec); opacity: 0.5; }
+
 
 .loading,
 .error,
@@ -177,18 +180,19 @@ onMounted(() => {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: color-mix(in oklab, var(--text), transparent 40%);
-  background: color-mix(in oklab, var(--bg), var(--text) 6%);
+  color: var(--text-sec);
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 12px 14px;
 }
 
 .error {
-  color: $alert-error;
-  background: $alert-error-bg;
-  border-color: rgba($alert-error, 0.3);
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
 }
+
 
 .cards {
   display: grid;
@@ -197,10 +201,11 @@ onMounted(() => {
 }
 
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-.modal { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; width: min(480px, 92vw); display: grid; gap: 12px; color: var(--text); box-shadow: 0 12px 40px rgba(0,0,0,0.25); }
-.modal-title { margin: 0; font-size: 18px; display: inline-flex; align-items: center; gap: 8px; color: var(--text); }
-.modal-desc { margin: 0; color: color-mix(in oklab, var(--text), transparent 40%); }
-.modal-btn { background: var(--accent); color: $white; border: none; border-radius: 999px; padding: 10px 14px; font-weight: 700; cursor: pointer; justify-self: end; }
+.modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; width: min(480px, 92vw); display: grid; gap: 12px; color: var(--text-main); box-shadow: var(--shadow); }
+.modal-title { margin: 0; font-size: 18px; display: inline-flex; align-items: center; gap: 8px; color: var(--text-main); }
+.modal-desc { margin: 0; color: var(--text-sec); }
+.modal-btn { background: var(--accent); color: #111613; border: none; border-radius: 999px; padding: 10px 14px; font-weight: 700; cursor: pointer; justify-self: end; }
+
 
 @media (min-width: 720px) {
   .cards {
