@@ -98,20 +98,21 @@ function onCardClick(e: Event) {
 
 <style lang="scss" scoped>
 .course-card {
-  background: var(--bg);
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 14px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow);
   display: grid;
   gap: 8px;
   text-decoration: none;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .course-card:hover {
   border-color: var(--accent);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
 }
 
 .course-card.disabled {
@@ -130,7 +131,7 @@ function onCardClick(e: Event) {
 }
 
 .name {
-  color: var(--text);
+  color: var(--text-main);
   font-weight: 700;
   margin: 0;
   font-size: 18px;
@@ -145,8 +146,8 @@ function onCardClick(e: Event) {
 }
 
 .badge {
-  background: color-mix(in oklab, var(--accent), transparent 85%);
-  color: var(--text);
+  background: rgba(134, 239, 172, 0.1);
+  color: var(--text-main);
   border-radius: 6px;
   padding: 6px 8px;
   font-size: 12px;
@@ -157,14 +158,15 @@ function onCardClick(e: Event) {
 
 .cta {
   background: var(--accent);
-  color: $white;
+  color: #111613; // Dark text on light accent
   border-radius: 999px;
   padding: 8px 12px;
   font-size: 13px;
+  font-weight: 600;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 12px rgba(134, 239, 172, 0.2);
 }
 
 .desc-toggle {
@@ -179,14 +181,14 @@ function onCardClick(e: Event) {
 }
 
 .desc-panel {
-  background: color-mix(in oklab, var(--bg), var(--text) 6%);
+  background: var(--bg-main);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 10px 12px;
 }
 
 .desc {
-  color: color-mix(in oklab, var(--text), transparent 30%);
+  color: var(--text-sec);
   margin: 0;
   font-size: 14px;
 }
@@ -223,17 +225,17 @@ function onCardClick(e: Event) {
   gap: 6px;
   font-family: monospace;
   font-weight: 700;
-  color: var(--text);
+  color: var(--text-main);
 }
 
 .countdown .label {
   font-size: 12px;
-  color: color-mix(in oklab, var(--text), transparent 60%);
+  color: var(--text-sec);
   margin-right: 4px;
 }
 
 .countdown .unit {
-  background: color-mix(in oklab, var(--accent), transparent 88%);
+  background: rgba(134, 239, 172, 0.1);
   color: var(--accent);
   padding: 4px 6px;
   border-radius: 6px;
@@ -242,6 +244,7 @@ function onCardClick(e: Event) {
 }
 
 .countdown .sep {
-  color: color-mix(in oklab, var(--text), transparent 60%);
+  color: var(--text-sec);
 }
+
 </style>
