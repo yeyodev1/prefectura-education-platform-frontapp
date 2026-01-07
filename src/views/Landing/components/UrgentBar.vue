@@ -16,12 +16,13 @@ function goToCheckout() { router.push('/checkout') }
 
 <style lang="scss" scoped>
 .urgent {
-  background-color: $FUDMASTER-ORANGE;
-  color: white;
+  background-color: var(--accent);
+  color: #111613;
   text-decoration: underline;
   text-align: center;
-  padding: 20px;
-  font-weight: bold;
+  padding: 10px 20px;
+  font-weight: 800;
   cursor: pointer;
+  z-index: 1000;
 }
 </style>
