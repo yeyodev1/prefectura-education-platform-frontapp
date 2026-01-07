@@ -125,14 +125,15 @@ function goToCheckout() {
       h3 {
         margin: 0;
         font-size: 18px;
-        color: var(--text);
+        color: var(--text-main);
       }
       
       p {
         margin: 4px 0 0;
         font-size: 14px;
-        color: color-mix(in oklab, var(--text), transparent 30%);
+        color: var(--text-sec);
       }
+
     }
 
     .upgrade-btn {
@@ -207,11 +208,12 @@ function goToCheckout() {
         p {
           font-size: 12px;
           font-weight: 600;
-          color: var(--text);
+          color: var(--text-main);
           margin: 0;
           line-height: 1.3;
         }
       }
+
     }
     
     .upgrade-btn {
